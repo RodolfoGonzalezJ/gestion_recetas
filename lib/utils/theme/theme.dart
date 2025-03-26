@@ -14,6 +14,13 @@ class TAppTheme {
     primaryColor: Color.fromRGBO(25, 131, 48, 100),
     scaffoldBackgroundColor: Colors.white,
     textTheme: TTextTheme.lightTextTheme,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+          Color.fromRGBO(25, 131, 48, 100),
+        ),
+      ),
+    ),
   );
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
