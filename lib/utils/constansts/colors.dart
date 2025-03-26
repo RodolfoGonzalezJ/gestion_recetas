@@ -17,4 +17,7 @@ class CColors {
   //Color Seleccionado
   static const Color selected = Color.fromRGBO(0, 0, 0, 10);
   static const Color selectedText = Color(0xFF027E1E);
+  //Color de fondo del contenedor
+  static const Color lightContainer = Color.fromRGBO(255, 255, 255, 100);
+  static const Color darkContainer = Colors.white;
 }
