@@ -16,7 +16,7 @@ class TAppTheme {
     textTheme: TTextTheme.lightTextTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(
+        backgroundColor: WidgetStateProperty.all<Color>(
           Color.fromRGBO(25, 131, 48, 100),
         ),
       ),
