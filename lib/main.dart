@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/theme/theme.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 void main() {
   runApp(const App());
