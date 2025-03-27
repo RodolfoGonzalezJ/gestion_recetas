@@ -36,15 +36,10 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-              },
-              child: Text('Iniciar Sesión'),
-            ),
+            ElevatedButton(onPressed: () {}, child: Text('Iniciar Sesión')),
             SizedBox(height: 10),
             OutlinedButton.icon(
-              onPressed: () {
-              },
+              onPressed: () {},
               icon: Image.asset(
                 'assets/icons/google.png',
                 height: 20,
@@ -57,15 +52,10 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                   child: Text('Recuperar Contraseña'),
                 ),
-                TextButton(
-                  onPressed: () {
-                  },
-                  child: Text('Registrar Cuenta'),
-                ),
+                TextButton(onPressed: () {}, child: Text('Registrar Cuenta')),
               ],
             ),
           ],

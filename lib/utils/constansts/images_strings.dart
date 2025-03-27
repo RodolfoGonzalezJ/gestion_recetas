@@ -1,0 +1,12 @@
+import 'package:flutter/material.dart';
+
+//Esta clase se encarga de almacenar las rutas de las imagenes que se usaran en la aplicacion
+//Se recomien
+class CImages {
+  //App - Logos
+  static const String darkAppLogo = 'assets/logos/logo.png';
+  static const String lightAppLogo = 'assets/logos/logo.png';
+
+  // Social Logos
+  static const String googleLogo = 'assets/icons/google.png';
+}
