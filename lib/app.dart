@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/theme/theme.dart';
+import 'package:gestion_recetas/features/auth/screens/login_screens.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -10,8 +11,8 @@ class App extends StatelessWidget {
       // Manejo del Tema oscuro y claro
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
-      // Cambiamos el tema oscuro por el tema claro
       darkTheme: TAppTheme.darkTheme,
+      home: LoginPage(),
     );
   }
 }
