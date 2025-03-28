@@ -55,7 +55,12 @@ class LoginPage extends StatelessWidget {
                   onPressed: () {},
                   child: Text('Recuperar Contraseña'),
                 ),
-                TextButton(onPressed: () {}, child: Text('Registrar Cuenta')),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/signup');
+                  },
+                  child: Text('Registrar Cuenta'),
+                ),
               ],
             ),
           ],

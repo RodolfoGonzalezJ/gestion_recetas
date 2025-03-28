@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/theme/theme.dart';
 import 'package:gestion_recetas/features/auth/screens/login_screens.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/signup_page1.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/signup_page2.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/signup_page3.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -13,6 +16,11 @@ class App extends StatelessWidget {
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       home: LoginPage(),
+      routes: {
+        '/signup': (context) => SignUpPage1(),
+        '/signup2': (context) => SignUpPage2(),
+        '/signup3': (context) => SignUpPage3(),
+      },
     );
   }
 }
