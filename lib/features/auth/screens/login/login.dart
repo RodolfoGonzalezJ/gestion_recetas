@@ -20,8 +20,9 @@ class LoginScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              LoginHeader(dark: dark),
               const SizedBox(height: 25),
+              LoginHeader(dark: dark),
+              const SizedBox(height: 30),
               LoginForm(dark: dark),
             ],
           ),

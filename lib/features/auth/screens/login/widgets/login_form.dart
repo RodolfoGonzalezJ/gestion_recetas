@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:iconsax/iconsax.dart';
 
