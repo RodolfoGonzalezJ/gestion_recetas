@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/signup_page1.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class LoginForm extends StatefulWidget {
@@ -96,7 +99,12 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('No tienes cuenta?', style: TextStyle(fontSize: 15)),
-                WTextButton(label: 'Regístrate Aquí', onPressed: () {}),
+                WTextButton(
+                  label: 'Regístrate Aquí',
+                  onPressed: () {
+                    THelperFunctions.navigateToScreen(context, SignUpPage1());
+                  },
+                ),
               ],
             ),
           ],

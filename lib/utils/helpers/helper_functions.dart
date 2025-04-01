@@ -61,9 +61,9 @@ class THelperFunctions {
   }
 
   // Para manejar el tema de navegacion de pages
-  // static void navigateToScreen(BuildContext context, Widget screen) {
-  //   Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
-  // }
+  static void navigateToScreen(BuildContext context, Widget screen) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+  }
 
   //Para truncar el texto
   static String truncateText(String text, int maxLenght) {
