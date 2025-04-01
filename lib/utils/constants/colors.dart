@@ -5,10 +5,10 @@ class CColors {
 
   // Colores de la aplicación basicos
   static const Color primaryColor = Color.fromRGBO(25, 131, 48, 100);
-  static const Color secondaryColor = Color.fromRGBO(31, 175, 63, 100);
-  static const Color resaltar = Color.fromRGBO(30, 103, 46, 100);
+  static const Color secondaryColor = Color.fromRGBO(31, 175, 63, 1);
+  static const Color resaltar = Color.fromRGBO(30, 103, 46, 1);
   // Colores de texto
-  static const Color primaryTextColor = Color.fromRGBO(0, 0, 0, 80);
+  static const Color primaryTextColor = Color.fromRGBO(0, 0, 0, 0.8);
   static const Color secondaryTextColor = Color.fromRGBO(51, 51, 51, 8);
   static const Color textBlanco = Colors.white;
   static const Color textCategory = Color.fromRGBO(189, 189, 189, 0.808);
@@ -18,7 +18,7 @@ class CColors {
   static const Color textMore = Color(0xFF1E672E);
   // Colores de fondo
   static const Color light = Color.fromRGBO(255, 255, 255, 1);
-  static const Color dark = Color.fromRGBO(0, 0, 0, 100);
+  static const Color dark = Color.fromRGBO(19, 33, 22, 1);
   //Color Seleccionado
   static const Color selected = Color.fromRGBO(0, 0, 0, 10);
   static const Color selectedText = Color(0xFF027E1E);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SignUpPage3 extends StatefulWidget {
+  const SignUpPage3({super.key});
+
   @override
   _SignUpPage3State createState() => _SignUpPage3State();
 }
@@ -96,9 +98,9 @@ class _SignUpPage3State extends State<SignUpPage3> {
                           }
                           : null,
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
                       (states) =>
-                          states.contains(MaterialState.disabled)
+                          states.contains(WidgetState.disabled)
                               ? Colors.green
                               : Theme.of(context).primaryColor,
                     ),

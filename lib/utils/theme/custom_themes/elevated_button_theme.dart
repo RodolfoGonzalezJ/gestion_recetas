@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 
 class TElevatedButtonTheme {
   TElevatedButtonTheme._();
   static ElevatedButtonThemeData
   lightElevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      elevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Color.fromRGBO(25, 131, 48, 100),
+      elevation: 3, // Aumenta la elevación para que la sombra sea más visible
+      foregroundColor: CColors.textBlanco,
+      backgroundColor: CColors.secondaryColor,
       disabledBackgroundColor: Colors.grey,
       disabledForegroundColor: Colors.grey,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      side: const BorderSide(color: Color.fromRGBO(25, 131, 48, 100), width: 1),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       textStyle: TextStyle(
-        fontSize: 16.0,
-        fontWeight: FontWeight.w600,
+        fontSize: 15.0,
+        fontWeight: FontWeight.normal,
         color: Colors.white,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -23,18 +23,13 @@ class TElevatedButtonTheme {
   static ElevatedButtonThemeData
   darkElevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      elevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Color.fromRGBO(25, 131, 48, 100),
+      elevation: 3, // Aumenta la elevación para que la sombra sea más visible
+      foregroundColor: CColors.textBlanco,
+      backgroundColor: CColors.primaryButton,
       disabledBackgroundColor: Colors.grey,
       disabledForegroundColor: Colors.grey,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      side: const BorderSide(color: Color.fromRGBO(25, 131, 48, 100), width: 1),
-      textStyle: TextStyle(
-        fontSize: 16.0,
-        fontWeight: FontWeight.w600,
-        color: Colors.white,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      textStyle: TextStyle(fontSize: 15.0, color: CColors.secondaryTextColor),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     ),
   );

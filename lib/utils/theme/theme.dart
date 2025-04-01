@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/appbar_theme.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/bottom_sheet_theme.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/checkbox_theme.dart';
@@ -25,7 +26,6 @@ class TAppTheme {
     appBarTheme: TAppBarTheme.lightAppBarTheme,
     checkboxTheme: TCheckboxTheme.lightCheckboxTheme,
     bottomSheetTheme: TBottomSheetTheme.lightButtonSheetStyle,
-
     elevatedButtonTheme: TElevatedButtonTheme.lightElevatedButtonTheme,
     outlinedButtonTheme: TOutlinedButtonTheme.lightOutlinedButtonTheme,
     inputDecorationTheme: TTextFieldTheme.lightInputDecorationTheme,
@@ -36,7 +36,7 @@ class TAppTheme {
     fontFamily: 'Poppins',
     brightness: Brightness.dark,
     primaryColor: Color.fromRGBO(25, 131, 48, 100),
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: CColors.dark,
     textTheme: TTextTheme.darkTextTheme,
     chipTheme: TChipTheme.darkChipTheme,
     appBarTheme: TAppBarTheme.darkAppBarTheme,

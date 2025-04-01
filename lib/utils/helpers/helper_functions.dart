@@ -30,6 +30,7 @@ class THelperFunctions {
     } else if (value == "cyan") {
       return Colors.cyan;
     }
+    return null;
   }
 
   static void showSnackBar(String message) {

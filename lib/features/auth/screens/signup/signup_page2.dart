@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 
 class SignUpPage2 extends StatefulWidget {
+  const SignUpPage2({super.key});
+
   @override
   _SignUpPage2State createState() => _SignUpPage2State();
 }

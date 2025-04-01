@@ -1,0 +1,41 @@
+import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/images_strings.dart';
+
+class LoginHeader extends StatelessWidget {
+  const LoginHeader({super.key, required this.dark});
+
+  final bool dark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(
+          child: Image(
+            height: 200,
+            image: AssetImage(
+              dark ? CImages.darkAppLogo : CImages.lightAppLogo,
+            ),
+          ),
+        ),
+        Text(
+          'Welcome Back',
+          style: Theme.of(
+            context,
+          ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 25),
+        Text(
+          'Encantado de verte de nuevo 😊',
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Inicie sesión en su cuenta a continuación',
+          style: Theme.of(context).textTheme.bodyMedium!,
+        ),
+      ],
+    );
+  }
+}
