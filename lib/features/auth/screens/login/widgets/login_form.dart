@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
+import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
@@ -74,51 +75,14 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ],
             ),
+
             //Botones de Inicio de Sesión
             const SizedBox(height: 32),
             WButton(label: 'Iniciar Sesión', onPressed: () {}),
             const SizedBox(height: 5),
 
             // Divider
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Container(
-                    height: 2,
-                    decoration: BoxDecoration(
-                      color:
-                          widget.dark
-                              ? CColors.lightContainer
-                              : CColors.resaltar,
-                      borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(10),
-                      ),
-                    ),
-                    margin: const EdgeInsets.only(left: 30, right: 10),
-                  ),
-                ),
-                const Text(
-                  'O',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Flexible(
-                  child: Container(
-                    height: 2,
-                    decoration: BoxDecoration(
-                      color:
-                          widget.dark
-                              ? CColors.lightContainer
-                              : CColors.resaltar,
-                      borderRadius: const BorderRadius.horizontal(
-                        right: Radius.circular(10),
-                      ),
-                    ),
-                    margin: const EdgeInsets.only(left: 10, right: 30),
-                  ),
-                ),
-              ],
-            ),
+            TextDivider(widget: widget),
             const SizedBox(height: 5),
 
             // Botón de Google
