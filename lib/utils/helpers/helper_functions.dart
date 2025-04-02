@@ -82,4 +82,8 @@ class THelperFunctions {
   static Size screenSize(BuildContext context) {
     return MediaQuery.of(Get.context!).size;
   }
+
+  static double screenWidth(BuildContext context) {
+    return MediaQuery.of(Get.context!).size.width;
+  }
 }
