@@ -4,6 +4,7 @@ import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
@@ -16,7 +17,11 @@ class VerifyEmailScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () => Get.offAll(() => const LoginScreen()),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
             icon: const Icon(CupertinoIcons.clear),
           ),
         ],
@@ -48,7 +53,7 @@ class VerifyEmailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Felicidades, te has registrado correcatemente en Foody! Por favor, revisa tu bandeja de entrada y haz clic en el enlace para verificar tu cuenta.',
+                'Felicidades, te has registrado correctamente en Foody! Por favor, revisa tu bandeja de entrada y haz clic en el enlace para verificar tu cuenta.',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -57,14 +62,21 @@ class VerifyEmailScreen extends StatelessWidget {
               WButton(
                 label: 'Continuar',
                 onPressed: () {
-                  Get.offAll(() => const LoginScreen());
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
                 },
               ),
               WTextButton(
                 label: 'Reenviar correo',
                 onPressed: () {
-                  //Se tiene cambiar para que realice la acción de reenviar el correo
-                  Get.offAll(() => const LoginScreen());
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
                 },
               ),
             ],
