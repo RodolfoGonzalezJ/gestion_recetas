@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
+import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/utils/theme/theme.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page1.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page2.dart';
@@ -20,6 +21,7 @@ class App extends StatelessWidget {
         '/signup': (context) => SignUpPage1(),
         '/signup2': (context) => SignUpPage2(),
         '/signup3': (context) => SignUpPage3(),
+        '/home': (context) => HomeScreen(),
       },
     );
   }

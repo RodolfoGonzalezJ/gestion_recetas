@@ -94,7 +94,10 @@ class _SignUpPage3State extends State<SignUpPage3> {
                   onPressed:
                       acceptTerms
                           ? () {
-                            // Lógica para crear cuenta
+                            Navigator.pushNamed(
+                              context,
+                              '/home',
+                            ); // Lógica para crear cuenta
                           }
                           : null,
                   style: ButtonStyle(
