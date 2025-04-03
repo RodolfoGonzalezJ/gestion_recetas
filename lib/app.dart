@@ -16,6 +16,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
+      debugShowCheckedModeBanner: false,
       home: LoginScreen(),
       routes: {
         '/signup': (context) => SignUpPage1(),

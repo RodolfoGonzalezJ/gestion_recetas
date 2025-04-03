@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/common/widgets/button.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/verify_emai.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:get/get.dart';
 
 class SignUpPage3 extends StatefulWidget {
   const SignUpPage3({super.key});
@@ -9,6 +13,14 @@ class SignUpPage3 extends StatefulWidget {
 
 class _SignUpPage3State extends State<SignUpPage3> {
   bool acceptTerms = false;
+  bool _obscureText = true;
+  bool _rememberMe = false;
+
+  void _toggleRememberMe(bool? value) {
+    setState(() {
+      _rememberMe = value ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,47 +84,34 @@ class _SignUpPage3State extends State<SignUpPage3> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Checkbox(
-                    value: acceptTerms,
-                    onChanged: (value) {
-                      setState(() {
-                        acceptTerms = value ?? false;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Acepto los términos y condiciones',
-                      style: TextStyle(fontSize: 14),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _rememberMe,
+                            onChanged: _toggleRememberMe,
+                          ),
+                          const Text(
+                            'Acepto los términos y condiciones',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed:
-                      acceptTerms
-                          ? () {
-                            Navigator.pushNamed(
-                              context,
-                              '/home',
-                            ); // Lógica para crear cuenta
-                          }
-                          : null,
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) =>
-                          states.contains(WidgetState.disabled)
-                              ? Colors.green
-                              : Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  child: Text(
-                    'Crear Cuenta',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+              WButton(
+                label: 'Crear Cuenta',
+                onPressed: () {
+                  THelperFunctions.navigateToScreen(
+                    context,
+                    VerifyEmailScreen(),
+                  );
+                },
               ),
             ],
           ),
