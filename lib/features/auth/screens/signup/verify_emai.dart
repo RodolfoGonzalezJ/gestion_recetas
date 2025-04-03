@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
+import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
@@ -63,9 +64,7 @@ class VerifyEmailScreen extends StatelessWidget {
                 label: 'Continuar',
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
                   );
                 },
               ),
