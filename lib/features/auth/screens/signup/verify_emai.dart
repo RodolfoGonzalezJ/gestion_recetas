@@ -64,7 +64,7 @@ class VerifyEmailScreen extends StatelessWidget {
                 label: 'Continuar',
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
                 },
               ),

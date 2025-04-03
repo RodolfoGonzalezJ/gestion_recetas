@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,27 +25,19 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _infoCard('Recetas', '24'),
-                _infoCard('Estado Crítico', '1'),
-                _infoCard('Estado Medio', '2'),
-              ],
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Categorías',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            _categories(),
-            SizedBox(height: 16),
-            _sectionTitle('Pronto a Expirar', onPressed: () {}),
-            _expiringItems(),
-            SizedBox(height: 16),
             _sectionTitle('Vistas Recientemente', onPressed: () {}),
             _recentViews(),
+            SizedBox(height: 16),
+            _adBanner(),
+            SizedBox(height: 16),
+            _sectionTitle('Recomendado para ti', onPressed: () {}),
+            _recommendedItems(),
+            SizedBox(height: 16),
+            _sectionTitle('En tendencias 🔥', onPressed: () {}),
+            _trendingItems(),
+            SizedBox(height: 16),
+            _sectionTitle('Pronto a Expirar', onPressed: () {}),
+            _expiringSoon(),
           ],
         ),
       ),
@@ -64,76 +54,66 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoCard(String title, String value) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text(value, style: TextStyle(fontSize: 20)),
-            ],
-          ),
+  Widget _recentViews() {
+    List<String> items = [
+      'Sandwichito Sabrosito',
+      'Buñuelo Asado',
+      'Pasta Alemán-Italia',
+    ];
+    return _horizontalList(items);
+  }
+
+  Widget _adBanner() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      color: Colors.grey[300],
+      child: Center(
+        child: Text(
+          'Anuncioooooooooooooo',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget _categories() {
-    List<String> categories = ['Todo', 'Sopa', 'Fideos', 'Fritos', 'Ron'];
-    return Wrap(
-      spacing: 8,
-      children:
-          categories.map((category) {
-            return Chip(label: Text(category));
-          }).toList(),
-    );
+  Widget _recommendedItems() {
+    List<String> items = [
+      'Espagueti Aglio',
+      'Mote de queso',
+      'Salchipapa Casera',
+    ];
+    return _horizontalList(items);
   }
 
-  Widget _expiringItems() {
-    List<String> items = ['Brócoli', 'Tomate', 'Leche condensada'];
+  Widget _trendingItems() {
+    List<String> items = [
+      'Hamburguesa Melosa',
+      'Sopa Ajiaco',
+      'Salchipapa Casera',
+    ];
+    return _horizontalList(items);
+  }
+
+  Widget _expiringSoon() {
+    List<String> items = ['Brócoli', 'Tomate', 'Leche Condensada'];
+    return _horizontalList(items);
+  }
+
+  Widget _horizontalList(List<String> items) {
     return SizedBox(
-      height: 120,
+      height: 150,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         itemBuilder: (context, index) {
           return Card(
             child: Container(
-              width: 100,
-              padding: EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  Icon(Icons.food_bank, size: 40),
-                  Text(items[index]),
-                  Text('Cantidad: 5', style: TextStyle(fontSize: 12)),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _recentViews() {
-    List<String> recent = ['Sandwich', 'Buñuelo', 'Pasta'];
-    return SizedBox(
-      height: 140,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: recent.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Container(
-              width: 120,
+              width: 130,
               padding: EdgeInsets.all(8),
               child: Column(
                 children: [
                   Icon(Icons.fastfood, size: 40),
-                  Text(recent[index]),
+                  Text(items[index]),
                   Text('Tiempo: 20 min', style: TextStyle(fontSize: 12)),
                 ],
               ),
