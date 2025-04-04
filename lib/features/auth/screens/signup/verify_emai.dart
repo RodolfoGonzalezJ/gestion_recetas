@@ -13,6 +13,7 @@ class VerifyEmailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -36,8 +37,12 @@ class VerifyEmailScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Logo
-              Image(image: AssetImage(CImages.darkAppLogo), width: 200),
-              const SizedBox(height: 32),
+              Image(
+                image: AssetImage(
+                  dark ? CImages.darkAppLogo : CImages.lightAppLogo,
+                ),
+                width: 200,
+              ),
 
               // Título y subtítulo
               Text(
