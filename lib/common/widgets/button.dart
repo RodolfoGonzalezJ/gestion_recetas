@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/elevated_button_theme.dart';
 
 class WButton extends StatelessWidget {
@@ -32,7 +31,7 @@ class WButton extends StatelessWidget {
               style ??
               (isGoogleButton
                   ? ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

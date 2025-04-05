@@ -10,7 +10,7 @@ class TTextFieldTheme {
     prefixIconColor: Colors.grey,
     suffixIconColor: Colors.grey,
     fillColor: CColors.lightContainer,
-    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
     labelStyle: const TextStyle().copyWith(
       color: CColors.primaryTextColor,
       fontSize: 16,
@@ -59,7 +59,7 @@ class TTextFieldTheme {
     prefixIconColor: const Color.fromARGB(255, 255, 255, 255),
     suffixIconColor: const Color.fromARGB(255, 255, 255, 255),
     fillColor: const Color.fromARGB(62, 55, 55, 55),
-    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
     labelStyle: const TextStyle().copyWith(
       color: CColors.textBlanco,
       fontSize: 16,

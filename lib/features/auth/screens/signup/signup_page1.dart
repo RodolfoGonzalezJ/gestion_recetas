@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 class SignUpPage1 extends StatelessWidget {
+  const SignUpPage1({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,8 +73,7 @@ class SignUpPage1 extends StatelessWidget {
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
                   );
-                  if (pickedDate != null) {
-                  }
+                  if (pickedDate != null) {}
                 },
               ),
               SizedBox(height: 20),

@@ -8,34 +8,38 @@ class LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Center(
-          child: Image(
-            height: 200,
-            image: AssetImage(
-              dark ? CImages.darkAppLogo : CImages.lightAppLogo,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Image(
+              height: 200,
+              image: AssetImage(
+                dark ? CImages.darkAppLogo : CImages.lightAppLogo,
+              ),
             ),
           ),
-        ),
-        Text(
-          'Welcome Back',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 25),
-        Text(
-          'Encantado de verte de nuevo 😊',
-          style: Theme.of(context).textTheme.headlineSmall!,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Inicie sesión en su cuenta a continuación',
-          style: Theme.of(context).textTheme.bodyMedium!,
-        ),
-      ],
+          Text(
+            'Welcome Back',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 30),
+          Text(
+            'Encantado de verte de nuevo 😊',
+            style: Theme.of(context).textTheme.headlineSmall!,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Inicie sesión en su cuenta a continuación',
+            style: Theme.of(context).textTheme.bodyMedium!,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

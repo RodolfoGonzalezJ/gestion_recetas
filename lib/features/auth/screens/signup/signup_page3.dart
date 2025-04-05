@@ -13,7 +13,7 @@ class SignUpPage3 extends StatefulWidget {
 
 class _SignUpPage3State extends State<SignUpPage3> {
   bool acceptTerms = false;
-  bool _obscureText = true;
+  final bool _obscureText = true;
   bool _rememberMe = false;
 
   void _toggleRememberMe(bool? value) {

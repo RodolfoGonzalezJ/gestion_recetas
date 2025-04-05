@@ -6,7 +6,6 @@ import 'package:gestion_recetas/features/auth/screens/login/login.dart';
 import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
-import 'package:get/get.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
   const VerifyEmailScreen({super.key});

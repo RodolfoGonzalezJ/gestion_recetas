@@ -13,14 +13,13 @@ class LoginScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 56,
+            top: 50,
             left: 24,
             bottom: 24,
             right: 24,
           ),
           child: Column(
             children: [
-              const SizedBox(height: 25),
               LoginHeader(dark: dark),
               const SizedBox(height: 30),
               LoginForm(dark: dark),
