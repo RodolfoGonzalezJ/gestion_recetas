@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
-import 'package:gestion_recetas/features/auth/screens/signup/signup_page1.dart';
+import 'package:gestion_recetas/features/auth/screens/signup/signup_page.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:gestion_recetas/utils/validators/validators.dart';
@@ -134,7 +134,7 @@ class _LoginFormState extends State<LoginForm> {
                   WTextButton(
                     label: 'Regístrate Aquí',
                     onPressed: () {
-                      THelperFunctions.navigateToScreen(context, SignUpPage1());
+                      THelperFunctions.navigateToScreen(context, SignUpPage());
                     },
                   ),
                 ],
