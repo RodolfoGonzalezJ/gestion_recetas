@@ -8,7 +8,7 @@ class MongoDBHelper {
         'mongodb+srv://hjpertuz:0813@gestionrecetas.pd25tev.mongodb.net/gestion_recetas?retryWrites=true&w=majority';
     final parsedUri = Db.create(
       connectionString,
-    ); // Use Db.create to handle mongodb+srv
+    );
     _db = await parsedUri;
     await _db.open();
     print('Connected to MongoDB');

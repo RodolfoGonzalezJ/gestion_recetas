@@ -6,7 +6,7 @@ class AuthController {
   final AuthService _authService = AuthService();
   final UserModel _user = UserModel();
 
-  UserModel get user => _user; // Expose the private _user field
+  UserModel get user => _user;
 
   void updateUserField(String field, dynamic value) {
     switch (field) {

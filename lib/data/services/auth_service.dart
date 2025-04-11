@@ -12,4 +12,18 @@ class AuthService {
       return false;
     }
   }
+
+  Future<bool> authenticateUser(String email, String password) async {
+    try {
+      final collection = MongoDBHelper.db.collection('users');
+      final user = await collection.findOne({
+        'correo': email,
+        'contrasena': password,
+      });
+      return user != null;
+    } catch (e) {
+      print('Error al autenticar usuario: $e');
+      return false;
+    }
+  }
 }

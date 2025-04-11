@@ -3,10 +3,13 @@ import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page.dart';
+import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:gestion_recetas/utils/validators/validators.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gestion_recetas/data/services/auth_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.dark});
@@ -37,12 +40,50 @@ class _LoginFormState extends State<LoginForm> {
     });
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Aquí iría tu lógica de inicio de sesión
-      print('Correo: ${_emailController.text}');
-      print('Contraseña: ${_passwordController.text}');
+      final authService = AuthService();
+      final success = await authService.authenticateUser(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (success) {
+        if (_rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', _emailController.text);
+          await prefs.setString('password', _passwordController.text);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Inicio de sesión exitoso')),
+        );
+        // Navegar a la pantalla principal
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Correo o contraseña incorrectos')),
+        );
+      }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberedCredentials();
+  }
+
+  void _loadRememberedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _emailController.text = prefs.getString('email') ?? '';
+      _passwordController.text = prefs.getString('password') ?? '';
+      _rememberMe =
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
+    });
   }
 
   @override
