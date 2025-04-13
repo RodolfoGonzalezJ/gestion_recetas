@@ -4,7 +4,7 @@ class CColors {
   CColors._();
 
   // Colores de la aplicación basicos
-  static const Color primaryColor = Color.fromRGBO(25, 131, 48, 100);
+  static const Color primaryColor = Color.fromARGB(255, 25, 131, 48);
   static const Color secondaryColor = Color.fromRGBO(31, 175, 63, 1);
   static const Color resaltar = Color.fromRGBO(30, 103, 46, 1);
   // Colores de texto

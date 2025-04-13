@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'blurred_background.dart';
 import 'animated_action_item.dart';
-import 'action_button.dart';
 
 class FloatingMenuButton extends StatefulWidget {
   const FloatingMenuButton({super.key});
@@ -30,10 +31,13 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
+    final Color backgroundColor = isDark ? CColors.dark : CColors.primaryColor;
+    final Color iconColor = Colors.white;
+
     return Stack(
       children: [
         if (isOpen) BlurredBackground(onTap: toggleMenu),
-
         Positioned(
           bottom: 20,
           right: 20,
@@ -44,7 +48,7 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 visible: showButtons[0],
                 label: "Registrar Receta",
                 icon: Icons.food_bank,
-                color: Colors.purple,
+                color: backgroundColor,
                 onPressed: toggleMenu,
               ),
               const SizedBox(height: 12),
@@ -52,17 +56,15 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 visible: showButtons[1],
                 label: "Registrar Producto",
                 icon: Icons.add_shopping_cart,
-                color: Colors.teal,
+
+                color: backgroundColor,
                 onPressed: toggleMenu,
               ),
               const SizedBox(height: 12),
               FloatingActionButton(
                 onPressed: toggleMenu,
-                backgroundColor: isOpen ? Colors.grey[300] : Colors.blue,
-                child: Icon(
-                  isOpen ? Icons.close : Icons.add,
-                  color: isOpen ? Colors.black : Colors.white,
-                ),
+                backgroundColor: backgroundColor,
+                child: Icon(isOpen ? Icons.close : Icons.add, color: iconColor),
               ),
             ],
           ),
