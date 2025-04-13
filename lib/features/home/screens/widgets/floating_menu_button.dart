@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'blurred_background.dart';
 import 'animated_action_item.dart';
@@ -47,7 +48,7 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
               AnimatedActionItem(
                 visible: showButtons[0],
                 label: "Registrar Receta",
-                icon: Icons.food_bank,
+                icon: Image.asset(CImages.recipeIcons, height: 24, width: 24),
                 color: backgroundColor,
                 onPressed: toggleMenu,
               ),
@@ -55,7 +56,7 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
               AnimatedActionItem(
                 visible: showButtons[1],
                 label: "Registrar Producto",
-                icon: Icons.add_shopping_cart,
+                icon: Image.asset(CImages.productIcons, height: 24, width: 24),
 
                 color: backgroundColor,
                 onPressed: toggleMenu,

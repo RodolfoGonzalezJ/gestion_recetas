@@ -3,7 +3,7 @@ import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class ActionButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onPressed;
 
@@ -34,11 +34,7 @@ class ActionButton extends StatelessWidget {
             heroTag: label,
             onPressed: onPressed,
             backgroundColor: isDark ? CColors.dark : CColors.primaryColor,
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 28,
-            ), // Icono más grande
+            child: icon,
           ),
         ),
       ],

@@ -4,7 +4,7 @@ import 'action_button.dart';
 class AnimatedActionItem extends StatelessWidget {
   final bool visible;
   final String label;
-  final IconData icon;
+  final Widget icon;
   final Color color;
   final VoidCallback onPressed;
 
