@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -53,6 +54,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: const FloatingMenuButton(),
     );
   }
 
