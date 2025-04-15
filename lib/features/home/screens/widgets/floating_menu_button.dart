@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/register.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
@@ -50,7 +51,15 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 label: "Registrar Receta",
                 icon: Image.asset(CImages.recipeIcons, height: 24, width: 24),
                 color: backgroundColor,
-                onPressed: toggleMenu,
+                onPressed: () {
+                  // Navigate to register recipe screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RegisterRecipeScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               AnimatedActionItem(
