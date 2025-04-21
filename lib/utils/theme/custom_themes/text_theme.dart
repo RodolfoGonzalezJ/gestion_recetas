@@ -15,7 +15,7 @@ class TTextTheme {
       color: Colors.black,
     ),
     headlineSmall: TextStyle().copyWith(
-      fontSize: 20.0,
+      fontSize: 18.0,
       fontWeight: FontWeight.w600,
       color: Colors.black,
     ),
