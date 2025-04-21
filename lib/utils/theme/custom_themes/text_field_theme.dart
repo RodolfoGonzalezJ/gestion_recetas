@@ -10,7 +10,10 @@ class TTextFieldTheme {
     prefixIconColor: Colors.grey,
     suffixIconColor: Colors.grey,
     fillColor: CColors.lightContainer,
-    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+    contentPadding: const EdgeInsets.symmetric(
+      vertical: 15.0,
+      horizontal: 12.0,
+    ),
     labelStyle: const TextStyle().copyWith(
       color: CColors.primaryTextColor,
       fontSize: 16,
@@ -31,8 +34,8 @@ class TTextFieldTheme {
     ),
     border: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(
-        color: const Color.fromARGB(255, 255, 4, 4),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 255, 4, 4),
         width: 1.5,
       ),
     ),
@@ -46,20 +49,21 @@ class TTextFieldTheme {
     ),
     errorBorder: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(color: Colors.red, width: 1.5),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
     ),
     focusedErrorBorder: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(color: Colors.orange, width: 1.5),
+      borderSide: const BorderSide(color: Colors.orange, width: 1.5),
     ),
   );
+
   static InputDecorationTheme darkInputDecorationTheme = InputDecorationTheme(
     errorMaxLines: 3,
     filled: true,
-    prefixIconColor: const Color.fromARGB(255, 255, 255, 255),
-    suffixIconColor: const Color.fromARGB(255, 255, 255, 255),
+    prefixIconColor: Colors.white,
+    suffixIconColor: Colors.white,
     fillColor: const Color.fromARGB(62, 55, 55, 55),
-    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 2.0),
     labelStyle: const TextStyle().copyWith(
       color: CColors.textBlanco,
       fontSize: 16,
@@ -80,8 +84,8 @@ class TTextFieldTheme {
     ),
     border: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(
-        color: const Color.fromARGB(255, 255, 4, 4),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 255, 4, 4),
         width: 1.5,
       ),
     ),
@@ -95,11 +99,11 @@ class TTextFieldTheme {
     ),
     errorBorder: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(color: Colors.red, width: 1.5),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
     ),
     focusedErrorBorder: OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(14.0),
-      borderSide: BorderSide(color: Colors.orange, width: 1.5),
+      borderSide: const BorderSide(color: Colors.orange, width: 1.5),
     ),
   );
 }

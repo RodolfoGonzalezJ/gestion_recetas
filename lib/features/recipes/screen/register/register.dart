@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/common/widgets/login/text_input_area_horizontal.dart';
+import 'package:gestion_recetas/common/widgets/text_input_horizontal.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
@@ -22,7 +24,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final color = dark ? Colors.white : Colors.black;
+    final color = dark ? Colors.white : CColors.secondaryTextColor;
 
     return Scaffold(
       appBar: AppBar(
@@ -38,6 +40,20 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
           padding: const EdgeInsets.all(16),
           child: ListView(
             children: [
+              Text(
+                'Imagen de la receta *',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(color: color),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Selecciona una imagen para tu receta',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: color.withOpacity(0.6)),
+              ),
+              SizedBox(height: 8),
               // Imagen
               GestureDetector(
                 onTap: () {},
@@ -51,24 +67,20 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Nombre Receta
-              TextFormField(
+              WTextInputFormHorizontal(
+                label: 'Nombre de Receta',
+                hint: 'Escribe el título de la receta',
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre Receta *'),
-                // validator: Validators.validateRequired,
               ),
-              const SizedBox(height: 12),
 
-              // Descripción
-              TextFormField(
+              const SizedBox(height: 12),
+              WTextAreaFormHorizontal(
+                label: 'Descripcion',
+                hint: 'Coloca la descripción de la receta',
+
                 controller: _descController,
-                decoration: const InputDecoration(labelText: 'Descripcion *'),
-                // validator: Validators.validateRequired,
               ),
               const SizedBox(height: 12),
-
-              // Dificultad
               DropdownButtonFormField<String>(
                 value: _selectedDifficulty,
                 items:
@@ -76,29 +88,43 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
                 onChanged: (val) => setState(() => _selectedDifficulty = val),
-                decoration: const InputDecoration(labelText: 'Dificultad *'),
+                decoration: const InputDecoration(
+                  labelText: 'Dificultad *',
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 15,
+                  ),
+                ),
                 validator:
                     (value) => value == null ? 'Campo obligatorio' : null,
               ),
               const SizedBox(height: 12),
 
-              // Tiempo
               TextFormField(
                 controller: _timeController,
                 decoration: const InputDecoration(
                   labelText: 'Tiempo (HH:MM) *',
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 15,
+                  ),
                 ),
                 keyboardType: TextInputType.datetime,
-                // validator: VValidators.validateRequired,
               ),
               const SizedBox(height: 12),
 
-              // Calorías
               TextFormField(
                 controller: _caloriesController,
-                decoration: const InputDecoration(labelText: 'Calorías'),
+                decoration: const InputDecoration(
+                  labelText: 'Calorías',
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 15,
+                  ),
+                ),
                 keyboardType: TextInputType.number,
               ),
+
               const SizedBox(height: 20),
 
               ElevatedButton(
