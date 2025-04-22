@@ -74,7 +74,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
                 },
                 mini: true,
                 backgroundColor: CColors.primaryColor,
-                child: const Icon(Icons.add),
+                child: const Icon(Icons.add, color: Colors.white),
               ),
             ),
 
@@ -93,15 +93,13 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
             const SizedBox(height: 24),
             Text(
               'Subir Video Tutorial',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: textColor),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(),
             ),
             const SizedBox(height: 8),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    dark ? Colors.grey.shade800 : Colors.green.shade700,
+                    dark ? CColors.textMore : Colors.green.shade700,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
@@ -110,11 +108,6 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CColors.resaltar,
-                foregroundColor: CColors.light,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
               onPressed: () {
                 // publicar receta
               },
