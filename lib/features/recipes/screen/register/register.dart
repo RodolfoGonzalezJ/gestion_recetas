@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/login/text_input_area_horizontal.dart';
 import 'package:gestion_recetas/common/widgets/text_input_horizontal.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/widgets/register_2.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
@@ -130,13 +131,12 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Continuar a la siguiente sección
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (_) => const RecipeIngredientsStep(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RecipeIngredientsStep(),
+                      ),
+                    );
                   }
                 },
                 child: const Text("Siguiente"),
