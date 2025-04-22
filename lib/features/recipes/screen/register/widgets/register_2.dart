@@ -24,7 +24,6 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final textColor = dark ? Colors.white : CColors.primaryTextColor;
-    final subTextColor = dark ? Colors.grey.shade400 : Colors.grey.shade600;
 
     return Scaffold(
       appBar: AppBar(
