@@ -31,6 +31,7 @@ class LoginHeader extends StatelessWidget {
           Text(
             'Encantado de verte de nuevo 😊',
             style: Theme.of(context).textTheme.headlineSmall!,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(

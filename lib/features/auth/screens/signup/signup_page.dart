@@ -86,6 +86,71 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
+  Future<bool> _validateCedula(String cedula) async {
+    final exists = await _authController.isCedulaDuplicated(cedula);
+    if (exists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('El número de cédula ya está registrado')),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> _validateEmail(String email) async {
+    final exists = await _authController.isEmailDuplicated(email);
+    if (exists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El correo electrónico ya está registrado'),
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> _validateForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return false;
+    }
+    final cedulaValid = await _validateCedula(
+      _authController.user.cedula ?? '',
+    );
+    final emailValid = await _validateEmail(_authController.user.correo ?? '');
+    return cedulaValid && emailValid;
+  }
+
+  void _clearFields() {
+    setState(() {
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+      _authController.updateUserField('nombre', '');
+      _authController.updateUserField('apellido', '');
+      _authController.updateUserField('celular', '');
+      _authController.updateUserField('cedula', '');
+      _authController.updateUserField('fechaNacimiento', null);
+      _authController.updateUserField('correo', '');
+      _authController.updateUserField('pais', '');
+      _authController.updateUserField('departamento', '');
+      _authController.updateUserField('municipio', '');
+      _authController.updateUserField('direccion', '');
+      _authController.updateUserField('barrio', '');
+      _authController.updateUserField('contrasena', '');
+      selectedCountry = null;
+      selectedDepartment = null;
+      selectedMunicipality = null;
+      selectedVia = null;
+      selectedNumber1 = null;
+      selectedLetter1 = null;
+      selectedNumber2 = null;
+      barrio = null;
+      direccionIntegrada = '';
+      acceptTerms = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -461,10 +526,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 20),
                 WButton(
                   label: 'Registrar',
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+                  onPressed: () async {
+                    if (await _validateForm()) {
                       if (acceptTerms) {
-                        _authController.registerUser(context);
+                        await _authController.registerUser(context);
+                        _clearFields(); 
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

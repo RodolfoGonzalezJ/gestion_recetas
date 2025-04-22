@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/button.dart';
 import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
+import 'package:gestion_recetas/features/auth/screens/Recover%20password/recover_password.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page.dart';
 import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
@@ -149,7 +150,13 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                   WTextButton(
                     label: 'Olvidaste tu\ncontraseña?',
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const RecoverPasswordScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

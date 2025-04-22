@@ -99,4 +99,12 @@ class AuthController {
       );
     }
   }
+
+  Future<bool> isCedulaDuplicated(String cedula) async {
+    return await _authService.isCedulaDuplicated(cedula);
+  }
+
+  Future<bool> isEmailDuplicated(String email) async {
+    return await _authService.isEmailDuplicated(email);
+  }
 }
