@@ -3,7 +3,8 @@ import 'package:gestion_recetas/features/auth/models/models.dart';
 import 'package:gestion_recetas/data/services/auth_service.dart';
 import 'package:gestion_recetas/data/services/google_auth_service.dart';
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
-import 'package:gestion_recetas/features/home/screens/home.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
+
 class AuthController {
   final AuthService _authService = AuthService();
   final UserModel _user = UserModel();
@@ -122,11 +123,7 @@ class AuthController {
 
       if (existingUser == null) {
         // Si el usuario no existe, crearlo en MongoDB
-        final newUser = UserModel(
-          nombre: name,
-          correo: email,
-          contrasena: '', 
-        );
+        final newUser = UserModel(nombre: name, correo: email, contrasena: '');
 
         await collection.insert(newUser.toJson());
         print('Usuario creado en MongoDB: $name');
@@ -136,7 +133,7 @@ class AuthController {
 
       // Navegar a la pantalla principal
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const NavigationScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

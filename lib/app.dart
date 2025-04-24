@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
-import 'package:gestion_recetas/features/home/screens/home.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
 import 'package:gestion_recetas/utils/theme/theme.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page.dart'; // Importa solo el archivo unificado
 
@@ -18,7 +18,7 @@ class App extends StatelessWidget {
       home: LoginScreen(),
       routes: {
         '/signup': (context) => SignUpPage(), // Ruta al archivo unificado
-        '/home': (context) => HomeScreen(),
+        '/home': (context) => NavigationScreen(),
       },
     );
   }

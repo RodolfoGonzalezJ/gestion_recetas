@@ -1,84 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
-import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-  final currentPageIndex = 0;
 
   @override
-  Widget build(BuildContext context) {
-    final bool isDark = THelperFunctions.isDarkMode(context);
-    final Color backgroundColor = isDark ? CColors.dark : CColors.primaryColor;
-    final Color iconColor = Colors.white;
+  State<HomeScreen> createState() => _HomeScreenRealState();
+}
 
+class _HomeScreenRealState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Gestión de Alimentos'),
-        actions: [
-          IconButton(icon: Icon(Icons.face), onPressed: () {}),
-          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
-        ],
-      ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               decoration: InputDecoration(
                 hintText: 'Buscar...',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _sectionTitle('Vistas Recientemente', onPressed: () {}),
             _recentViews(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _adBanner(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
             _recommendedItems(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _sectionTitle('En tendencias 🔥', onPressed: () {}),
             _trendingItems(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _sectionTitle('Pronto a Expirar', onPressed: () {}),
             _expiringSoon(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
-            Set<WidgetState> states,
-          ) {
-            return TextStyle(
-              color: isDark ? Colors.white : Colors.white,
-              fontSize: 16,
-            );
-          }),
-        ),
-        child: NavigationBar(
-          //selectedIndex: currentPageIndex,
-          backgroundColor: backgroundColor,
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.home, color: iconColor),
-              label: 'Inicio',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.list, color: iconColor),
-              label: 'Inventario',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.favorite, color: iconColor),
-              label: 'Favoritos',
-            ),
           ],
         ),
       ),
@@ -87,10 +48,22 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _recentViews() {
-    List<String> items = [
-      'Sandwichito Sabrosito',
-      'Buñuelo Asado',
-      'Pasta Alemán-Italia',
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Sandwichito Sabrosito',
+        'time': '20 min',
+        'image': 'assets/images/sandwichitoSabrosito.png',
+      },
+      {
+        'title': 'Buñuelo Asado',
+        'time': '20 min',
+        'image': 'assets/images/buñueloAsado.png',
+      },
+      {
+        'title': 'Pasta Alemán-Italia',
+        'time': '20 min',
+        'image': 'assets/images/pastaAlemanItalia.png',
+      },
     ];
     return _horizontalList(items);
   }
@@ -109,31 +82,71 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _recommendedItems() {
-    List<String> items = [
-      'Espagueti Aglio',
-      'Mote de queso',
-      'Salchipapa Casera',
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Espagueti Aglio',
+        'time': '20 min',
+        'image': 'assets/images/EspaguetiAglio.png',
+      },
+      {
+        'title': 'Mote de queso',
+        'time': '20 min',
+        'image': 'assets/images/moteDeQueso.png',
+      },
+      {
+        'title': 'Salchipapa Casera',
+        'time': '20 min',
+        'image': 'assets/images/salchipapaCasera.png',
+      },
     ];
     return _horizontalList(items);
   }
 
   Widget _trendingItems() {
-    List<String> items = [
-      'Hamburguesa Melosa',
-      'Sopa Ajiaco',
-      'Salchipapa Casera',
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Hamburguesa Melosa',
+        'time': '20 min',
+        'image': 'assets/images/hamburguesaMelosa.png',
+      },
+      {
+        'title': 'Sopa Ajiaco',
+        'time': '20 min',
+        'image': 'assets/images/sopaAjiaco.png',
+      },
+      {
+        'title': 'Salchipapa Casera',
+        'time': '20 min',
+        'image': 'assets/images/salchipapaCasera.png',
+      },
     ];
     return _horizontalList(items);
   }
 
   Widget _expiringSoon() {
-    List<String> items = ['Brócoli', 'Tomate', 'Leche Condensada'];
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Brócoli',
+        'time': '30 min',
+        'image': 'assets/images/brocoli.png',
+      },
+      {
+        'title': 'Tomate',
+        'time': '20 min',
+        'image': 'assets/images/tomate.png',
+      },
+      {
+        'title': 'Leche Condensada',
+        'time': '20 min',
+        'image': 'assets/images/lecheCondensada.png',
+      },
+    ];
     return _horizontalList(items);
   }
 
-  Widget _horizontalList(List<String> items) {
+  Widget _horizontalList(List<Map<String, dynamic>> items) {
     return SizedBox(
-      height: 150,
+      height: 210,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
@@ -144,9 +157,12 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.all(8),
               child: Column(
                 children: [
-                  Icon(Icons.fastfood, size: 40),
-                  Text(items[index]),
-                  Text('Tiempo: 20 min', style: TextStyle(fontSize: 12)),
+                  Image.asset(items[index]['image']!),
+                  Text(items[index]['title']!),
+                  Text(
+                    'Tiempo: ${items[index]['time']}',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
             ),
