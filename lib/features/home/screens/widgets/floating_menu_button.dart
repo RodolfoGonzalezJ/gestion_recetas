@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/inventory/screens/register_product_screen.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/register.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
@@ -66,9 +67,15 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 visible: showButtons[1],
                 label: "Registrar Producto",
                 icon: Image.asset(CImages.productIcons, height: 24, width: 24),
-
                 color: backgroundColor,
-                onPressed: toggleMenu,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RegisterProductScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               FloatingActionButton(

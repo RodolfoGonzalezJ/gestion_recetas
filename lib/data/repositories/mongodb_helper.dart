@@ -6,9 +6,7 @@ class MongoDBHelper {
   static Future<void> connect() async {
     const connectionString =
         'mongodb+srv://hjpertuz:0813@gestionrecetas.pd25tev.mongodb.net/gestion_recetas?retryWrites=true&w=majority';
-    final parsedUri = Db.create(
-      connectionString,
-    );
+    final parsedUri = Db.create(connectionString);
     _db = await parsedUri;
     await _db.open();
     print('Connected to MongoDB');
