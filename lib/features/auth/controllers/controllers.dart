@@ -125,7 +125,7 @@ class AuthController {
         final newUser = UserModel(
           nombre: name,
           correo: email,
-          contrasena: '', // Puedes dejarlo vacío si no usas contraseña
+          contrasena: '', 
         );
 
         await collection.insert(newUser.toJson());
