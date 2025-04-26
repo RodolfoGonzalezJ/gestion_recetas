@@ -82,8 +82,31 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
     if (_formKey.currentState!.validate()) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const RecipeIngredientsStep()),
+        MaterialPageRoute(
+          builder:
+              (_) => RecipeIngredientsStep(
+                name: _nameController.text.trim(),
+                description: _descController.text.trim(),
+                category:
+                    _selectedCategory ??
+                    '', // Usa '' temporal si no hay categoría seleccionada
+                difficulty:
+                    _selectedDifficulty ??
+                    '', // Usa '' si no seleccionaron dificultad
+                preparationTime: _parseDuration(_timeController.text.trim()),
+                calories: int.tryParse(_caloriesController.text.trim()),
+                imageUrl:
+                    null, // Si luego tienes imagen seleccionada puedes pasarla aquí
+              ),
+        ),
       );
     }
+  }
+
+  Duration _parseDuration(String timeString) {
+    final parts = timeString.split(':');
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
+    return Duration(hours: hours, minutes: minutes);
   }
 }

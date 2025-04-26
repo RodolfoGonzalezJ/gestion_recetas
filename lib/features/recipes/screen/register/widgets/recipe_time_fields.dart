@@ -32,8 +32,7 @@ class RecipeTimeField extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
-                  entryModeIconColor:
-                      Colors.transparent, // 👉 Ocultar el icono de cambiar modo
+                  entryModeIconColor: Colors.transparent,
                 ),
                 colorScheme: ColorScheme.light(
                   primary: CColors.primaryColor,
@@ -65,9 +64,19 @@ class RecipeTimeField extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Campo obligatorio';
+            if (value == null || value.isEmpty) {
+              return 'Campo obligatorio';
+            }
             final regex = RegExp(r'^([0-9]{2}):([0-5][0-9])$');
-            if (!regex.hasMatch(value)) return 'Formato inválido. Usa HH:MM';
+            if (!regex.hasMatch(value)) {
+              return 'Formato inválido. Usa HH:MM';
+            }
+            final parts = value.split(':');
+            final hours = int.parse(parts[0]);
+            final minutes = int.parse(parts[1]);
+            if (hours == 0 && minutes == 0) {
+              return 'La duración no puede ser 00:00';
+            }
             return null;
           },
         ),
