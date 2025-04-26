@@ -4,13 +4,14 @@ import 'package:gestion_recetas/common/widgets/login/TextDivider.dart';
 import 'package:gestion_recetas/common/widgets/text_button.dart';
 import 'package:gestion_recetas/features/auth/screens/Recover%20password/recover_password.dart';
 import 'package:gestion_recetas/features/auth/screens/signup/signup_page.dart';
-import 'package:gestion_recetas/features/home/screens/home.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
 import 'package:gestion_recetas/utils/constants/images_strings.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:gestion_recetas/utils/validators/validators.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gestion_recetas/data/services/auth_service.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.dark});
@@ -25,6 +26,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthController _authController = AuthController();
 
   bool _obscureText = true;
   bool _rememberMe = false;
@@ -60,7 +62,7 @@ class _LoginFormState extends State<LoginForm> {
         );
         // Navegar a la pantalla principal
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const NavigationScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +171,9 @@ class _LoginFormState extends State<LoginForm> {
                 label: 'Iniciar Sesión con Google',
                 icon: Image.asset(CImages.googleLogo, height: 24, width: 24),
                 isGoogleButton: true,
-                onPressed: () {},
+                onPressed: () async {
+                  await _authController.signInWithGoogle(context);
+                },
               ),
 
               Row(

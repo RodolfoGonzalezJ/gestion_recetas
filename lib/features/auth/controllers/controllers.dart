@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/auth/models/models.dart';
 import 'package:gestion_recetas/data/services/auth_service.dart';
+import 'package:gestion_recetas/data/services/google_auth_service.dart';
+import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
 
 class AuthController {
   final AuthService _authService = AuthService();
@@ -106,5 +109,41 @@ class AuthController {
 
   Future<bool> isEmailDuplicated(String email) async {
     return await _authService.isEmailDuplicated(email);
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    final googleUser = await GoogleAuthService.signInWithGoogle();
+    if (googleUser != null) {
+      final email = googleUser.email;
+      final name = googleUser.displayName ?? 'Usuario';
+
+      // Verificar si el usuario ya existe en MongoDB
+      final collection = MongoDBHelper.db.collection('users');
+      final existingUser = await collection.findOne({'correo': email});
+
+      if (existingUser == null) {
+        // Si el usuario no existe, crearlo en MongoDB
+        final newUser = UserModel(nombre: name, correo: email, contrasena: '');
+
+        await collection.insert(newUser.toJson());
+        print('Usuario creado en MongoDB: $name');
+      } else {
+        print('Usuario ya existe en MongoDB: $name');
+      }
+
+      // Navegar a la pantalla principal
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const NavigationScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al iniciar sesión con Google')),
+      );
+    }
+  }
+
+  Future<void> signOut() async {
+    await GoogleAuthService.signOut();
+    print('Sesión cerrada');
   }
 }

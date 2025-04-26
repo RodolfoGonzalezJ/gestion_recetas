@@ -2,128 +2,188 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
-import 'package:gestion_recetas/features/inventory/screens/inventory/inventory.dart';
-import 'package:gestion_recetas/features/recipes/models/models.dart';
-import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
-import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenRealState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentPageIndex = 0;
-  late Future<List<Recipe>> _recipesFuture;
-  final RecipeService _recipeService = RecipeService();
-
+class _HomeScreenRealState extends State<HomeScreen> {
   @override
-  void initState() {
-    super.initState();
-    _recipesFuture = _recipeService.fetchRecipes();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _sectionTitle('Vistas Recientemente', onPressed: () {}),
+            _recentViews(),
+            const SizedBox(height: 16),
+            _adBanner(),
+            const SizedBox(height: 16),
+            _sectionTitle('Recomendado para ti', onPressed: () {}),
+            _recommendedItems(),
+            const SizedBox(height: 16),
+            _sectionTitle('En tendencias 🔥', onPressed: () {}),
+            _trendingItems(),
+            const SizedBox(height: 16),
+            _sectionTitle('Pronto a Expirar', onPressed: () {}),
+            _expiringSoon(),
+          ],
+        ),
+      ),
+      floatingActionButton: const FloatingMenuButton(),
+    );
   }
 
-  final List<Widget> _pages = [
-    const Center(child: Text('Inicio')), // Placeholder for the Home page
-    const InventoryScreen(), // Inventory page
-    const Center(child: Text('Favoritos')), // Placeholder for Favorites page
-  ];
+  Widget _recentViews() {
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Sandwichito Sabrosito',
+        'time': '20 min',
+        'image': 'assets/images/sandwichitoSabrosito.png',
+      },
+      {
+        'title': 'Buñuelo Asado',
+        'time': '20 min',
+        'image': 'assets/images/buñueloAsado.png',
+      },
+      {
+        'title': 'Pasta Alemán-Italia',
+        'time': '20 min',
+        'image': 'assets/images/pastaAlemanItalia.png',
+      },
+    ];
+    return _horizontalList(items);
+  }
 
-  Widget _buildRecipeCard(Recipe recipe) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
-        leading:
-            recipe.imageUrl != null
-                ? Image.file(
-                  File(recipe.imageUrl!),
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.broken_image, size: 50);
-                  },
-                )
-                : const Icon(Icons.fastfood, size: 50),
-        title: Text(recipe.name),
-        subtitle: Text(recipe.description),
-        onTap: () {
-          // Acción al tocar una receta (puedes agregar más detalles aquí)
+  Widget _adBanner() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      color: Colors.grey[300],
+      child: Center(
+        child: Text(
+          'Anuncioooooooooooooo',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _recommendedItems() {
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Espagueti Aglio',
+        'time': '20 min',
+        'image': 'assets/images/EspaguetiAglio.png',
+      },
+      {
+        'title': 'Mote de queso',
+        'time': '20 min',
+        'image': 'assets/images/moteDeQueso.png',
+      },
+      {
+        'title': 'Salchipapa Casera',
+        'time': '20 min',
+        'image': 'assets/images/salchipapaCasera.png',
+      },
+    ];
+    return _horizontalList(items);
+  }
+
+  Widget _trendingItems() {
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Hamburguesa Melosa',
+        'time': '20 min',
+        'image': 'assets/images/hamburguesaMelosa.png',
+      },
+      {
+        'title': 'Sopa Ajiaco',
+        'time': '20 min',
+        'image': 'assets/images/sopaAjiaco.png',
+      },
+      {
+        'title': 'Salchipapa Casera',
+        'time': '20 min',
+        'image': 'assets/images/salchipapaCasera.png',
+      },
+    ];
+    return _horizontalList(items);
+  }
+
+  Widget _expiringSoon() {
+    final List<Map<String, dynamic>> items = [
+      {
+        'title': 'Brócoli',
+        'time': '30 min',
+        'image': 'assets/images/brocoli.png',
+      },
+      {
+        'title': 'Tomate',
+        'time': '20 min',
+        'image': 'assets/images/tomate.png',
+      },
+      {
+        'title': 'Leche Condensada',
+        'time': '20 min',
+        'image': 'assets/images/lecheCondensada.png',
+      },
+    ];
+    return _horizontalList(items);
+  }
+
+  Widget _horizontalList(List<Map<String, dynamic>> items) {
+    return SizedBox(
+      height: 210,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Card(
+            child: Container(
+              width: 130,
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Image.asset(items[index]['image']!),
+                  Text(items[index]['title']!),
+                  Text(
+                    'Tiempo: ${items[index]['time']}',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final bool isDark = THelperFunctions.isDarkMode(context);
-    final Color backgroundColor = isDark ? CColors.dark : CColors.primaryColor;
-    final Color iconColor = Colors.white;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gestión de Alimentos'),
-        actions: [
-          IconButton(icon: const Icon(Icons.face), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-        ],
-      ),
-      body:
-          _currentPageIndex == 0
-              ? FutureBuilder<List<Recipe>>(
-                future: _recipesFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error al cargar las recetas: ${snapshot.error}',
-                      ),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('No hay recetas disponibles.'),
-                    );
-                  } else {
-                    final recipes = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: recipes.length,
-                      itemBuilder: (context, index) {
-                        return _buildRecipeCard(recipes[index]);
-                      },
-                    );
-                  }
-                },
-              )
-              : _pages[_currentPageIndex],
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: backgroundColor,
-        selectedIndex: _currentPageIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _currentPageIndex = index;
-          });
-        },
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home, color: iconColor),
-            label: 'Inicio',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.list, color: iconColor),
-            label: 'Inventario',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite, color: iconColor),
-            label: 'Favoritos',
-          ),
-        ],
-      ),
-      floatingActionButton: const FloatingMenuButton(),
+  Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        TextButton(onPressed: onPressed, child: Text('Ver más')),
+      ],
     );
   }
 }
