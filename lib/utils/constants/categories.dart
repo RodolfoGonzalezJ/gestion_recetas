@@ -7,3 +7,13 @@ class ProductCategories {
     'Granos',
   ];
 }
+
+class RecipeCategories {
+  static const List<String> all = [
+    'Desayuno',
+    'Almuerzo',
+    'Cena',
+    'Postre',
+    'Snack',
+  ];
+}
