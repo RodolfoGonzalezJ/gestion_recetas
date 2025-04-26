@@ -37,20 +37,56 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Text(
-              'Ingredientes ',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: textColor),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '*',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            // Título Ingredientes
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Ingredientes ',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: textColor),
+                ),
+                const Text(
+                  '*',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  width: 73,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Cantidad',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      'Productos',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
 
-            // Ingredientes añadidos
+            // Lista de Ingredientes
             const IngredienteCard(
               nombre: 'Espaguetty Doria',
               cantidad: '2',
@@ -71,7 +107,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
                 onPressed: () {
                   // lógica para agregar nuevo ingrediente
                 },
-                mini: true,
+                mini: false,
                 backgroundColor: CColors.primaryColor,
                 child: const Icon(Icons.add, color: Colors.white),
               ),
