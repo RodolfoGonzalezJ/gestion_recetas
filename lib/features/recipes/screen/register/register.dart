@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/login/text_input_area_horizontal.dart';
 import 'package:gestion_recetas/common/widgets/text_input_horizontal.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/images_recipe_picker.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/recipe_text_fields.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/register_2.dart';
+import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterRecipeScreen extends StatefulWidget {
   const RegisterRecipeScreen({super.key});
@@ -22,6 +26,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _caloriesController = TextEditingController();
 
+  String? _selectedCategory;
   String? _selectedDifficulty;
 
   @override
