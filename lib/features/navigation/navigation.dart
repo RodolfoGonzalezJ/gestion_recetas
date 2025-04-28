@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/favorites/screens/favorites.dart';
 import 'package:gestion_recetas/features/home/screens/home.dart';
+import 'package:gestion_recetas/features/inventory/screens/inventory/inventory.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
 //import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
@@ -19,9 +20,7 @@ class _HomeScreenState extends State<NavigationScreen> {
 
   final List<Widget> _pages = [
     HomeScreen(), // Placeholder for the Home page
-    const Center(
-      child: Text('Inventario'),
-    ), // const InventoryScreen(), // Inventory page
+    InventoryScreen(), // const InventoryScreen(), // Inventory page
     FavoritesScreen(),
     const Center(child: Text('Perfil')), // Placeholder for Favorites page
   ];
