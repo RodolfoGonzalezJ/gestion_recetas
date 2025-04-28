@@ -35,10 +35,6 @@ class ProductSelectionPage extends StatelessWidget {
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                // Verificar si el producto está seleccionado
-                final isSelected = selectedProducts.any(
-                  (p) => p.id == product.id,
-                );
                 // Obtener la cantidad seleccionada o 0 si no está seleccionada
                 int selectedQuantity = selectedQuantities[product.id] ?? 0;
 
@@ -48,6 +44,21 @@ class ProductSelectionPage extends StatelessWidget {
                     horizontal: 16,
                   ),
                   child: ListTile(
+                    leading:
+                        product.photoUrl != null
+                            ? Image.network(
+                              product.photoUrl!,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image, size: 50);
+                              },
+                            )
+                            : const Icon(
+                              Icons.fastfood,
+                              size: 50,
+                            ), // Icono por defecto si no hay imagen
                     title: Text(product.name),
                     subtitle: Text('Cantidad disponible: ${product.quantity}'),
                     trailing: Row(
@@ -91,11 +102,20 @@ class ProductSelectionPage extends StatelessWidget {
               },
             ),
           ),
+          SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
+              // Al hacer clic en "Agregar Ingredientes", se actualizan los productos seleccionados
+              final updatedSelectedProducts =
+                  selectedProducts.where((p) {
+                    return selectedQuantities[p.id] != null &&
+                        selectedQuantities[p.id]! > 0;
+                  }).toList();
+
+              onSelected(updatedSelectedProducts);
               Navigator.pop(context);
             },
-            child: const Text('Cerrar'),
+            child: const Text('Agregar Ingredientes'),
           ),
         ],
       ),
@@ -107,22 +127,20 @@ class ProductSelectionPage extends StatelessWidget {
       // Si la cantidad es mayor a 0, se agrega o actualiza el producto en la lista seleccionada
       final existingProduct = selectedProducts.firstWhere(
         (p) => p.id == product.id,
-        orElse:
-            () => Product(
-              id: product.id,
-              name: product.name,
-              category: product.category,
-              entryDate: product.entryDate,
-              expiryDate: product.expiryDate,
-              grams: product.grams,
-              quantity: product.quantity, // Mantener la cantidad original
-            ),
+        orElse: () => product,
       );
-
-      // Aquí no intentamos modificar la cantidad del producto original
-      // Solo actualizamos la lista de seleccionados
       if (!selectedProducts.contains(existingProduct)) {
-        selectedProducts.add(existingProduct);
+        selectedProducts.add(
+          Product(
+            id: product.id,
+            name: product.name,
+            category: product.category,
+            entryDate: product.entryDate,
+            expiryDate: product.expiryDate,
+            grams: product.grams,
+            quantity: quantity, // Usar la cantidad seleccionada
+          ),
+        );
       }
     } else {
       // Si la cantidad es 0, se elimina el producto de la lista seleccionada
