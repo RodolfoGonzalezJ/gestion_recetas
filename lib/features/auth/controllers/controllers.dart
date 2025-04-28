@@ -54,28 +54,38 @@ class AuthController {
 
   List<String> getMissingFields() {
     List<String> missingFields = [];
-    if (_user.nombre == null || _user.nombre!.isEmpty)
+    if (_user.nombre == null || _user.nombre!.isEmpty) {
       missingFields.add('Nombre');
-    if (_user.apellido == null || _user.apellido!.isEmpty)
+    }
+    if (_user.apellido == null || _user.apellido!.isEmpty) {
       missingFields.add('Apellido');
-    if (_user.celular == null || _user.celular!.isEmpty)
+    }
+    if (_user.celular == null || _user.celular!.isEmpty) {
       missingFields.add('Número de Celular');
-    if (_user.cedula == null || _user.cedula!.isEmpty)
+    }
+    if (_user.cedula == null || _user.cedula!.isEmpty) {
       missingFields.add('Número de Cédula');
+    }
     if (_user.fechaNacimiento == null) missingFields.add('Fecha de Nacimiento');
-    if (_user.correo == null || _user.correo!.isEmpty)
+    if (_user.correo == null || _user.correo!.isEmpty) {
       missingFields.add('Correo Electrónico');
+    }
     if (_user.pais == null || _user.pais!.isEmpty) missingFields.add('País');
-    if (_user.departamento == null || _user.departamento!.isEmpty)
+    if (_user.departamento == null || _user.departamento!.isEmpty) {
       missingFields.add('Departamento');
-    if (_user.municipio == null || _user.municipio!.isEmpty)
+    }
+    if (_user.municipio == null || _user.municipio!.isEmpty) {
       missingFields.add('Municipio');
-    if (_user.direccion == null || _user.direccion!.isEmpty)
+    }
+    if (_user.direccion == null || _user.direccion!.isEmpty) {
       missingFields.add('Dirección');
-    if (_user.barrio == null || _user.barrio!.isEmpty)
+    }
+    if (_user.barrio == null || _user.barrio!.isEmpty) {
       missingFields.add('Barrio');
-    if (_user.contrasena == null || _user.contrasena!.isEmpty)
+    }
+    if (_user.contrasena == null || _user.contrasena!.isEmpty) {
       missingFields.add('Contraseña');
+    }
     return missingFields;
   }
 

@@ -6,8 +6,8 @@ class RecoverPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _emailController = TextEditingController();
-    final AuthService _authService = AuthService();
+    final emailController = TextEditingController();
+    final AuthService authService = AuthService();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Recuperar Contraseña')),
@@ -22,7 +22,7 @@ class RecoverPasswordScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _emailController,
+              controller: emailController,
               decoration: const InputDecoration(
                 labelText: 'Correo Electrónico',
                 border: OutlineInputBorder(),
@@ -31,7 +31,7 @@ class RecoverPasswordScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final email = _emailController.text.trim();
+                final email = emailController.text.trim();
                 if (email.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -41,7 +41,7 @@ class RecoverPasswordScreen extends StatelessWidget {
                   return;
                 }
 
-                final success = await _authService.sendRecoveryEmail(email);
+                final success = await authService.sendRecoveryEmail(email);
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
