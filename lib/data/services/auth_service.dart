@@ -58,7 +58,7 @@ class AuthService {
 
       if (user == null) {
         print('Correo no encontrado en la base de datos');
-        return false; 
+        return false;
       }
 
       final smtpServer = gmail('your_email@gmail.com', 'your_email_password');
@@ -85,7 +85,7 @@ El equipo de Gestion Recetas
       return true;
     } catch (e) {
       print('Error al enviar correo de recuperación: $e');
-      return false; 
+      return false;
     }
   }
 }

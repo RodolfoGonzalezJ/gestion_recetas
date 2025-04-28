@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class WTextInputFormHorizontal extends StatelessWidget {

@@ -1,9 +1,11 @@
+// lib/features/recipes/screen/register/register_2.dart
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/card.dart';
 import 'package:gestion_recetas/common/widgets/text_input_vertical.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 import 'package:gestion_recetas/features/recipes/models/models.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/widgets/product_selection_modal.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
@@ -17,7 +19,7 @@ class RecipeIngredientsStep extends StatefulWidget {
   final String difficulty;
   final Duration preparationTime;
   final int? calories;
-  final String? imageUrl; // Agregar el campo imageUrl
+  final String? imageUrl;
 
   const RecipeIngredientsStep({
     super.key,
@@ -27,7 +29,7 @@ class RecipeIngredientsStep extends StatefulWidget {
     required this.difficulty,
     required this.preparationTime,
     this.calories,
-    this.imageUrl, // Recibir el campo imageUrl
+    this.imageUrl,
   });
 
   @override
@@ -38,30 +40,27 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
   final TextEditingController instruccionesController = TextEditingController();
   final InventoryService _inventoryService = InventoryService();
   final RecipeService _recipeService = RecipeService();
-  List<Product> _selectedIngredients = [];
-  late Future<List<Product>> _ingredientsFuture;
-  String? _videoPath; // Variable para almacenar la ruta del video
+  final List<Product> _selectedIngredients = [];
+  List<Product> _availableProducts = [];
+  String? _videoPath;
 
   @override
   void initState() {
     super.initState();
-    _ingredientsFuture = _inventoryService.fetchProducts();
+    _loadAvailableProducts();
+  }
+
+  Future<void> _loadAvailableProducts() async {
+    final products = await _inventoryService.fetchProducts();
+    setState(() {
+      _availableProducts = products;
+    });
   }
 
   @override
   void dispose() {
     instruccionesController.dispose();
     super.dispose();
-  }
-
-  void _toggleIngredientSelection(Product ingredient) {
-    setState(() {
-      if (_selectedIngredients.contains(ingredient)) {
-        _selectedIngredients.remove(ingredient);
-      } else {
-        _selectedIngredients.add(ingredient);
-      }
-    });
   }
 
   Future<void> _pickVideo() async {
@@ -94,8 +93,8 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       calories: widget.calories,
       ingredients: _selectedIngredients,
       instructions: instruccionesController.text.trim(),
-      imageUrl: widget.imageUrl, // Incluir la imagen seleccionada
-      videoUrl: _videoPath, // Incluir el video seleccionado (opcional)
+      imageUrl: widget.imageUrl,
+      videoUrl: _videoPath,
     );
 
     try {
@@ -103,7 +102,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Receta publicada exitosamente.')),
       );
-      Navigator.pop(context); // Regresar a la pantalla anterior
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al publicar la receta: $e')),
@@ -128,51 +127,98 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Text(
-              'Ingredientes',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: textColor),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Ingredientes ',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: textColor),
+                ),
+                const Text(
+                  '*',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
-            FutureBuilder<List<Product>>(
-              future: _ingredientsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error al cargar los ingredientes: ${snapshot.error}',
+            Row(
+              children: [
+                Container(
+                  width: 73,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Cantidad',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      'Productos',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Column(
+              children:
+                  _selectedIngredients.map((ingredient) {
+                    return IngredienteCard(
+                      nombre: ingredient.name,
+                      cantidad: ingredient.quantity.toString(),
+                      unidad:
+                          ingredient.grams != null
+                              ? '${ingredient.grams}g'
+                              : 'Unidad',
+                      imagen: ingredient.photoUrl ?? 'assets/logos/logo.png',
+                    );
+                  }).toList(),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  final selected = await showModalBottomSheet<List<Product>>(
+                    context: context,
+                    builder: (context) {
+                      return ProductSelectionPage(
+                        products: _availableProducts,
+                        selectedProducts: _selectedIngredients,
+                        onSelected: (selectedProducts) {
+                          setState(() {
+                            _selectedIngredients.clear();
+                            _selectedIngredients.addAll(selectedProducts);
+                          });
+                        },
+                      );
+                    },
                   );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No hay ingredientes disponibles.'),
-                  );
-                } else {
-                  final ingredients = snapshot.data!;
-                  return Column(
-                    children:
-                        ingredients.map((ingredient) {
-                          final isSelected = _selectedIngredients.contains(
-                            ingredient,
-                          );
-                          return ListTile(
-                            title: Text(ingredient.name),
-                            subtitle: Text('Cantidad: ${ingredient.quantity}'),
-                            trailing: Icon(
-                              isSelected
-                                  ? Icons.check_box
-                                  : Icons.check_box_outline_blank,
-                              color: isSelected ? Colors.green : null,
-                            ),
-                            onTap: () => _toggleIngredientSelection(ingredient),
-                          );
-                        }).toList(),
-                  );
-                }
-              },
+
+                  if (selected != null) {
+                    setState(() {
+                      _selectedIngredients.clear();
+                      _selectedIngredients.addAll(selected);
+                    });
+                  }
+                },
+                backgroundColor: CColors.primaryColor,
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
             ),
             const SizedBox(height: 32),
             WTextAreaFormVertical(
@@ -187,7 +233,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
             const SizedBox(height: 24),
             Text(
               'Subir Video Tutorial (Opcional)',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             ElevatedButton(

@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:gestion_recetas/common/widgets/login/text_input_area_horizontal.dart';
-import 'package:gestion_recetas/common/widgets/text_input_horizontal.dart';
-import 'package:gestion_recetas/features/recipes/screen/register/widgets/register_2.dart';
-import 'package:gestion_recetas/utils/constants/categories.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/widgets/images_recipe_picker.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/widgets/recipe_text_fields.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/register_2.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
-import 'package:image_picker/image_picker.dart';
 
 class RegisterRecipeScreen extends StatefulWidget {
   const RegisterRecipeScreen({super.key});
@@ -26,16 +22,14 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
 
   String? _selectedCategory;
   String? _selectedDifficulty;
-  String? _imagePath; // Variable para almacenar la ruta de la imagen
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imagePath = pickedFile.path;
-      });
-    }
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descController.dispose();
+    _timeController.dispose();
+    _caloriesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,158 +47,60 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(16),
-          child: ListView(
-            children: [
-              Text(
-                'Imagen de la receta *',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(color: color),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Selecciona una imagen para tu receta',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: color.withOpacity(0.6)),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 160,
-                  decoration: BoxDecoration(
-                    color: CColors.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                    image:
-                        _imagePath != null
-                            ? DecorationImage(
-                              image: FileImage(File(_imagePath!)),
-                              fit: BoxFit.cover,
-                            )
-                            : null,
-                  ),
-                  child:
-                      _imagePath == null
-                          ? const Icon(Icons.add, color: Colors.white, size: 40)
-                          : null,
-                ),
-              ),
-              const SizedBox(height: 16),
-              WTextInputFormHorizontal(
-                label: 'Nombre de Receta',
-                hint: 'Escribe el título de la receta',
-                controller: _nameController,
-              ),
-              const SizedBox(height: 12),
-              WTextAreaFormHorizontal(
-                label: 'Descripcion',
-                hint: 'Coloca la descripción de la receta',
-                controller: _descController,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                items:
-                    RecipeCategories.all
-                        .map(
-                          (category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category),
-                          ),
-                        )
-                        .toList(),
-                onChanged: (val) => setState(() => _selectedCategory = val),
-                decoration: const InputDecoration(
-                  labelText: 'Categoría *',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 15,
-                  ),
-                ),
-                validator:
-                    (value) =>
-                        value == null ? 'La categoría es obligatoria' : null,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _selectedDifficulty,
-                items:
-                    ['Fácil', 'Media', 'Difícil']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                onChanged: (val) => setState(() => _selectedDifficulty = val),
-                decoration: const InputDecoration(
-                  labelText: 'Dificultad *',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 15,
-                  ),
-                ),
-                validator:
-                    (value) =>
-                        value == null ? 'La dificultad es obligatoria' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _timeController,
-                decoration: const InputDecoration(
-                  labelText: 'Tiempo (HH:MM) *',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 15,
-                  ),
-                ),
-                keyboardType: TextInputType.datetime,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _caloriesController,
-                decoration: const InputDecoration(
-                  labelText: 'Calorías',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 15,
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => RecipeIngredientsStep(
-                              name: _nameController.text.trim(),
-                              description: _descController.text.trim(),
-                              category: _selectedCategory!,
-                              difficulty: _selectedDifficulty!,
-                              preparationTime: Duration(
-                                minutes:
-                                    int.tryParse(_timeController.text.trim()) ??
-                                    0,
-                              ),
-                              calories: int.tryParse(
-                                _caloriesController.text.trim(),
-                              ),
-                              imageUrl:
-                                  _imagePath, // Pasar la imagen seleccionada
-                            ),
-                      ),
-                    );
-                  }
-                },
-                child: const Text("Siguiente"),
-              ),
-            ],
-          ),
+          children: [
+            RecipeImagePicker(color: color),
+            const SizedBox(height: 16),
+            RecipeTextFields(
+              nameController: _nameController,
+              descController: _descController,
+              timeController: _timeController,
+              caloriesController: _caloriesController,
+              selectedDifficulty: _selectedDifficulty,
+              onDifficultyChanged:
+                  (val) => setState(() => _selectedDifficulty = val),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _onNextPressed,
+              child: const Text("Siguiente"),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  void _onNextPressed() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => RecipeIngredientsStep(
+                name: _nameController.text.trim(),
+                description: _descController.text.trim(),
+                category:
+                    _selectedCategory ??
+                    '', // Usa '' temporal si no hay categoría seleccionada
+                difficulty:
+                    _selectedDifficulty ??
+                    '', // Usa '' si no seleccionaron dificultad
+                preparationTime: _parseDuration(_timeController.text.trim()),
+                calories: int.tryParse(_caloriesController.text.trim()),
+                imageUrl:
+                    null, // Si luego tienes imagen seleccionada puedes pasarla aquí
+              ),
+        ),
+      );
+    }
+  }
+
+  Duration _parseDuration(String timeString) {
+    final parts = timeString.split(':');
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
+    return Duration(hours: hours, minutes: minutes);
   }
 }
