@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
+import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +18,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            appBar(),
             TextField(
               decoration: InputDecoration(
                 hintText: 'Buscar...',

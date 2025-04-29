@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/favorites/screens/favorites.dart';
 import 'package:gestion_recetas/features/home/screens/home.dart';
 import 'package:gestion_recetas/features/inventory/screens/inventory/inventory.dart';
-import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
+//import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
+// import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
 //import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 // import 'package:gestion_recetas/features/inventory/screens/inventory/inventory.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -22,7 +24,9 @@ class _HomeScreenState extends State<NavigationScreen> {
     HomeScreen(), // Placeholder for the Home page
     InventoryScreen(), // const InventoryScreen(), // Inventory page
     FavoritesScreen(),
-    const Center(child: Text('Perfil')), // Placeholder for Favorites page
+    const Center(
+      child: Text('Configuración'),
+    ), // Placeholder for Favorites page
   ];
 
   @override
@@ -33,66 +37,49 @@ class _HomeScreenState extends State<NavigationScreen> {
     final Color iconColor = Colors.white;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
-          child: iconButtonBox(
-            imagePath: 'assets/logos/logo.png',
-            onTap: () {},
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage('assets/logos/Ellipse 2.png'),
-                ),
-                SizedBox(width: 16),
-                iconButtonBox(
-                  imagePath: 'assets/logos/Frame.png',
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       body: _pages[_currentPageIndex],
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: SalomonBottomBar(
         backgroundColor: backgroundColor,
-        indicatorColor: resaltar,
-        selectedIndex: _currentPageIndex,
-        onDestinationSelected: (int index) {
+        itemShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+
+        // indicatorColor: resaltar,
+        // indicatorShape: RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.circular(4),
+        // ),
+        currentIndex: _currentPageIndex,
+        onTap: (int index) {
           setState(() {
             _currentPageIndex = index;
           });
         },
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
-          Set<WidgetState> states,
-        ) {
-          return TextStyle(color: Colors.white, fontSize: 16);
-        }),
-        destinations: [
-          NavigationDestination(
+        // labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        // labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
+        //   Set<WidgetState> states,
+        // ) {
+        //   return TextStyle(color: Colors.white, fontSize: 12);
+        // }),
+        items: [
+          SalomonBottomBarItem(
             icon: Icon(Icons.home_outlined, color: iconColor, size: 32),
-            label: 'Inicio',
+            title: Text("Inicio"),
+            selectedColor: iconColor,
           ),
-          NavigationDestination(
+          SalomonBottomBarItem(
             icon: Icon(Icons.inventory_2_outlined, color: iconColor, size: 28),
-            label: 'Inventario',
+            title: Text('Inventario'),
+            selectedColor: iconColor,
           ),
-          NavigationDestination(
+          SalomonBottomBarItem(
             icon: Icon(Icons.bookmark_border, color: iconColor, size: 32),
-            label: 'Colecciones',
+            title: Text('Colecciones'),
+            selectedColor: iconColor,
           ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outlined, color: iconColor, size: 32),
-            label: 'Perfil',
+          SalomonBottomBarItem(
+            icon: Icon(Icons.settings_outlined, color: iconColor, size: 32),
+            title: Text('Configuración'),
+            selectedColor: iconColor,
           ),
         ],
       ),
