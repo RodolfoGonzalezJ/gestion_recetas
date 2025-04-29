@@ -101,16 +101,19 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _sectionTitle('Pronto a Expirar', onPressed: () {}),
             _expiringSoon(),
             const SizedBox(height: 16),
-            _adBanner(),
-            const SizedBox(height: 16),
             _sectionTitle('Vistas Recientemente', onPressed: () {}),
             _recentViews(),
+            const SizedBox(height: 16),
+            _adBanner(),
             const SizedBox(height: 16),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
             _recommendedItems(),
             const SizedBox(height: 16),
             _sectionTitle('En tendencias 🔥', onPressed: () {}),
             _trendingItems(),
+            const SizedBox(height: 16),
+            _sectionTitle('Recetas de la semana', onPressed: () {}),
+            _recommendedItems(),
           ],
         ),
       ),
@@ -124,16 +127,22 @@ class _HomeScreenRealState extends State<HomeScreen> {
         'title': 'Sandwichito Sabrosito',
         'time': '20 min',
         'image': 'assets/images/sandwichitoSabrosito.png',
+        'rating': '4.9',
+        'nivel': '1',
       },
       {
         'title': 'Buñuelo Asado',
-        'time': '20 min',
+        'time': '40 min',
         'image': 'assets/images/buñueloAsado.png',
+        'rating': '4.9',
+        'nivel': '2',
       },
       {
         'title': 'Pasta Alemán-Italia',
-        'time': '20 min',
+        'time': '120 min',
         'image': 'assets/images/pastaAlemanItalia.png',
+        'rating': '4.0',
+        'nivel': '1',
       },
     ];
     return _horizontalList(items);
@@ -156,18 +165,24 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final List<Map<String, dynamic>> items = [
       {
         'title': 'Espagueti Aglio',
-        'time': '20 min',
+        'time': '60 min',
         'image': 'assets/images/EspaguetiAglio.png',
+        'rating': '4.9',
+        'nivel': '2',
       },
       {
         'title': 'Mote de queso',
-        'time': '20 min',
+        'time': '120 min',
         'image': 'assets/images/moteDeQueso.png',
+        'rating': '4.9',
+        'nivel': '2',
       },
       {
         'title': 'Salchipapa Casera',
-        'time': '20 min',
+        'time': '50 min',
         'image': 'assets/images/salchipapaCasera.png',
+        'rating': '4.0',
+        'nivel': '1',
       },
     ];
     return _horizontalList(items);
@@ -177,18 +192,24 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final List<Map<String, dynamic>> items = [
       {
         'title': 'Hamburguesa Melosa',
-        'time': '20 min',
+        'time': '180 min',
         'image': 'assets/images/hamburguesaMelosa.png',
+        'rating': '5.0',
+        'nivel': '3',
       },
       {
         'title': 'Sopa Ajiaco',
-        'time': '20 min',
+        'time': '120 min',
         'image': 'assets/images/sopaAjiaco.png',
+        'rating': '4.0',
+        'nivel': '2',
       },
       {
         'title': 'Salchipapa Casera',
-        'time': '20 min',
+        'time': '50 min',
         'image': 'assets/images/salchipapaCasera.png',
+        'rating': '4.0',
+        'nivel': '3',
       },
     ];
     return _horizontalList(items);
@@ -198,44 +219,199 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final List<Map<String, dynamic>> items = [
       {
         'title': 'Brócoli',
-        'time': '30 min',
         'image': 'assets/images/brocoli.png',
+        'cantidad': '9',
+        'expira': 'Expira en 1 mes',
       },
       {
         'title': 'Tomate',
-        'time': '20 min',
         'image': 'assets/images/tomate.png',
+        'cantidad': '5',
+        'expira': 'Expira en 2 mes',
       },
       {
         'title': 'Leche Condensada',
-        'time': '20 min',
         'image': 'assets/images/lecheCondensada.png',
+        'cantidad': '3',
+        'expira': 'Expira en 1 mes',
       },
     ];
-    return _horizontalList(items);
+    return _horizontalListProducts(items);
+  }
+
+  Widget _horizontalListProducts(List<Map<String, dynamic>> items) {
+    return SizedBox(
+      height: 230,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 2,
+            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(141, 0, 0, 0),
+                    blurRadius: 1,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              width: 140,
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      item['expira']!,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      item['image']!,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    item['title']!,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Cantidad: ${item['cantidad']}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _horizontalList(List<Map<String, dynamic>> items) {
     return SizedBox(
-      height: 210,
+      height: 230,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         itemBuilder: (context, index) {
-          return Card(
-            child: Container(
-              width: 130,
-              padding: EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  Image.asset(items[index]['image']!),
-                  Text(items[index]['title']!),
-                  Text(
-                    'Tiempo: ${items[index]['time']}',
-                    style: TextStyle(fontSize: 12),
+          final item = items[index];
+          return Container(
+            width: 150,
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
                   ),
-                ],
-              ),
+                  child: Image.asset(
+                    item['image']!,
+                    height: 100,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title']!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.timer,
+                            color: Colors.green.shade700,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            item['time']!,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Colors.orange,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            item['rating']!,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: List.generate(
+                          3,
+                          (i) => Icon(
+                            Icons.local_dining,
+                            color:
+                                i < int.parse(item['nivel']!)
+                                    ? Colors.orangeAccent
+                                    : Colors.grey.shade300,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         },
