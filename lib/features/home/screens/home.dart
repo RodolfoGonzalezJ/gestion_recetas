@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
+import 'package:gestion_recetas/utils/constants/categories.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenRealState extends State<HomeScreen> {
+  final categories = ProductCategories.all;
+  int seleccionado = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,16 +24,80 @@ class _HomeScreenRealState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             appBar(),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Buscar...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(141, 0, 0, 0),
+                    blurRadius: 3,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Buscar...',
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
                 ),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
+            const SizedBox(height: 16.0),
+            Row(
+              children: [
+                Column(
+                  children: [
+                    _sectionTitleWithoutSeeMore(
+                      'Recetas Totales',
+                      16,
+                      FontWeight.w600,
+                      onPressed: () {},
+                    ),
+                    _card('Recetas', 24, 140, 93),
+                  ],
+                ),
+                Column(
+                  children: [
+                    _sectionTitleWithoutSeeMore(
+                      'Lote de Inventario',
+                      16,
+                      FontWeight.w600,
+                      onPressed: () {},
+                    ),
+                    Row(
+                      children: [
+                        _card('Estado Critico', 1, 106, 93),
+                        _card('Estado Medio', 2, 106, 93),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
+            _sectionTitleWithoutSeeMore(
+              'Categorias',
+              20,
+              FontWeight.bold,
+              onPressed: () {},
+            ),
+            const SizedBox(height: 16),
+            _categories(),
+            const SizedBox(height: 12),
             _sectionTitle('Pronto a Expirar', onPressed: () {}),
             _expiringSoon(),
             const SizedBox(height: 16),
@@ -77,7 +146,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
       child: Center(
         child: Text(
           'Anuncioooooooooooooo',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -180,10 +249,116 @@ class _HomeScreenRealState extends State<HomeScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: CColors.secondaryTextColor,
+          ),
         ),
         TextButton(onPressed: onPressed, child: Text('Ver más')),
       ],
+    );
+  }
+
+  Widget _sectionTitleWithoutSeeMore(
+    String title,
+    double fontSize,
+    FontWeight fontWeight, {
+    required VoidCallback onPressed,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            color: CColors.secondaryTextColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _card(String titulo, int cantidad, double width, double height) {
+    return Card(
+      color: CColors.lightContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      shadowColor: const Color.fromARGB(144, 0, 0, 0),
+      child: Container(
+        width: width,
+        height: height,
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              titulo,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: CColors.secondaryTextColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '$cantidad',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: CColors.primaryTextColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _categories() {
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: categories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final esSeleccionado = index == seleccionado;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                seleccionado = index;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color:
+                    esSeleccionado
+                        ? CColors.primaryColor
+                        : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                categories[index],
+                style: TextStyle(
+                  color:
+                      esSeleccionado
+                          ? Colors.white
+                          : CColors.secondaryTextColor,
+                  fontWeight:
+                      esSeleccionado ? FontWeight.bold : FontWeight.bold,
+                  fontSize: 10,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

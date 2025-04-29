@@ -1,5 +1,6 @@
 class ProductCategories {
   static const List<String> all = [
+    'Todos',
     'Vegetales',
     'Frutas',
     'Lácteos',

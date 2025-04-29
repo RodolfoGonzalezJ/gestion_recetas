@@ -5,7 +5,7 @@ export 'appBar.dart';
 
 Widget appBar() {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0),
+    padding: const EdgeInsets.only(bottom: 16.0, top: 20.0),
     child: AppBar(
       elevation: 0,
       leading: Padding(

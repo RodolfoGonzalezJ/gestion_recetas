@@ -33,7 +33,7 @@ class _HomeScreenState extends State<NavigationScreen> {
   Widget build(BuildContext context) {
     final bool isDark = THelperFunctions.isDarkMode(context);
     final Color backgroundColor = isDark ? CColors.dark : CColors.primaryColor;
-    final Color resaltar = isDark ? CColors.dark : CColors.resaltar;
+    // final Color resaltar = isDark ? CColors.dark : CColors.resaltar;
     final Color iconColor = Colors.white;
 
     return Scaffold(
