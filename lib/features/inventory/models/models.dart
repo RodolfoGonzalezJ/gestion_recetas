@@ -48,6 +48,21 @@ class Product {
       notes: map['notes'] as String?,
     );
   }
+
+  Product copyWith({int? quantity}) {
+    return Product(
+      id: id,
+      name: name,
+      category: category,
+      entryDate: entryDate,
+      expiryDate: expiryDate,
+      grams: grams,
+      quantity: quantity ?? this.quantity,
+      photoUrl: photoUrl,
+      notes: notes,
+    );
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

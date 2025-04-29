@@ -60,6 +60,9 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
               selectedDifficulty: _selectedDifficulty,
               onDifficultyChanged:
                   (val) => setState(() => _selectedDifficulty = val),
+              selectedCategory: _selectedCategory,
+              onCategoryChanged:
+                  (val) => setState(() => _selectedCategory = val),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

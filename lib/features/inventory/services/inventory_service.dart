@@ -30,7 +30,7 @@ class InventoryService {
   ) async {
     try {
       final collection = MongoDBHelper.db.collection('products');
-      await collection.update({'_id': id}, updatedData);
+      await collection.update({'_id': id}, {'\$set': updatedData});
       print('Product updated in MongoDB');
     } catch (e) {
       print('Error updating product: $e');

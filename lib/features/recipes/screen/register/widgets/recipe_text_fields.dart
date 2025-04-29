@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/login/text_input_area_horizontal.dart';
 import 'package:gestion_recetas/common/widgets/text_input_horizontal.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/recipe_time_fields.dart';
+import 'package:gestion_recetas/utils/constants/categories.dart';
 
 class RecipeTextFields extends StatelessWidget {
   final TextEditingController nameController;
@@ -10,6 +11,8 @@ class RecipeTextFields extends StatelessWidget {
   final TextEditingController caloriesController;
   final String? selectedDifficulty;
   final ValueChanged<String?> onDifficultyChanged;
+  final String? selectedCategory;
+  final ValueChanged<String?> onCategoryChanged;
 
   const RecipeTextFields({
     super.key,
@@ -19,6 +22,8 @@ class RecipeTextFields extends StatelessWidget {
     required this.caloriesController,
     required this.selectedDifficulty,
     required this.onDifficultyChanged,
+    required this.selectedCategory,
+    required this.onCategoryChanged,
   });
 
   @override
@@ -35,6 +40,20 @@ class RecipeTextFields extends StatelessWidget {
           label: 'Descripción',
           hint: 'Coloca la descripción de la receta',
           controller: descController,
+        ),
+        const SizedBox(height: 12),
+        DropdownButtonFormField<String>(
+          value: selectedCategory,
+          items:
+              RecipeCategories.all
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+          onChanged: onCategoryChanged,
+          decoration: const InputDecoration(
+            labelText: 'Categoría *',
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+          ),
+          validator: (value) => value == null ? 'Campo obligatorio' : null,
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(

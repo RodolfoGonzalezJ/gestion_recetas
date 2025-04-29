@@ -83,6 +83,23 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       return;
     }
 
+    // Validate stock availability
+    for (final ingredient in _selectedIngredients) {
+      final product = _availableProducts.firstWhere(
+        (p) => p.id == ingredient.id,
+      );
+      if (ingredient.quantity > product.quantity) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Stock insuficiente para el producto: ${product.name}. Disponible: ${product.quantity}',
+            ),
+          ),
+        );
+        return;
+      }
+    }
+
     final recipe = Recipe(
       id: const Uuid().v4(),
       name: widget.name,
@@ -98,6 +115,18 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
     );
 
     try {
+      // Update stock in the database
+      for (final ingredient in _selectedIngredients) {
+        final product = _availableProducts.firstWhere(
+          (p) => p.id == ingredient.id,
+        );
+        final updatedQuantity = product.quantity - ingredient.quantity;
+        await _inventoryService.updateProduct(product.id, {
+          'quantity': updatedQuantity,
+        });
+      }
+
+      // Save the recipe
       await _recipeService.saveRecipe(recipe);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Receta publicada exitosamente.')),
