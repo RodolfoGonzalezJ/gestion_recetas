@@ -6,7 +6,7 @@ class Product {
   final DateTime expiryDate;
   final double? grams; // Optional
   final int quantity;
-  final String? photoUrl; // Optional
+  late final String? photoUrl; // Optional
   final String? notes; // Optional
 
   Product({

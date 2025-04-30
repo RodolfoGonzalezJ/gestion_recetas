@@ -134,76 +134,152 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget _buildProductCard(Product product) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child:
-                  _isValidNetworkUrl(product.photoUrl)
-                      ? Image.network(
-                        product.photoUrl!,
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image, size: 80);
-                        },
-                      )
-                      : const Icon(Icons.fastfood, size: 80),
+  void _updateProduct(BuildContext context, Product product) async {
+    final newExpiryDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 5),
+    );
+
+    if (newExpiryDate != null) {
+      final additionalQuantity = await showDialog<int>(
+        context: context,
+        builder: (context) {
+          final quantityController = TextEditingController();
+          return AlertDialog(
+            title: const Text('Cantidad Adicional'),
+            content: TextField(
+              controller: quantityController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Cantidad'),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, null),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final quantity = int.tryParse(quantityController.text);
+                  Navigator.pop(context, quantity);
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (additionalQuantity != null && additionalQuantity > 0) {
+        try {
+          await _inventoryService.addQuantityAndExpiry(
+            productId: product.id,
+            additionalQuantity: additionalQuantity,
+            newExpiryDate: newExpiryDate,
+          );
+          setState(() {
+            _productsFuture = _inventoryService.fetchProducts();
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Nuevo producto agregado con éxito')),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al agregar el producto: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Widget _buildProductCard(Product product) {
+    return GestureDetector(
+      onTap: () => _showProductDetails(context, product),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child:
+                        _isValidNetworkUrl(product.photoUrl)
+                            ? Image.network(
+                              product.photoUrl!,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image, size: 80);
+                              },
+                            )
+                            : const Icon(Icons.fastfood, size: 80),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Categoría: ${product.category}',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.circle,
+                              color: Colors.green,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Disponible',
+                              style: const TextStyle(color: Colors.green),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Expira: ${product.expiryDate.toLocal()}'.split(
+                                ' ',
+                              )[0],
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            Text(
+                              'Cantidad: ${product.quantity}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Categoría: ${product.category}',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.circle, color: Colors.green, size: 12),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Disponible',
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Expira: ${product.expiryDate.toLocal()}'.split(' ')[0],
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                      Text(
-                        'Cantidad: ${product.quantity}',
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ],
                   ),
                 ],
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: () => _updateProduct(context, product),
+                child: const Text('Agregar Cantidad/Fecha'),
+              ),
+            ],
+          ),
         ),
       ),
     );
