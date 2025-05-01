@@ -51,24 +51,10 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 80,
+              height: 100,
             ), // Compensación por el solapamiento del header
             // Estadísticas
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: isDark ? CColors.darkContainer : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: ProfileStats(user: user),
-            ),
+            ProfileStats(user: user),
             const SizedBox(height: 20),
 
             // Barra de búsqueda

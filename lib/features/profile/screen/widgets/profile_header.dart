@@ -15,10 +15,11 @@ class ProfileHeader extends StatelessWidget {
 
     return Stack(
       clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
       children: [
-        // Fondo decorativo
+        // Fondo decorativo superior
         Container(
-          height: 180,
+          height: 200,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             image: const DecorationImage(
@@ -28,37 +29,18 @@ class ProfileHeader extends StatelessWidget {
           ),
         ),
 
-        // Botón editar (flotante y sobresaliente de la card)
+        // Card blanca con nombre, username y bio
         Positioned(
-          top: 140,
-          right: 32,
-          child: GestureDetector(
-            onTap: onEdit,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.edit, color: Colors.white, size: 20),
-            ),
-          ),
-        ),
-
-        // Card blanca con avatar y datos
-        Positioned(
-          bottom: -60,
+          top: 75,
           left: 16,
           right: 16,
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              60,
+              16,
+              16,
+            ), // espacio arriba para el avatar
             decoration: BoxDecoration(
               color: isDark ? Colors.grey[850] : Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -70,38 +52,61 @@ class ProfileHeader extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
               children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundImage: AssetImage(user.avatarUrl),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.name,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '@${user.username}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isDark ? Colors.grey[400] : Colors.grey[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        user.bio,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+                Text(
+                  user.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                Text(
+                  '@${user.username}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isDark ? Colors.grey[400] : Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  user.bio,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
               ],
+            ),
+          ),
+        ),
+
+        // Avatar centrado sobre la card
+        Positioned(
+          top: 40,
+          child: CircleAvatar(
+            radius: 40,
+            backgroundImage: AssetImage(user.avatarUrl),
+            backgroundColor: Colors.white,
+          ),
+        ),
+
+        // Botón de editar (parte superior derecha)
+        Positioned(
+          top: 16,
+          right: 17,
+          child: GestureDetector(
+            onTap: onEdit,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: CColors.primaryButton,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  const BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
             ),
           ),
         ),
