@@ -16,7 +16,6 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = THelperFunctions.isDarkMode(context);
 
-    // Datos del usuario (estáticos o simulados)
     const user = UserProfile(
       username: 'OzarkPepi',
       name: 'Pepi Por la Calleja',
@@ -30,48 +29,35 @@ class ProfileScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Perfil'),
+        backgroundColor: isDark ? CColors.dark : CColors.light,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header con fondo + card + botón editar
             Stack(
+              clipBehavior: Clip.none,
               children: [
-                ProfileHeader(user: user),
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Acción editar perfil
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: CColors.primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
+                ProfileHeader(
+                  user: user,
+                  onEdit: () {
+                    // Acción de editar perfil
+                  },
                 ),
               ],
             ),
             const SizedBox(
-              height: 100,
-            ), // espacio debajo del header visualmente
-
-            const SizedBox(height: 16),
-
-            // Card estadísticas
+              height: 80,
+            ), // Compensación por el solapamiento del header
+            // Estadísticas
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: isDark ? Colors.grey[800] : Colors.white,
+                color: isDark ? CColors.darkContainer : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -83,12 +69,12 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: ProfileStats(user: user),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
-            // Search bar
+            // Barra de búsqueda
             Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.grey[900] : Colors.white,
+                color: isDark ? CColors.darkContainer : Colors.white,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
@@ -107,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Receta popular
+            // Receta Popular
             Text("Receta Popular", style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             const PopularRecipeCard(
@@ -120,12 +106,12 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Mis recetas
+            // Mis Recetas
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.grey[800] : Colors.white,
+                color: isDark ? CColors.darkContainer : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(

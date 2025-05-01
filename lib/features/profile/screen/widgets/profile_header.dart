@@ -1,39 +1,66 @@
 import 'package:flutter/material.dart';
 import '../../models/user_profile_model.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserProfile user;
+  final VoidCallback onEdit;
 
-  const ProfileHeader({super.key, required this.user});
+  const ProfileHeader({super.key, required this.user, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final isDark = THelperFunctions.isDarkMode(context);
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Fondo decorativo (imagen superior)
-        ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Image.asset(
-            'assets/logos/background.png', // Usa tu imagen de fondo
-            height: 150,
-            width: double.infinity,
-            fit: BoxFit.cover,
+        // Fondo decorativo
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            image: const DecorationImage(
+              image: AssetImage('assets/logos/background.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+
+        // Botón editar (flotante y sobresaliente de la card)
+        Positioned(
+          top: 140,
+          right: 32,
+          child: GestureDetector(
+            onTap: onEdit,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
+            ),
           ),
         ),
 
         // Card blanca con avatar y datos
         Positioned(
-          top: 100,
-          left: 0,
-          right: 0,
+          bottom: -60,
+          left: 16,
+          right: 16,
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.cardColor,
+              color: isDark ? Colors.grey[850] : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -44,6 +71,7 @@ class ProfileHeader extends StatelessWidget {
               ],
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
                   radius: 35,
@@ -56,18 +84,20 @@ class ProfileHeader extends StatelessWidget {
                     children: [
                       Text(
                         user.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '@${user.username}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(user.bio, style: theme.textTheme.bodyMedium),
+                      Text(
+                        user.bio,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),

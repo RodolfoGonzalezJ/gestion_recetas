@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class UserRecipeCard extends StatelessWidget {
   final String imagePath;
@@ -21,17 +23,14 @@ class UserRecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final isDark = THelperFunctions.isDarkMode(context);
 
     return ListTile(
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover),
       ),
-      title: Text(
-        title,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,14 +38,16 @@ class UserRecipeCard extends StatelessWidget {
             children: [
               Icon(Iconsax.star1, size: 14, color: Colors.amber),
               const SizedBox(width: 4),
-              Text('$rating · $reviews', style: theme.textTheme.bodySmall),
+              Text(
+                '$rating · $reviews',
+                style: const TextStyle(color: Colors.grey),
+              ),
               const SizedBox(width: 8),
               Icon(Iconsax.clock, size: 14),
               const SizedBox(width: 2),
-              Text('$duration min', style: theme.textTheme.bodySmall),
+              Text('$duration min', style: const TextStyle(color: Colors.grey)),
             ],
           ),
-          const SizedBox(height: 2),
           Row(
             children: List.generate(
               difficulty,
