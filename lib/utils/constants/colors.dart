@@ -24,7 +24,7 @@ class CColors {
   static const Color selectedText = Color(0xFF027E1E);
   //Color de fondo del contenedor
   static const Color lightContainer = Color(0xFFF3F3F3);
-  static const Color darkContainer = Colors.white;
+  static Color? darkContainer = Colors.grey[850];
   static const Color errorContainer = Color(0xFFEDAAAA);
   static const Color warningContainer = Color.fromRGBO(255, 143, 0, 50);
   //Color de Botones

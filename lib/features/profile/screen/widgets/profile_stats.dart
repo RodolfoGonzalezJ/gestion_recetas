@@ -15,7 +15,7 @@ class ProfileStats extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: isDark ? CColors.dark : Colors.white,
+        color: isDark ? CColors.darkContainer : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

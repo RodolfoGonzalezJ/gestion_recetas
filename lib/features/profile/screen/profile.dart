@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: isDark ? CColors.dark : CColors.light,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 100,
+              height: 90,
             ), // Compensación por el solapamiento del header
             // Estadísticas
             ProfileStats(user: user),

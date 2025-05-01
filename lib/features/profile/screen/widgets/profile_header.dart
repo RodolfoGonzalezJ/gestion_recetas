@@ -42,7 +42,7 @@ class ProfileHeader extends StatelessWidget {
               16,
             ), // espacio arriba para el avatar
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey[850] : Colors.white,
+              color: isDark ? CColors.darkContainer : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -62,9 +62,7 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 Text(
                   '@${user.username}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isDark ? Colors.grey[400] : Colors.grey[700],
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -81,7 +79,7 @@ class ProfileHeader extends StatelessWidget {
         Positioned(
           top: 40,
           child: CircleAvatar(
-            radius: 40,
+            radius: 45,
             backgroundImage: AssetImage(user.avatarUrl),
             backgroundColor: Colors.white,
           ),
