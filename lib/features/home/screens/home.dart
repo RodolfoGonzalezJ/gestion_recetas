@@ -23,7 +23,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            appBar(),
+            CustomAppBar(),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,

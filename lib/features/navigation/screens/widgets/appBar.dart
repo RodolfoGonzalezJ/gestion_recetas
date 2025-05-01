@@ -1,32 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
-export 'appBar.dart';
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
 
-Widget appBar() {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 16.0, top: 20.0),
-    child: AppBar(
-      elevation: 0,
-      leading: Padding(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
-        child: iconButtonBox(imagePath: 'assets/logos/logo.png', onTap: () {}),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(),
-          child: Row(
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0, top: 20.0),
+      child: AppBar(
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
+          child: iconButtonBox(
+            imagePath: 'assets/logos/logo.png',
+            onTap: () {},
+          ),
+        ),
+        actions: [
+          Row(
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundImage: AssetImage('assets/logos/Ellipse 2.png'),
+              GestureDetector(
+                onTap:
+                    () => THelperFunctions.navigateToScreen(
+                      context,
+                      ProfileScreen(),
+                    ),
+                child: const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage('assets/logos/Ellipse 2.png'),
+                ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               iconButtonBox(imagePath: 'assets/logos/Frame.png', onTap: () {}),
             ],
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 20);
 }
