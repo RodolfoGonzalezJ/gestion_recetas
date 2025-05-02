@@ -1,12 +1,16 @@
+// lib/features/profile/screen/profile.dart
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
+import 'package:gestion_recetas/features/profile/screen/widgets/all_recipes.dart';
+import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 import 'widgets/profile_header.dart';
 import 'widgets/profile_stats.dart';
 import 'widgets/popular_recipe_card.dart';
-import 'widgets/user_recipe_card.dart';
+import 'widgets/ver_todas_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -50,9 +54,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 90,
-            ), // Compensación por el solapamiento del header
+            const SizedBox(height: 90),
+
             // Estadísticas
             ProfileStats(user: user),
             const SizedBox(height: 20),
@@ -77,11 +80,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 10),
 
             // Receta Popular
             Text("Receta Popular", style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
             const PopularRecipeCard(
               imagePath: 'assets/logos/logo.png',
               title: 'Buñuelo asado',
@@ -90,38 +92,34 @@ class ProfileScreen extends StatelessWidget {
               duration: 40,
               difficulty: 2,
             ),
-            const SizedBox(height: 24),
 
-            // Mis Recetas
+            // Mis Recetas (vista previa)
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: isDark ? CColors.darkContainer : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(
-                children: List.generate(2, (index) {
-                  return const UserRecipeCard(
-                    imagePath: 'assets/logos/logo.png',
-                    title: 'Buñuelo asado',
-                    rating: 4.9,
-                    reviews: 102,
-                    duration: 40,
-                    difficulty: 2,
-                  );
-                }),
-              ),
+            Column(
+              children: List.generate(2, (index) {
+                // Aquí reemplacé UserRecipeCard por RecipeCard
+                return RecipeCard(
+                  imagePath: 'assets/logos/logo.png',
+                  title: 'Buñuelo asado',
+                  rating: 4.9,
+                  reviews: 102,
+                  duration: 40,
+                  difficulty: 2,
+                );
+              }),
             ),
-            const SizedBox(height: 16),
+
+            // Botón de "Ver todas mis recetas"
+            VerTodasButton(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TodasMisRecetasScreen(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),

@@ -18,7 +18,8 @@ class VerTodasButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isDark ? CColors.darkContainer : Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey.shade300)),
+
+          borderRadius: BorderRadius.circular(12), // Agregado para redondear
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
