@@ -37,7 +37,7 @@ class DifficultyIndicator extends StatelessWidget {
         return Container(
           width: 17,
           height: 16,
-          margin: EdgeInsets.only(right: index < 2 ? 2 : 0),
+          margin: EdgeInsets.only(right: index < 1 ? 0 : 0),
           decoration: BoxDecoration(
             color: barColor,
             borderRadius: BorderRadius.only(

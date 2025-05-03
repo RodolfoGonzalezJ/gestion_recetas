@@ -55,13 +55,13 @@ class ProfileHeader extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  user.name,
+                  user.fullName,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '@${user.username}',
+                  user.username,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(),
                 ),
                 const SizedBox(height: 8),

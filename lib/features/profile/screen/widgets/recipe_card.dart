@@ -60,7 +60,7 @@ class _RecipeCardState extends State<RecipeCard> {
       color: isDark ? CColors.darkContainer : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 9),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -71,11 +71,10 @@ class _RecipeCardState extends State<RecipeCard> {
                 widget.imagePath,
                 height: 80,
                 width: 80,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
-            const SizedBox(width: 12),
-
+            const SizedBox(width: 10),
             // Contenido
             Expanded(
               child: Stack(
