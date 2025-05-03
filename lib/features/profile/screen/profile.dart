@@ -61,25 +61,6 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Barra de búsqueda
-            Container(
-              decoration: BoxDecoration(
-                color: isDark ? CColors.darkContainer : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Buscar...',
-                  hintStyle: TextStyle(color: Colors.grey.shade400),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
-                  suffixIcon: Icon(
-                    Icons.filter_alt_outlined,
-                    color: Colors.grey.shade400,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
             const SizedBox(height: 10),
 
             // Receta Popular
@@ -120,6 +101,7 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
