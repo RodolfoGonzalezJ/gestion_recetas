@@ -85,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
                   rating: 4.9,
                   reviews: 102,
                   duration: 40,
-                  difficulty: 2,
+                  difficulty: 3,
                 );
               }),
             ),

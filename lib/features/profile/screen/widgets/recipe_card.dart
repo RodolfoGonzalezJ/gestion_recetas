@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/common/widgets/difficulty.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
@@ -135,22 +136,8 @@ class _RecipeCardState extends State<RecipeCard> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Row(
-                        children: List.generate(3, (index) {
-                          final filled = index < widget.difficulty;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Icon(
-                              Iconsax.star,
-                              size: 16,
-                              color:
-                                  filled
-                                      ? CColors.medium
-                                      : Colors.grey.shade400,
-                            ),
-                          );
-                        }),
-                      ),
+                      const SizedBox(height: 4),
+                      DifficultyIndicator(level: widget.difficulty),
                     ],
                   ),
 
@@ -162,7 +149,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       onTap: _toggleFavorite,
                       child: Icon(
                         favorite ? Iconsax.heart5 : Iconsax.heart,
-                        color: favorite ? Colors.red : Colors.black,
+                        color: favorite ? Colors.red : Colors.grey,
                       ),
                     ),
                   ),
