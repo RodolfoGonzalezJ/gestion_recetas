@@ -4,6 +4,10 @@ import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart'
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/features/Comment/screens/CommentScreen.dart';
+import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
+import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/features/Comment/service/comment_service.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +19,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenRealState extends State<HomeScreen> {
   final categories = ProductCategories.all;
   int seleccionado = 0;
+  final InventoryService _inventoryService = InventoryService();
+  final RecipeService _recipeService = RecipeService();
+  final CommentService _commentService = CommentService();
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +165,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
       color: Colors.grey[300],
       child: Center(
         child: Text(
-          'Anuncioooooooooooooo',
+          '¡SM y PO no an pagado la nomina si no paga el el equipo renuncia!',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
@@ -166,81 +173,87 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _recommendedItems() {
-    final List<Map<String, dynamic>> items = [
-      {
-        'title': 'Espagueti Aglio',
-        'time': '60 min',
-        'image': 'assets/images/EspaguetiAglio.png',
-        'rating': '4.9',
-        'nivel': '2',
+    return FutureBuilder(
+      future: _recipeService.fetchRecipes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar recetas.'));
+        }
+        final items = snapshot.data ?? [];
+        return _horizontalList(
+          items.map((recipe) {
+            return {
+              'id': recipe.id,
+              'title': recipe.name,
+              'time': '${recipe.preparationTime.inMinutes} min',
+              'image': recipe.imageUrl ?? 'assets/images/default.png',
+              'rating': recipe.averageRating.toStringAsFixed(
+                1,
+              ), // Use actual average rating
+              'nivel': recipe.difficulty, // Use difficulty directly
+            };
+          }).toList(),
+        );
       },
-      {
-        'title': 'Mote de queso',
-        'time': '120 min',
-        'image': 'assets/images/moteDeQueso.png',
-        'rating': '4.9',
-        'nivel': '2',
-      },
-      {
-        'title': 'Salchipapa Casera',
-        'time': '50 min',
-        'image': 'assets/images/salchipapaCasera.png',
-        'rating': '4.0',
-        'nivel': '1',
-      },
-    ];
-    return _horizontalList(items);
+    );
   }
 
   Widget _trendingItems() {
-    final List<Map<String, dynamic>> items = [
-      {
-        'title': 'Hamburguesa Melosa',
-        'time': '180 min',
-        'image': 'assets/images/hamburguesaMelosa.png',
-        'rating': '5.0',
-        'nivel': '3',
+    return FutureBuilder(
+      future: _recipeService.fetchRecipes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar recetas.'));
+        }
+        final items = snapshot.data ?? [];
+        return _horizontalList(
+          items.map((recipe) {
+            return {
+              'id': recipe.id,
+              'title': recipe.name,
+              'time': '${recipe.preparationTime.inMinutes} min',
+              'image': recipe.imageUrl ?? 'assets/images/default.png',
+              'rating': recipe.averageRating.toStringAsFixed(
+                1,
+              ), // Use actual average rating
+              'nivel': recipe.difficulty, // Use difficulty directly
+            };
+          }).toList(),
+        );
       },
-      {
-        'title': 'Sopa Ajiaco',
-        'time': '120 min',
-        'image': 'assets/images/sopaAjiaco.png',
-        'rating': '4.0',
-        'nivel': '2',
-      },
-      {
-        'title': 'Salchipapa Casera',
-        'time': '50 min',
-        'image': 'assets/images/salchipapaCasera.png',
-        'rating': '4.0',
-        'nivel': '3',
-      },
-    ];
-    return _horizontalList(items);
+    );
   }
 
   Widget _expiringSoon() {
-    final List<Map<String, dynamic>> items = [
-      {
-        'title': 'Brócoli',
-        'image': 'assets/images/brocoli.png',
-        'cantidad': '9',
-        'expira': 'Expira en 1 mes',
+    return FutureBuilder(
+      future: _inventoryService.fetchProducts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar productos.'));
+        }
+        final items = snapshot.data ?? [];
+        return _horizontalListProducts(
+          items.map((product) {
+            return {
+              'title': product.name,
+              'image': product.photoUrl ?? 'assets/images/default.png',
+              'cantidad': product.quantity.toString(),
+              'expira':
+                  'Expira en ${product.expiryDate.difference(DateTime.now()).inDays} días',
+            };
+          }).toList(),
+        );
       },
-      {
-        'title': 'Tomate',
-        'image': 'assets/images/tomate.png',
-        'cantidad': '5',
-        'expira': 'Expira en 2 mes',
-      },
-      {
-        'title': 'Leche Condensada',
-        'image': 'assets/images/lecheCondensada.png',
-        'cantidad': '3',
-        'expira': 'Expira en 1 mes',
-      },
-    ];
-    return _horizontalListProducts(items);
+    );
   }
 
   Widget _horizontalListProducts(List<Map<String, dynamic>> items) {
@@ -296,11 +309,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      item['image']!,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
+                    child: _loadImage(item['image']),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -331,11 +340,16 @@ class _HomeScreenRealState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           final item = items[index];
           return GestureDetector(
-            onTap: () {
+            onTap: () async {
+              final comments = await _commentService.fetchComments(item['id']);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CommentScreen(recipeId: item['id']),
+                  builder:
+                      (context) => CommentScreen(
+                        recipeId: item['id'],
+                        comments: comments,
+                      ),
                 ),
               );
             },
@@ -353,12 +367,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
-                    child: Image.asset(
-                      item['image']!,
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+                    child: _loadImage(item['image']),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -409,17 +418,23 @@ class _HomeScreenRealState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 6),
                         Row(
-                          children: List.generate(
-                            3,
-                            (i) => Icon(
-                              Icons.local_dining,
-                              color:
-                                  i < int.parse(item['nivel']!)
-                                      ? Colors.orangeAccent
-                                      : Colors.grey.shade300,
-                              size: 14,
+                          children: [
+                            Text(
+                              'Dificultad: ',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
+                            Text(
+                              item['nivel']!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: _getDifficultyColor(item['nivel']!),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -431,6 +446,63 @@ class _HomeScreenRealState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  Color _getDifficultyColor(String difficulty) {
+    switch (difficulty) {
+      case 'Fácil':
+        return Colors.green;
+      case 'Media':
+        return Colors.orange;
+      case 'Difícil':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _loadImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      // Si no hay imagen, usa el marcador de posición
+      return Image.asset(
+        'assets/images/1.png',
+        height: 100,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      );
+    } else if (imagePath.startsWith('http')) {
+      // Si la imagen es una URL, usa Image.network
+      return Image.network(
+        imagePath,
+        height: 100,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/1.png',
+            height: 100,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    } else {
+      // Si la imagen es una ruta local, usa Image.file
+      return Image.file(
+        File(imagePath),
+        height: 100,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/1.png',
+            height: 100,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
   }
 
   Widget _sectionTitle(String title, {required VoidCallback onPressed}) {

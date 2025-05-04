@@ -1,8 +1,12 @@
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
+import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/models/models.dart';
 import 'package:uuid/uuid.dart';
+import 'package:gestion_recetas/features/Comment/service/comment_service.dart';
 
 class RecipeService {
+  final CommentService _commentService = CommentService();
+
   Future<void> saveRecipe(Recipe recipe) async {
     try {
       final collection = MongoDBHelper.db.collection('recipes');
@@ -30,7 +34,19 @@ class RecipeService {
     try {
       final collection = MongoDBHelper.db.collection('recipes');
       final recipes = await collection.find().toList();
-      return recipes.map((data) => Recipe.fromMap(data)).toList();
+
+      // Fetch average ratings for each recipe
+      final recipeList = await Future.wait(
+        recipes.map((data) async {
+          final recipe = Recipe.fromMap(data);
+          final averageRating = await _commentService.calculateAverageRating(
+            recipe.id,
+          );
+          return recipe.copyWith(averageRating: averageRating);
+        }),
+      );
+
+      return recipeList;
     } catch (e) {
       print('Error fetching recipes: $e');
       rethrow;
@@ -55,6 +71,31 @@ class RecipeService {
       print('Receta eliminada de MongoDB');
     } catch (e) {
       print('Error al eliminar la receta: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> addCommentToRecipe(String recipeId, Comment comment) async {
+    try {
+      // Add the comment
+      await _commentService.addComment(comment);
+
+      // Recalculate the average rating
+      final averageRating = await _commentService.calculateAverageRating(
+        recipeId,
+      );
+
+      // Update the recipe with the new average rating
+      final collection = MongoDBHelper.db.collection('recipes');
+      await collection.update(
+        {'_id': recipeId},
+        {
+          '\$set': {'averageRating': averageRating},
+        },
+      );
+      print('Comentario agregado y rating actualizado.');
+    } catch (e) {
+      print('Error al agregar comentario a la receta: $e');
       rethrow;
     }
   }

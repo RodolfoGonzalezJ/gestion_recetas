@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/controllers/controllers.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
@@ -5,6 +7,7 @@ import 'package:gestion_recetas/features/inventory/services/inventory_service.da
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:gestion_recetas/data/services/cloudinary_service.dart';
 
 class RegisterProductScreen extends StatefulWidget {
   final Product? existingProduct;
@@ -48,9 +51,21 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _photoPath = pickedFile.path;
-      });
+      final cloudinaryService = CloudinaryService();
+      final uploadedUrl = await cloudinaryService.uploadImage(
+        File(pickedFile.path),
+      );
+      if (uploadedUrl != null) {
+        setState(() {
+          _photoPath = uploadedUrl;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al subir la imagen a Cloudinary'),
+          ),
+        );
+      }
     }
   }
 

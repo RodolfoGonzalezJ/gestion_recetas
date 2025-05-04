@@ -7,11 +7,12 @@ class Recipe {
   final String category;
   final String difficulty;
   final String? imageUrl;
-  final String? videoUrl; 
+  final String? videoUrl;
   final Duration preparationTime;
-  final int? calories; 
+  final int? calories;
   final List<Product> ingredients;
-  final String? instructions; 
+  final String? instructions;
+  final double averageRating;
 
   Recipe({
     required this.id,
@@ -25,7 +26,25 @@ class Recipe {
     this.calories,
     required this.ingredients,
     this.instructions,
+    this.averageRating = 0.0,
   });
+
+  Recipe copyWith({double? averageRating}) {
+    return Recipe(
+      id: id,
+      name: name,
+      description: description,
+      category: category,
+      difficulty: difficulty,
+      imageUrl: imageUrl,
+      videoUrl: videoUrl,
+      preparationTime: preparationTime,
+      calories: calories,
+      ingredients: ingredients,
+      instructions: instructions,
+      averageRating: averageRating ?? this.averageRating,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -40,6 +59,7 @@ class Recipe {
       'calories': calories,
       'ingredients': ingredients.map((e) => e.toMap()).toList(),
       'instructions': instructions,
+      'averageRating': averageRating,
     };
   }
 
@@ -59,6 +79,7 @@ class Recipe {
               .map((e) => Product.fromMap(e as Map<String, dynamic>))
               .toList(),
       instructions: map['instructions'] as String?,
+      averageRating: map['averageRating'] as double? ?? 0.0,
     );
   }
 }

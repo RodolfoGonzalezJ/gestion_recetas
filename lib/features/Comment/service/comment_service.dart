@@ -13,6 +13,11 @@ class CommentService {
         commentMap['_id'] = const Uuid().v4();
       }
 
+      // Ensure the comment is tied to a recipe
+      if (commentMap['recipeId'] == null || commentMap['recipeId'].isEmpty) {
+        throw Exception('El comentario debe estar asociado a una receta.');
+      }
+
       await collection.insert(commentMap);
       print('Comentario agregado con éxito.');
     } catch (e) {
@@ -39,6 +44,23 @@ class CommentService {
       print('Comentario eliminado con éxito.');
     } catch (e) {
       print('Error al eliminar el comentario: $e');
+      rethrow;
+    }
+  }
+
+  Future<double> calculateAverageRating(String recipeId) async {
+    try {
+      final collection = MongoDBHelper.db.collection('comments');
+      final comments = await collection.find({'recipeId': recipeId}).toList();
+      if (comments.isEmpty) return 0.0;
+
+      final totalRating = comments.fold<double>(
+        0.0,
+        (sum, comment) => sum + (comment['rating'] as double),
+      );
+      return totalRating / comments.length;
+    } catch (e) {
+      print('Error al calcular el promedio de rating: $e');
       rethrow;
     }
   }

@@ -21,7 +21,7 @@ class RecipeController {
       caloriesController.text = existingRecipe.calories?.toString() ?? '';
       instructionsController.text = existingRecipe.instructions ?? '';
       setSelectedCategory(existingRecipe.category);
-      setSelectedDifficulty(existingRecipe.difficulty);
+      setSelectedDifficulty(existingRecipe.difficulty.toString());
       setIngredients(existingRecipe.ingredients);
     }
   }

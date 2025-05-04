@@ -1,4 +1,6 @@
 // lib/features/recipes/screen/register/register_2.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/card.dart';
 import 'package:gestion_recetas/common/widgets/text_input_vertical.dart';
@@ -11,6 +13,7 @@ import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:gestion_recetas/data/services/cloudinary_service.dart';
 
 class RecipeIngredientsStep extends StatefulWidget {
   final String name;
@@ -66,10 +69,21 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
   Future<void> _pickVideo() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+
     if (pickedFile != null) {
-      setState(() {
-        _videoPath = pickedFile.path;
-      });
+      final cloudinaryService = CloudinaryService();
+      final uploadedUrl = await cloudinaryService.uploadImage(
+        File(pickedFile.path),
+      );
+      if (uploadedUrl != null) {
+        setState(() {
+          _videoPath = uploadedUrl;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al subir el video a Cloudinary')),
+        );
+      }
     }
   }
 

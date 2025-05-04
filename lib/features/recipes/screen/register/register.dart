@@ -22,6 +22,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
 
   String? _selectedCategory;
   String? _selectedDifficulty;
+  String? _imageUrl;
 
   @override
   void dispose() {
@@ -50,7 +51,10 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            RecipeImagePicker(color: color),
+            RecipeImagePicker(
+              color: color,
+              onImageUploaded: (url) => _imageUrl = url,
+            ),
             const SizedBox(height: 16),
             RecipeTextFields(
               nameController: _nameController,
@@ -84,16 +88,11 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
               (_) => RecipeIngredientsStep(
                 name: _nameController.text.trim(),
                 description: _descController.text.trim(),
-                category:
-                    _selectedCategory ??
-                    '', // Usa '' temporal si no hay categoría seleccionada
-                difficulty:
-                    _selectedDifficulty ??
-                    '', // Usa '' si no seleccionaron dificultad
+                category: _selectedCategory ?? '',
+                difficulty: _selectedDifficulty ?? '',
                 preparationTime: _parseDuration(_timeController.text.trim()),
                 calories: int.tryParse(_caloriesController.text.trim()),
-                imageUrl:
-                    null, // Si luego tienes imagen seleccionada puedes pasarla aquí
+                imageUrl: _imageUrl,
               ),
         ),
       );

@@ -1,29 +1,48 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/data/services/cloudinary_service.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RecipeImagePicker extends StatefulWidget {
   final Color color;
+  final Function(String?) onImageUploaded;
 
-  const RecipeImagePicker({super.key, required this.color});
+  const RecipeImagePicker({
+    super.key,
+    required this.color,
+    required this.onImageUploaded,
+  });
 
   @override
   State<RecipeImagePicker> createState() => _RecipeImagePickerState();
 }
 
 class _RecipeImagePickerState extends State<RecipeImagePicker> {
-  XFile? _selectedImage;
+  String? _uploadedImageUrl;
 
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
+    if (pickedFile != null) {
+      final cloudinaryService = CloudinaryService();
+      final uploadedUrl = await cloudinaryService.uploadImage(
+        File(pickedFile.path),
+      );
+      if (uploadedUrl != null) {
+        setState(() {
+          _uploadedImageUrl = uploadedUrl;
+        });
+        widget.onImageUploaded(uploadedUrl);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al subir la imagen a Cloudinary'),
+          ),
+        );
+      }
     }
   }
 
@@ -54,15 +73,15 @@ class _RecipeImagePickerState extends State<RecipeImagePicker> {
               color: CColors.primaryColor,
               borderRadius: BorderRadius.circular(12),
               image:
-                  _selectedImage != null
+                  _uploadedImageUrl != null
                       ? DecorationImage(
-                        image: FileImage(File(_selectedImage!.path)),
+                        image: NetworkImage(_uploadedImageUrl!),
                         fit: BoxFit.cover,
                       )
                       : null,
             ),
             child:
-                _selectedImage == null
+                _uploadedImageUrl == null
                     ? const Center(
                       child: Icon(Icons.add, color: Colors.white, size: 40),
                     )
