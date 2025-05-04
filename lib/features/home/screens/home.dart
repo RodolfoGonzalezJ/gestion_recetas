@@ -3,6 +3,7 @@ import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_butt
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/features/Comment/screens/CommentScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -124,6 +125,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
   Widget _recentViews() {
     final List<Map<String, dynamic>> items = [
       {
+        'id': 'recipe1',
         'title': 'Sandwichito Sabrosito',
         'time': '20 min',
         'image': 'assets/images/sandwichitoSabrosito.png',
@@ -131,6 +133,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         'nivel': '1',
       },
       {
+        'id': 'recipe2',
         'title': 'Buñuelo Asado',
         'time': '40 min',
         'image': 'assets/images/buñueloAsado.png',
@@ -138,6 +141,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         'nivel': '2',
       },
       {
+        'id': 'recipe3',
         'title': 'Pasta Alemán-Italia',
         'time': '120 min',
         'image': 'assets/images/pastaAlemanItalia.png',
@@ -326,92 +330,102 @@ class _HomeScreenRealState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         itemBuilder: (context, index) {
           final item = items[index];
-          return Container(
-            width: 150,
-            margin: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                  child: Image.asset(
-                    item['image']!,
-                    height: 100,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CommentScreen(recipeId: item['id']),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 6,
+              );
+            },
+            child: Container(
+              width: 150,
+              margin: const EdgeInsets.symmetric(horizontal: 6),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    child: Image.asset(
+                      item['image']!,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['title']!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['title']!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.timer,
-                            color: Colors.green.shade700,
-                            size: 14,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            item['time']!,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.orange,
-                            size: 14,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            item['rating']!,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: List.generate(
-                          3,
-                          (i) => Icon(
-                            Icons.local_dining,
-                            color:
-                                i < int.parse(item['nivel']!)
-                                    ? Colors.orangeAccent
-                                    : Colors.grey.shade300,
-                            size: 14,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.timer,
+                              color: Colors.green.shade700,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              item['time']!,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.orange,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              item['rating']!,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: List.generate(
+                            3,
+                            (i) => Icon(
+                              Icons.local_dining,
+                              color:
+                                  i < int.parse(item['nivel']!)
+                                      ? Colors.orangeAccent
+                                      : Colors.grey.shade300,
+                              size: 14,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
