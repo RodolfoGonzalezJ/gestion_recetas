@@ -88,10 +88,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
     if (_formKey.currentState!.validate() &&
         _selectedCategory != null &&
         _selectedExpiryDate != null) {
-      final product = Product(
-        id: widget.existingProduct?.id ?? const Uuid().v4(),
-        name: _nameController.text.trim(),
-        category: _selectedCategory!,
+      final entry = Entry(
         entryDate: DateTime.now(),
         expiryDate: _selectedExpiryDate!,
         grams:
@@ -99,11 +96,21 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
                 ? double.tryParse(_gramsController.text.trim())
                 : null,
         quantity: int.tryParse(_quantityController.text.trim()) ?? 1,
+      );
+
+      final product = Product(
+        id: widget.existingProduct?.id ?? const Uuid().v4(),
+        name: _nameController.text.trim(),
+        category: _selectedCategory!,
         photoUrl: _photoPath,
         notes:
             _notesController.text.isNotEmpty
                 ? _notesController.text.trim()
                 : null,
+        entradas: widget.existingProduct?.entradas ?? [entry],
+        entryDate: entry.entryDate,
+        expiryDate: entry.expiryDate,
+        quantity: entry.quantity,
       );
 
       try {

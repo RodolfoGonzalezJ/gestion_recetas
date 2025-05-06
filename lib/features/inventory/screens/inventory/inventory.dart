@@ -182,11 +182,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
             _productsFuture = _inventoryService.fetchProducts();
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nuevo producto agregado con éxito')),
+            const SnackBar(content: Text('Nueva entrada agregada con éxito')),
           );
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al agregar el producto: $e')),
+            SnackBar(content: Text('Error al agregar la entrada: $e')),
           );
         }
       }

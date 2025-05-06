@@ -44,27 +44,8 @@ class ProductDetailsWidget extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Ingreso: ${product.entryDate.toLocal()}'.split(' ')[0],
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Expira: ${product.expiryDate.toLocal()}'.split(' ')[0],
-                  style: const TextStyle(fontSize: 16, color: Colors.red),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (product.grams != null)
-              Text(
-                'Gramos: ${product.grams}',
-                style: const TextStyle(fontSize: 16),
-              ),
             Text(
-              'Cantidad: ${product.quantity}',
+              'Cantidad total: ${product.quantity}',
               style: const TextStyle(fontSize: 16),
             ),
             if (product.notes != null && product.notes!.isNotEmpty)
@@ -80,7 +61,7 @@ class ProductDetailsWidget extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => _showStockDetails(context),
-              child: const Text('Ver más'),
+              child: const Text('Ver detalles de stock'),
             ),
           ],
         ),
@@ -105,14 +86,24 @@ class ProductDetailsWidget extends StatelessWidget {
             title: Text('Detalles de stock: ${product.name}'),
             content: SingleChildScrollView(
               child: Column(
-                children: List.generate(product.quantity, (index) {
-                  return _StockCard(
+                children: [
+                  // Mostrar la entrada principal
+                  _StockCard(
                     entryDate: product.entryDate,
                     expiryDate: product.expiryDate,
-                    unitIndex: index + 1,
-                    photoUrl: product.photoUrl,
-                  );
-                }),
+                    quantity: product.quantity,
+                    grams: product.grams,
+                  ),
+                  // Mostrar las entradas adicionales
+                  ...product.entradas.map((entry) {
+                    return _StockCard(
+                      entryDate: entry.entryDate,
+                      expiryDate: entry.expiryDate,
+                      quantity: entry.quantity,
+                      grams: entry.grams,
+                    );
+                  }).toList(),
+                ],
               ),
             ),
             actions: [
@@ -129,14 +120,14 @@ class ProductDetailsWidget extends StatelessWidget {
 class _StockCard extends StatelessWidget {
   final DateTime entryDate;
   final DateTime expiryDate;
-  final int unitIndex;
-  final String? photoUrl;
+  final int quantity;
+  final double? grams;
 
   const _StockCard({
     required this.entryDate,
     required this.expiryDate,
-    required this.unitIndex,
-    this.photoUrl,
+    required this.quantity,
+    this.grams,
   });
 
   @override
@@ -156,36 +147,6 @@ class _StockCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                if (photoUrl != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      photoUrl!,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.broken_image, size: 60);
-                      },
-                    ),
-                  )
-                else
-                  const Icon(Icons.fastfood, size: 60),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    'Unidad ${unitIndex}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
             Text(
               'Fecha de ingreso: ${entryDate.toLocal()}'.split(' ')[0],
               style: const TextStyle(fontSize: 14),
@@ -194,6 +155,9 @@ class _StockCard extends StatelessWidget {
               'Fecha de caducidad: ${expiryDate.toLocal()}'.split(' ')[0],
               style: const TextStyle(fontSize: 14, color: Colors.red),
             ),
+            Text('Cantidad: $quantity', style: const TextStyle(fontSize: 14)),
+            if (grams != null)
+              Text('Gramos: $grams', style: const TextStyle(fontSize: 14)),
             Text(
               'Tiempo restante: $remainingText',
               style: const TextStyle(fontSize: 14),
