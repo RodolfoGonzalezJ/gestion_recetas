@@ -154,7 +154,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
                       // Descripción
                       const Text(
-                        'Description',
+                        'Descripción',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -170,7 +170,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
                       // Ingredientes
                       const Text(
-                        'Ingredients',
+                        'Ingredientes',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -197,7 +197,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
                       // Comentarios
                       const Text(
-                        'Comments',
+                        'Commentarios',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -230,7 +230,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
                       // Añadir comentario
                       const Text(
-                        'Add a Comment',
+                        'Añadir comentario',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -240,7 +240,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       TextField(
                         controller: _commentController,
                         decoration: const InputDecoration(
-                          labelText: 'Write your comment...',
+                          labelText: 'Escribe tu comentario aquí',
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -268,7 +268,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             _addComment(_commentController.text, _rating);
                           }
                         },
-                        child: const Text('Submit'),
+                        child: const Text('Enviar'),
                       ),
                     ],
                   ),
