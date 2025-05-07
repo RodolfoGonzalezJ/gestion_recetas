@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+
+extension DateTimeExtensions on DateTime {
+  String getRelativeTime() {
+    final now = DateTime.now();
+    final difference = now.difference(this);
+
+    if (difference.inMinutes < 1) {
+      return 'Justo ahora';
+    } else if (difference.inSeconds < 60) {
+      return '${difference.inSeconds} s';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} min';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} h';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} d';
+    } else {
+      return '${difference.inDays ~/ 7} sem';
+    }
+  }
+}
 
 class RecipeDetailPage extends StatefulWidget {
   final String recipeId;
@@ -196,79 +218,295 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       const SizedBox(height: 20),
 
                       // Comentarios
+                      // Center(
+                      //   child: ElevatedButton(
+                      //     onPressed:
+                      //         () => _mostrarComentarios(context, comments),
+                      //     child: const Text('Ver todos'),
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 16),
+
+                      // Comentarios
                       const Text(
-                        'Commentarios',
+                        'Comentarios',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
+
                       const SizedBox(height: 10),
+
                       ...comments.map((comment) {
-                        return Card(
+                        return Container(
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: ListTile(
-                            title: Text(
-                              comment.userName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.grey[300],
+                              child: Text(comment.userName[0]),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            title: Row(
+                              children: [
+                                Text(
+                                  comment.userName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text(comment.createdAt.getRelativeTime()),
+                              ],
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(comment.content),
                                 const SizedBox(height: 4),
-                                Text('Rating: ${comment.rating}'),
+
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                    ),
+                                    Text(comment.rating.toStringAsFixed(1)),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
                         );
                       }).toList(),
-
                       const SizedBox(height: 20),
 
-                      // Añadir comentario
-                      const Text(
-                        'Añadir comentario',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                      // Positioned(
+                      //   left: 0,
+                      //   right: 0,
+                      //   bottom: 0,
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(16),
+                      //     decoration: const BoxDecoration(
+                      //       color: Colors.white,
+                      //       border: Border(
+                      //         top: BorderSide(color: Colors.grey, width: 0.5),
+                      //       ),
+                      //     ),
+                      //     child: Column(
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         const Text(
+                      //           'Añadir comentario',
+                      //           style: TextStyle(
+                      //             fontWeight: FontWeight.bold,
+                      //             fontSize: 16,
+                      //           ),
+                      //         ),
+                      //         const SizedBox(height: 10),
+                      //         TextField(
+                      //           controller: _commentController,
+                      //           decoration: const InputDecoration(
+                      //             labelText: 'Escribe tu comentario aquí',
+                      //             border: OutlineInputBorder(),
+                      //           ),
+                      //         ),
+                      //         const SizedBox(height: 10),
+                      //         Row(
+                      //           children: [
+                      //             const Text('Rating:'),
+                      //             Expanded(
+                      //               child: Slider(
+                      //                 value: _rating,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     _rating = value;
+                      //                   });
+                      //                 },
+                      //                 min: 0,
+                      //                 max: 5,
+                      //                 divisions: 5,
+                      //                 label: _rating.toString(),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //         ElevatedButton(
+                      //           onPressed: () {
+                      //             if (_commentController.text.isNotEmpty) {
+                      //               _addComment(
+                      //                 _commentController.text,
+                      //                 _rating,
+                      //               );
+                      //             }
+                      //           },
+                      //           style: ElevatedButton.styleFrom(
+                      //             backgroundColor: Colors.green,
+                      //           ),
+                      //           child: const Text('Enviar'),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+
+                      // Container(
+                      //   padding: const EdgeInsets.all(16),
+                      //   decoration: const BoxDecoration(
+                      //     color: Colors.white,
+                      //     border: Border(
+                      //       top: BorderSide(color: Colors.grey, width: 0.5),
+                      //     ),
+                      //   ),
+                      //   child: Column(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       const Text(
+                      //         'Añadir comentario',
+                      //         style: TextStyle(
+                      //           fontWeight: FontWeight.bold,
+                      //           fontSize: 16,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 10),
+                      //       TextField(
+                      //         controller: _commentController,
+                      //         decoration: const InputDecoration(
+                      //           labelText: 'Escribe tu comentario aquí',
+                      //           border: OutlineInputBorder(),
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 10),
+                      //       Row(
+                      //         children: [
+                      //           const Text('Rating:'),
+                      //           Expanded(
+                      //             child: Slider(
+                      //               value: _rating,
+                      //               onChanged: (value) {
+                      //                 setState(() {
+                      //                   _rating = value;
+                      //                 });
+                      //               },
+                      //               min: 0,
+                      //               max: 5,
+                      //               divisions: 5,
+                      //               label: _rating.toString(),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       ElevatedButton(
+                      //         onPressed: () {
+                      //           if (_commentController.text.isNotEmpty) {
+                      //             _addComment(_commentController.text, _rating);
+                      //           }
+                      //         },
+                      //         style: ElevatedButton.styleFrom(
+                      //           backgroundColor: Colors.green,
+                      //         ),
+                      //         child: const Text('Enviar'),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const Text(
+                      //   'Añadir comentario',
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 16,
+                      //   ),
+                      // ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color.fromARGB(141, 0, 0, 0),
+                              blurRadius: 3,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: _commentController,
-                        decoration: const InputDecoration(
-                          labelText: 'Escribe tu comentario aquí',
-                          border: OutlineInputBorder(),
+                        child: TextField(
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            hintText: 'Escribe tu comentario aquí',
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey.shade400,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12.0,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.send),
+                              onPressed: () {
+                                if (_commentController.text.isNotEmpty) {
+                                  _addComment(_commentController.text, _rating);
+                                }
+                              },
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.black),
                         ),
                       ),
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Text('Rating:'),
-                          Slider(
-                            value: _rating,
-                            onChanged: (value) {
+                          const Text('Calificación:'),
+                          // Slider(
+                          //   value: _rating,
+                          //   onChanged: (value) {
+                          //     setState(() {
+                          //       _rating = value;
+                          //     });
+                          //   },
+                          //   min: 0,
+                          //   max: 5,
+                          //   divisions: 5,
+                          //   label: _rating.toString(),
+                          // ),
+                          RatingBar.builder(
+                            initialRating: _rating,
+                            minRating: 0,
+                            maxRating: 5,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: const EdgeInsets.symmetric(
+                              horizontal: 2.0,
+                            ),
+                            itemBuilder:
+                                (context, _) =>
+                                    const Icon(Icons.star, color: Colors.amber),
+                            onRatingUpdate: (value) {
                               setState(() {
                                 _rating = value;
                               });
                             },
-                            min: 0,
-                            max: 5,
-                            divisions: 5,
-                            label: _rating.toString(),
                           ),
+                          // IconButton(
+                          //   onPressed: () {
+                          //     if (_commentController.text.isNotEmpty) {
+                          //       _addComment(_commentController.text, _rating);
+                          //     }
+                          //   },
+                          //   icon: Icon(Icons.send, color: Colors.green),
+                          // ),
                         ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_commentController.text.isNotEmpty) {
-                            _addComment(_commentController.text, _rating);
-                          }
-                        },
-                        child: const Text('Enviar'),
                       ),
                     ],
                   ),
@@ -290,4 +528,141 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       ],
     );
   }
+
+  // void _mostrarComentarios(BuildContext context, List<Comment> comments) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.white,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     isScrollControlled: true,
+  //     builder: (context) {
+  //       return FractionallySizedBox(
+
+  //         heightFactor: 0.85,
+
+  //         builder: (context, scrollController) {
+  //           return Container(
+  //             padding: const EdgeInsets.all(16),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 const Text(
+  //                   'Comentarios',
+  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 16),
+  //                 SizedBox(
+  //                   height: MediaQuery.of(context).size.height * 0.6,
+  //                   child: Column(
+  //                     children: [
+  //                       Expanded(
+  //                         child: ListView.builder(
+  //                           controller: scrollController,
+  //                           itemCount: comments.length,
+  //                           itemBuilder: (context, index) {
+  //                             final comment = comments[index];
+  //                             return Container(
+  //                               margin: const EdgeInsets.symmetric(vertical: 8),
+  //                               child: ListTile(
+  //                                 leading: CircleAvatar(
+  //                                   backgroundColor: Colors.grey[300],
+  //                                   child: Text(comment.userName[0]),
+  //                                 ),
+  //                                 contentPadding: const EdgeInsets.all(10),
+  //                                 title: Row(
+  //                                   children: [
+  //                                     Text(
+  //                                       comment.userName,
+  //                                       style: const TextStyle(
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     const SizedBox(width: 8),
+  //                                     Text(comment.createdAt.getRelativeTime()),
+  //                                   ],
+  //                                 ),
+  //                                 subtitle: Column(
+  //                                   crossAxisAlignment:
+  //                                       CrossAxisAlignment.start,
+  //                                   children: [
+  //                                     Text(comment.content),
+  //                                     const SizedBox(height: 4),
+  //                                     Row(
+  //                                       children: [
+  //                                         const Icon(
+  //                                           Icons.star,
+  //                                           color: Colors.orange,
+  //                                         ),
+  //                                         Text(
+  //                                           comment.rating.toStringAsFixed(1),
+  //                                         ),
+  //                                       ],
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             );
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                   child: Column(
+  //                     children: [
+  //                       const Text(
+  //                         'Añadir comentario',
+  //                         style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           fontSize: 16,
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 10),
+  //                       TextField(
+  //                         controller: _commentController,
+  //                         decoration: const InputDecoration(
+  //                           labelText: 'Escribe tu comentario aquí',
+  //                           border: OutlineInputBorder(),
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 10),
+  //                       Row(
+  //                         children: [
+  //                           const Text('Rating:'),
+  //                           Slider(
+  //                             value: _rating,
+  //                             onChanged: (value) {
+  //                               setState(() {
+  //                                 _rating = value;
+  //                               });
+  //                             },
+  //                             min: 0,
+  //                             max: 5,
+  //                             divisions: 5,
+  //                             label: _rating.toString(),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       ElevatedButton(
+  //                         onPressed: () {
+  //                           if (_commentController.text.isNotEmpty) {
+  //                             _addComment(_commentController.text, _rating);
+  //                           }
+  //                         },
+  //                         child: const Text('Enviar'),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }
