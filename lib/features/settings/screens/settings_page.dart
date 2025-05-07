@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_section.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_tile.dart';
@@ -31,7 +32,7 @@ class SettingsPage extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              const ProfileTile(
+              ProfileTile(
                 name: 'Pepi Por la Calleja',
                 subtitle: 'Ver Perfil',
                 avatarUrl: 'https://i.pravatar.cc/150?img=3',
