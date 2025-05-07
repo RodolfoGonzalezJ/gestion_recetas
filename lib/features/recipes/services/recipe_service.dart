@@ -53,6 +53,19 @@ class RecipeService {
     }
   }
 
+  Future<int> getTotalRecipes() async {
+    try {
+      final collection = MongoDBHelper.db.collection('recipes');
+      final count =
+          await collection.find().length;
+      print('Total recipes count: $count'); 
+      return count;
+    } catch (e) {
+      print('Error fetching total recipes count: $e');
+      return 0; 
+    }
+  }
+
   Future<void> updateRecipe(String id, Map<String, dynamic> updatedData) async {
     try {
       final collection = MongoDBHelper.db.collection('recipes');

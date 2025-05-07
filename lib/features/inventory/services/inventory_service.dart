@@ -1,5 +1,6 @@
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:uuid/uuid.dart';
 
 class InventoryService {
@@ -66,6 +67,7 @@ class InventoryService {
         quantity: newQuantity,
         photoUrl: originalProduct.photoUrl,
         notes: originalProduct.notes,
+        entradas: originalProduct.entradas ?? [],
       );
       await saveProduct(newProduct);
       print('Duplicated product saved to MongoDB');
@@ -85,29 +87,38 @@ class InventoryService {
       final product = await collection.findOne({'_id': productId});
 
       if (product != null) {
-        // Create a new product entry with the new quantity and expiry date
-        final newProduct = Product(
-          id: const Uuid().v4(),
-          name: product['name'] as String,
-          category: product['category'] as String,
-          entryDate: DateTime.now(),
-          expiryDate: newExpiryDate,
-          grams:
-              product['grams'] != null
-                  ? (product['grams'] as num).toDouble()
-                  : null,
-          quantity: additionalQuantity,
-          photoUrl: product['photoUrl'] as String?,
-          notes: product['notes'] as String?,
+        // Add a new entry to the "entradas" array
+        final newEntry = {
+          'entryDate': DateTime.now().toIso8601String(),
+          'expiryDate': newExpiryDate.toIso8601String(),
+          'grams': null,
+          'quantity': additionalQuantity,
+        };
+
+        // Update the main fields of the product
+        final updatedQuantity =
+            (product['quantity'] as int) + additionalQuantity;
+        final updatedExpiryDate =
+            newExpiryDate.isAfter(
+                  DateTime.parse(product['expiryDate'] as String),
+                )
+                ? newExpiryDate.toIso8601String()
+                : product['expiryDate'];
+
+        await collection.updateOne(
+          where.eq('_id', productId),
+          modify
+              .push('entradas', newEntry)
+              .set('quantity', updatedQuantity)
+              .set('expiryDate', updatedExpiryDate),
         );
 
-        await saveProduct(newProduct);
-        print('New product entry added with updated quantity and expiry date');
+        print('Product updated with new entry');
       } else {
         print('Product not found');
       }
     } catch (e) {
-      print('Error adding new product entry: $e');
+      print('Error adding new entry to product: $e');
       rethrow;
     }
   }

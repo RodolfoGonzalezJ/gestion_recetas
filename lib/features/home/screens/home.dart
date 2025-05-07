@@ -17,11 +17,55 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenRealState extends State<HomeScreen> {
-  final categories = ProductCategories.all;
-  int seleccionado = 0;
   final InventoryService _inventoryService = InventoryService();
   final RecipeService _recipeService = RecipeService();
   final CommentService _commentService = CommentService();
+  int totalRecipes = 0;
+  String selectedRecipeCategory = 'Todos';
+  String searchQuery = '';
+  int criticalCount = 0;
+  int mediumCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTotalRecipes();
+    _fetchInventoryCounts();
+  }
+
+  Future<void> _fetchTotalRecipes() async {
+    try {
+      final count = await _recipeService.getTotalRecipes();
+      setState(() {
+        totalRecipes = count;
+      });
+    } catch (e) {
+      print('Error fetching total recipes: $e');
+    }
+  }
+
+  Future<void> _fetchInventoryCounts() async {
+    try {
+      final products = await _inventoryService.fetchProducts();
+      final now = DateTime.now();
+
+      setState(() {
+        criticalCount =
+            products.where((product) {
+              final daysToExpire = product.expiryDate.difference(now).inDays;
+              return daysToExpire >= 0 && daysToExpire <= 5;
+            }).length;
+
+        mediumCount =
+            products.where((product) {
+              final daysToExpire = product.expiryDate.difference(now).inDays;
+              return daysToExpire >= 6 && daysToExpire <= 10;
+            }).length;
+      });
+    } catch (e) {
+      print('Error fetching inventory counts: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +106,11 @@ class _HomeScreenRealState extends State<HomeScreen> {
                   ),
                 ),
                 style: const TextStyle(color: Colors.black),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
               ),
             ),
             const SizedBox(height: 16.0),
@@ -75,7 +124,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       FontWeight.w600,
                       onPressed: () {},
                     ),
-                    _card('Recetas', 24, 140, 93),
+                    _card('Recetas', totalRecipes, 140, 93),
                   ],
                 ),
                 Column(
@@ -88,14 +137,23 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     Row(
                       children: [
-                        _card('Estado Critico', 1, 106, 93),
-                        _card('Estado Medio', 2, 106, 93),
+                        _card('Estado Critico', criticalCount, 106, 93),
+                        _card('Estado Medio', mediumCount, 106, 93),
                       ],
                     ),
                   ],
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            _sectionTitleWithoutSeeMore(
+              'Pronto a Expirar',
+              20,
+              FontWeight.bold,
+              onPressed: () {},
+            ),
+            const SizedBox(height: 16),
+            _expiringSoon(),
             const SizedBox(height: 16),
             _sectionTitleWithoutSeeMore(
               'Categorias',
@@ -105,15 +163,14 @@ class _HomeScreenRealState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             _categories(),
-            const SizedBox(height: 12),
-            _sectionTitle('Pronto a Expirar', onPressed: () {}),
-            _expiringSoon(),
             const SizedBox(height: 16),
+            _filteredRecipes(),
+            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             _sectionTitle('Vistas Recientemente', onPressed: () {}),
             _recentViews(),
             const SizedBox(height: 16),
             _adBanner(),
-            const SizedBox(height: 16),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
             _recommendedItems(),
             const SizedBox(height: 16),
@@ -121,11 +178,89 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _trendingItems(),
             const SizedBox(height: 16),
             _sectionTitle('Recetas de la semana', onPressed: () {}),
-            _recommendedItems(),
+            _weeklyRecipes(),
           ],
         ),
       ),
       floatingActionButton: const FloatingMenuButton(),
+    );
+  }
+
+  Widget _categories() {
+    final categories = ['Todos', ...RecipeCategories.all];
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: categories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final isSelected = categories[index] == selectedRecipeCategory;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedRecipeCategory = categories[index];
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isSelected ? CColors.primaryColor : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                categories[index],
+                style: TextStyle(
+                  color: isSelected ? Colors.white : CColors.secondaryTextColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _filteredRecipes() {
+    return FutureBuilder(
+      future: _recipeService.fetchRecipes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar recetas.'));
+        }
+        final items = snapshot.data ?? [];
+        final filteredItems =
+            items
+                .where(
+                  (recipe) =>
+                      (selectedRecipeCategory == 'Todos' ||
+                          recipe.category == selectedRecipeCategory) &&
+                      recipe.name.toLowerCase().contains(
+                        searchQuery.toLowerCase(),
+                      ),
+                )
+                .toList();
+
+        return _horizontalList(
+          filteredItems.map((recipe) {
+            return {
+              'id': recipe.id,
+              'title': recipe.name,
+              'time': '${recipe.preparationTime.inMinutes} min',
+              'image': recipe.imageUrl ?? 'assets/images/default.png',
+              'rating': recipe.averageRating.toStringAsFixed(1),
+              'nivel': recipe.difficulty,
+            };
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -183,17 +318,24 @@ class _HomeScreenRealState extends State<HomeScreen> {
           return const Center(child: Text('Error al cargar recetas.'));
         }
         final items = snapshot.data ?? [];
+        final filteredItems =
+            selectedRecipeCategory == 'Todos'
+                ? items
+                : items
+                    .where(
+                      (recipe) => recipe.category == selectedRecipeCategory,
+                    )
+                    .toList();
+
         return _horizontalList(
-          items.map((recipe) {
+          filteredItems.map((recipe) {
             return {
               'id': recipe.id,
               'title': recipe.name,
               'time': '${recipe.preparationTime.inMinutes} min',
               'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(
-                1,
-              ), // Use actual average rating
-              'nivel': recipe.difficulty, // Use difficulty directly
+              'rating': recipe.averageRating.toStringAsFixed(1),
+              'nivel': recipe.difficulty,
             };
           }).toList(),
         );
@@ -212,17 +354,60 @@ class _HomeScreenRealState extends State<HomeScreen> {
           return const Center(child: Text('Error al cargar recetas.'));
         }
         final items = snapshot.data ?? [];
+        final filteredItems =
+            selectedRecipeCategory == 'Todos'
+                ? items
+                : items
+                    .where(
+                      (recipe) => recipe.category == selectedRecipeCategory,
+                    )
+                    .toList();
+
         return _horizontalList(
-          items.map((recipe) {
+          filteredItems.map((recipe) {
             return {
               'id': recipe.id,
               'title': recipe.name,
               'time': '${recipe.preparationTime.inMinutes} min',
               'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(
-                1,
-              ), // Use actual average rating
-              'nivel': recipe.difficulty, // Use difficulty directly
+              'rating': recipe.averageRating.toStringAsFixed(1),
+              'nivel': recipe.difficulty,
+            };
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _weeklyRecipes() {
+    return FutureBuilder(
+      future: _recipeService.fetchRecipes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar recetas.'));
+        }
+        final items = snapshot.data ?? [];
+        final filteredItems =
+            selectedRecipeCategory == 'Todos'
+                ? items
+                : items
+                    .where(
+                      (recipe) => recipe.category == selectedRecipeCategory,
+                    )
+                    .toList();
+
+        return _horizontalList(
+          filteredItems.map((recipe) {
+            return {
+              'id': recipe.id,
+              'title': recipe.name,
+              'time': '${recipe.preparationTime.inMinutes} min',
+              'image': recipe.imageUrl ?? 'assets/images/default.png',
+              'rating': recipe.averageRating.toStringAsFixed(1),
+              'nivel': recipe.difficulty,
             };
           }).toList(),
         );
@@ -241,14 +426,37 @@ class _HomeScreenRealState extends State<HomeScreen> {
           return const Center(child: Text('Error al cargar productos.'));
         }
         final items = snapshot.data ?? [];
+        final filteredItems =
+            items
+                .where(
+                  (product) => product.name.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ),
+                )
+                .toList();
+
+        filteredItems.sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
+
         return _horizontalListProducts(
-          items.map((product) {
+          filteredItems.map((product) {
+            final daysToExpire =
+                product.expiryDate.difference(DateTime.now()).inDays;
+            final status =
+                daysToExpire < 0
+                    ? 'Vencido'
+                    : daysToExpire == 0
+                    ? 'Hoy'
+                    : 'Expira en $daysToExpire días';
+            final quantityStatus =
+                product.quantity == 0
+                    ? 'Agotado'
+                    : 'Cantidad: ${product.quantity}';
+
             return {
               'title': product.name,
               'image': product.photoUrl ?? 'assets/images/default.png',
-              'cantidad': product.quantity.toString(),
-              'expira':
-                  'Expira en ${product.expiryDate.difference(DateTime.now()).inDays} días',
+              'cantidad': quantityStatus,
+              'expira': status,
             };
           }).toList(),
         );
@@ -318,7 +526,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Cantidad: ${item['cantidad']}',
+                    item['cantidad']!,
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ],
@@ -575,51 +783,6 @@ class _HomeScreenRealState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _categories() {
-    return SizedBox(
-      height: 40,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        itemCount: categories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final esSeleccionado = index == seleccionado;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                seleccionado = index;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color:
-                    esSeleccionado
-                        ? CColors.primaryColor
-                        : Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                categories[index],
-                style: TextStyle(
-                  color:
-                      esSeleccionado
-                          ? Colors.white
-                          : CColors.secondaryTextColor,
-                  fontWeight:
-                      esSeleccionado ? FontWeight.bold : FontWeight.bold,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }

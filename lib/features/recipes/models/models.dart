@@ -68,7 +68,7 @@ class Recipe {
       id: map['_id'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
-      category: map['category'] as String,
+      category: map['category'] ?? 'Otros',
       difficulty: map['difficulty'] as String,
       imageUrl: map['imageUrl'] as String?,
       videoUrl: map['videoUrl'] as String?,
