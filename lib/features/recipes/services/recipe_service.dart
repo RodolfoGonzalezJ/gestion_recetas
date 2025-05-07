@@ -56,13 +56,12 @@ class RecipeService {
   Future<int> getTotalRecipes() async {
     try {
       final collection = MongoDBHelper.db.collection('recipes');
-      final count =
-          await collection.find().length;
-      print('Total recipes count: $count'); 
+      final count = await collection.find().length;
+      print('Total recipes count: $count');
       return count;
     } catch (e) {
       print('Error fetching total recipes count: $e');
-      return 0; 
+      return 0;
     }
   }
 
@@ -91,8 +90,8 @@ class RecipeService {
   Future<void> addCommentToRecipe(String recipeId, Comment comment) async {
     try {
       if (recipeId.isEmpty) {
-         throw Exception('El ID de la receta no puede estar vacío.');
-       }
+        throw Exception('El ID de la receta no puede estar vacío.');
+      }
 
       // Add the comment
       await _commentService.addComment(comment);
@@ -113,6 +112,35 @@ class RecipeService {
       print('Comentario agregado y rating actualizado.');
     } catch (e) {
       print('Error al agregar comentario a la receta: $e');
+      rethrow;
+    }
+  }
+
+  Future<Recipe> fetchRecipeById(String recipeId) async {
+    try {
+      final collection = MongoDBHelper.db.collection('recipes');
+      final recipeData = await collection.findOne({'_id': recipeId});
+
+      if (recipeData == null) {
+        throw Exception('Receta no encontrada.');
+      }
+
+      final recipe = Recipe.fromMap(recipeData);
+      final averageRating = await _commentService.calculateAverageRating(
+        recipeId,
+      );
+      return recipe.copyWith(averageRating: averageRating);
+    } catch (e) {
+      print('Error al obtener la receta por ID: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Comment>> fetchComments(String recipeId) async {
+    try {
+      return await _commentService.fetchComments(recipeId);
+    } catch (e) {
+      print('Error al obtener los comentarios de la receta: $e');
       rethrow;
     }
   }

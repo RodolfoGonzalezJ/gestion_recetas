@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
 import 'package:gestion_recetas/utils/constants/categories.dart';
@@ -548,15 +549,13 @@ class _HomeScreenRealState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           final item = items[index];
           return GestureDetector(
-            onTap: () async {
-              final comments = await _commentService.fetchComments(item['id']);
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) => CommentScreen(
-                        recipeId: item['id'],
-                        comments: comments,
+                      (context) => RecipeDetailPage(
+                        recipeId: item['id'], // Pasar el ID de la receta
                       ),
                 ),
               );
@@ -671,9 +670,9 @@ class _HomeScreenRealState extends State<HomeScreen> {
 
   Widget _loadImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
-      // Si no hay imagen, usa el marcador de posición
+      // Si no hay imagen, usa la imagen predeterminada
       return Image.asset(
-        'assets/images/1.png',
+        'assets/images/1.png', // Ruta correcta
         height: 100,
         width: double.infinity,
         fit: BoxFit.cover,
@@ -687,7 +686,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
-            'assets/images/1.png',
+            'assets/images/1.png', // Imagen predeterminada
             height: 100,
             width: double.infinity,
             fit: BoxFit.cover,
@@ -703,7 +702,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
-            'assets/images/1.png',
+            'assets/images/1.png', // Imagen predeterminada
             height: 100,
             width: double.infinity,
             fit: BoxFit.cover,

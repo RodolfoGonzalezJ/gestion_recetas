@@ -87,6 +87,13 @@ class InventoryService {
       final product = await collection.findOne({'_id': productId});
 
       if (product != null) {
+        // Asegurarse de que los datos sean del tipo esperado
+        final currentQuantity = product['quantity'] as int? ?? 0;
+        final currentExpiryDate =
+            product['expiryDate'] != null
+                ? DateTime.parse(product['expiryDate'] as String)
+                : DateTime.now();
+
         // Add a new entry to the "entradas" array
         final newEntry = {
           'entryDate': DateTime.now().toIso8601String(),
@@ -96,14 +103,11 @@ class InventoryService {
         };
 
         // Update the main fields of the product
-        final updatedQuantity =
-            (product['quantity'] as int) + additionalQuantity;
+        final updatedQuantity = currentQuantity + additionalQuantity;
         final updatedExpiryDate =
-            newExpiryDate.isAfter(
-                  DateTime.parse(product['expiryDate'] as String),
-                )
+            newExpiryDate.isAfter(currentExpiryDate)
                 ? newExpiryDate.toIso8601String()
-                : product['expiryDate'];
+                : currentExpiryDate.toIso8601String();
 
         await collection.updateOne(
           where.eq('_id', productId),
