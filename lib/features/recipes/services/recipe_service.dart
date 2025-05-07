@@ -77,6 +77,10 @@ class RecipeService {
 
   Future<void> addCommentToRecipe(String recipeId, Comment comment) async {
     try {
+      if (recipeId.isEmpty) {
+         throw Exception('El ID de la receta no puede estar vacío.');
+       }
+
       // Add the comment
       await _commentService.addComment(comment);
 

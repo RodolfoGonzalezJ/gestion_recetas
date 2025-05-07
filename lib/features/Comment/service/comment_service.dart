@@ -1,12 +1,19 @@
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
 import 'package:gestion_recetas/features/Comment/models/models.dart';
+import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentService {
+  final ProfileController _profileController = ProfileController(); // Instancia del controlador de perfil
+
   Future<void> addComment(Comment comment) async {
     try {
       final collection = MongoDBHelper.db.collection('comments');
       final commentMap = comment.toMap();
+
+      // Obtener el nombre del usuario desde el perfil
+      final userName = _profileController.userProfile.fullName;
+      commentMap['userName'] = userName;
 
       // Ensure unique ID
       if (commentMap['_id'] == null || commentMap['_id'].isEmpty) {
@@ -16,6 +23,11 @@ class CommentService {
       // Ensure the comment is tied to a recipe
       if (commentMap['recipeId'] == null || commentMap['recipeId'].isEmpty) {
         throw Exception('El comentario debe estar asociado a una receta.');
+      }
+
+      // Ensure the comment includes a user name
+      if (commentMap['userName'] == null || commentMap['userName'].isEmpty) {
+        throw Exception('El comentario debe incluir el nombre del usuario.');
       }
 
       await collection.insert(commentMap);

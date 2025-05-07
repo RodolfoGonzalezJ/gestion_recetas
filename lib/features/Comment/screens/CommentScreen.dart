@@ -33,7 +33,17 @@ class _CommentScreenState extends State<CommentScreen> {
               itemBuilder: (context, index) {
                 final comment = widget.comments[index];
                 return ListTile(
-                  title: Text(comment.content),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        comment.userName, // Mostrar el nombre del usuario
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(comment.content),
+                    ],
+                  ),
                   subtitle: Text('Rating: ${comment.rating}'),
                 );
               },
@@ -72,16 +82,19 @@ class _CommentScreenState extends State<CommentScreen> {
                   onPressed: () async {
                     final newComment = Comment(
                       id: '',
-                      recipeId: widget.recipeId,
-                      userId: 'user123', // Replace with actual user ID
+                      recipeId: widget.recipeId, 
+                      userId: 'user123', // Reemplazar con el ID real del usuario
+                      userName: '********', 
                       content: _commentController.text,
                       rating: _rating,
                       createdAt: DateTime.now(),
                     );
+
                     await _recipeService.addCommentToRecipe(
                       widget.recipeId,
                       newComment,
                     );
+
                     setState(() {
                       widget.comments.add(newComment);
                       _commentController.clear();
