@@ -24,11 +24,7 @@ class ResetPasswordButton extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Contraseña actualizada")),
                     );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PasswordSecurityScreen(),
-                      ),
-                    );
+                    Navigator.pop(context);
                   }
                   : null,
 

@@ -48,7 +48,7 @@ class SettingsPage extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => const PasswordSecurityScreen(),
+                          builder: (context) => const PasswordSecurityScreen(),
                         ),
                       );
                     },

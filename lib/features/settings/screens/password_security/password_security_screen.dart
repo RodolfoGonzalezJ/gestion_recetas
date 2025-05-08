@@ -34,7 +34,7 @@ class PasswordSecurityScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const ChangePasswordScreen(),
+                        builder: (context) => const ChangePasswordScreen(),
                       ),
                     );
                   },

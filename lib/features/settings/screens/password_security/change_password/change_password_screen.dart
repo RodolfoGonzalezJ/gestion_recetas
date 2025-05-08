@@ -81,7 +81,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             const SizedBox(height: 24),
             PasswordInputField(
               label: "Confirmar Contraseña",
-              hintText: "Ambas contraseñas deben coincidir.",
+              hintText: "Introduce una contraseña segura.",
               controller: _confirmController,
               onChanged: _onConfirmChanged,
             ),
