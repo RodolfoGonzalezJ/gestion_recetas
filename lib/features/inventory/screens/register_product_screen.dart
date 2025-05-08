@@ -153,19 +153,19 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                RecipeImagePicker(
-                  text: 'Imagen del producto *',
-                  text_2: 'Selecciona una imagen para tu producto',
-                  color: color,
-                  onImageUploaded: (url) => _imageUrl = url,
-                ),
-                const SizedBox(width: 8),
-                if (_photoPath != null)
-                  Text(
-                    'Foto seleccionada',
-                    style: const TextStyle(color: Colors.green),
-                  ),
-                const SizedBox(height: 16),
+                // RecipeImagePicker(
+                //   text: 'Imagen del producto *',
+                //   text_2: 'Selecciona una imagen para tu producto',
+                //   color: color,
+                //   onImageUploaded: (url) => _imageUrl = url,
+                // ),
+                // const SizedBox(width: 8),
+                // if (_photoPath != null)
+                //   Text(
+                //     'Foto seleccionada',
+                //     style: const TextStyle(color: Colors.green),
+                //   ),
+                // const SizedBox(height: 16),
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(labelText: 'Nombre'),
@@ -207,6 +207,21 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
                 //     style: const TextStyle(color: Colors.green),
                 //   ),
                 // const SizedBox(height: 16),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _pickPhoto,
+                      child: const Text('Seleccionar Foto'),
+                    ),
+                    const SizedBox(width: 16),
+                    if (_photoPath != null)
+                      Text(
+                        'Foto seleccionada',
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _gramsController,
                   decoration: const InputDecoration(

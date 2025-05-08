@@ -578,10 +578,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                // color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(16),
-              ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -589,7 +586,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     width: 150,
                     height: 150,
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
                       child: _loadImage(item['image']),
                     ),
                   ),
