@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
 import 'package:gestion_recetas/features/profile/screen/profile.dart';
+import 'package:gestion_recetas/features/settings/screens/password_security/password_security_screen.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_section.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_tile.dart';
@@ -42,9 +43,16 @@ class SettingsPage extends StatelessWidget {
               SettingsSection(
                 title: "Cuenta",
                 tiles: [
-                  const SettingsTile(
+                  SettingsTile(
                     icon: Icons.lock_outline,
                     title: "Contraseña y Seguridad",
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const PasswordSecurityScreen(),
+                        ),
+                      );
+                    },
                   ),
                   SettingsTile(
                     icon: Icons.exit_to_app,

@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 class SettingsTile extends StatelessWidget {
   final IconData icon;
   final String title;
+  final String? subtitle; // ✅ Nuevo parámetro
   final bool isSwitch;
   final bool switchValue;
   final void Function(bool)? onChanged;
-  final VoidCallback? onTap; // ✅ Nuevo parámetro
+  final VoidCallback? onTap;
 
   const SettingsTile({
     super.key,
     required this.icon,
     required this.title,
+    this.subtitle,
     this.isSwitch = false,
     this.switchValue = false,
     this.onChanged,
-    this.onTap, // ✅ Agregado al constructor
+    this.onTap,
   });
 
   @override
@@ -33,12 +35,28 @@ class SettingsTile extends StatelessWidget {
           vertical: verticalPadding,
         ),
         leading: Icon(icon, size: iconSize),
-        title: Text(title),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ), //style: Theme.of(context).textTheme.titleSmall),
+        subtitle:
+            subtitle != null
+                ? Text(
+                  subtitle!,
+                  style: TextStyle(
+                    color:
+                        subtitle == "Registered"
+                            ? Colors.teal
+                            : Colors.grey[600],
+                    fontSize: 13,
+                  ),
+                )
+                : null,
         trailing:
             isSwitch
                 ? Switch(value: switchValue, onChanged: onChanged)
                 : Icon(Icons.arrow_forward_ios, size: iconSize * 0.7),
-        onTap: isSwitch ? null : onTap, // ✅ Usar onTap si no es switch
+        onTap: isSwitch ? null : onTap,
       ),
     );
   }
