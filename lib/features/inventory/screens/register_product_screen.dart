@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/controllers/controllers.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
+import 'package:gestion_recetas/features/recipes/screen/register/widgets/images_recipe_picker.dart';
 import 'package:gestion_recetas/utils/constants/categories.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:gestion_recetas/data/services/cloudinary_service.dart';
@@ -29,6 +32,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
   String? _selectedCategory;
   String? _photoPath;
   DateTime? _selectedExpiryDate;
+  String? _imageUrl;
 
   @override
   void initState() {
@@ -132,6 +136,8 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    final color = dark ? Colors.white : CColors.secondaryTextColor;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -147,6 +153,19 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                RecipeImagePicker(
+                  text: 'Imagen del producto *',
+                  text_2: 'Selecciona una imagen para tu producto',
+                  color: color,
+                  onImageUploaded: (url) => _imageUrl = url,
+                ),
+                const SizedBox(width: 8),
+                if (_photoPath != null)
+                  Text(
+                    'Foto seleccionada',
+                    style: const TextStyle(color: Colors.green),
+                  ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(labelText: 'Nombre'),
@@ -177,21 +196,17 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
                           value == null ? 'La categoría es obligatoria' : null,
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _pickPhoto,
-                      child: const Text('Seleccionar Foto'),
-                    ),
-                    const SizedBox(width: 16),
-                    if (_photoPath != null)
-                      Text(
-                        'Foto seleccionada',
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                // RecipeImagePicker(
+                //   color: color,
+                //   onImageUploaded: (url) => _imageUrl = url,
+                // ),
+                // const SizedBox(width: 8),
+                // if (_photoPath != null)
+                //   Text(
+                //     'Foto seleccionada',
+                //     style: const TextStyle(color: Colors.green),
+                //   ),
+                // const SizedBox(height: 16),
                 TextFormField(
                   controller: _gramsController,
                   decoration: const InputDecoration(

@@ -8,11 +8,15 @@ import 'package:image_picker/image_picker.dart';
 class RecipeImagePicker extends StatefulWidget {
   final Color color;
   final Function(String?) onImageUploaded;
+  final String? text;
+  final String? text_2;
 
   const RecipeImagePicker({
     super.key,
     required this.color,
     required this.onImageUploaded,
+    this.text,
+    this.text_2,
   });
 
   @override
@@ -21,6 +25,7 @@ class RecipeImagePicker extends StatefulWidget {
 
 class _RecipeImagePickerState extends State<RecipeImagePicker> {
   String? _uploadedImageUrl;
+  String? text;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -52,14 +57,14 @@ class _RecipeImagePickerState extends State<RecipeImagePicker> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Imagen de la receta *',
+          widget.text ?? 'Imagen de la receta *',
           style: Theme.of(
             context,
           ).textTheme.titleLarge?.copyWith(color: widget.color),
         ),
         const SizedBox(height: 8),
         Text(
-          'Selecciona una imagen para tu receta',
+          widget.text_2 ?? 'Selecciona una imagen para tu receta',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: widget.color.withOpacity(0.6),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/common/widgets/difficulty.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
@@ -555,8 +556,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _horizontalList(List<Map<String, dynamic>> items) {
-    return SizedBox(
-      height: 230,
+    return Container(
+      height: 195,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
@@ -576,90 +577,86 @@ class _HomeScreenRealState extends State<HomeScreen> {
               );
             },
             child: Container(
-              width: 150,
               margin: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                // color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
+                  SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                      child: _loadImage(item['image']),
                     ),
-                    child: _loadImage(item['image']),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 6,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item['title']!,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title']!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.timer,
+                            color: Colors.green.shade700,
+                            size: 14,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.timer,
-                              color: Colors.green.shade700,
-                              size: 14,
+                          const SizedBox(width: 4),
+                          Text(
+                            item['time']!,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: Colors.orange,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            item['rating']!,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            item['nivel']!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: _getDifficultyColor(item['nivel']!),
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              item['time']!,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.orange,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              item['rating']!,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Dificultad: ',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item['nivel']!,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: _getDifficultyColor(item['nivel']!),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+
+                      // Row(
+                      //   children: [
+                      //     const Icon(
+                      //       Icons.star,
+                      //       color: Colors.orange,
+                      //       size: 14,
+                      //     ),
+                      //     const SizedBox(width: 2),
+                      //     Text(
+                      //       item['rating']!,
+                      //       style: const TextStyle(fontSize: 12),
+                      //     ),
+                      //   ],
+                      // ),
+
+                      // DifficultyIndicatorR(level: item['nivel']),
+                    ],
                   ),
                 ],
               ),
