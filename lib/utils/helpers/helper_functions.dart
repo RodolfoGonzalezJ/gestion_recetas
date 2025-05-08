@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class THelperFunctions {
   THelperFunctions._();
@@ -85,5 +87,60 @@ class THelperFunctions {
 
   static double screenWidth(BuildContext context) {
     return MediaQuery.of(Get.context!).size.width;
+  }
+
+  static void showDialogBox(
+    BuildContext context, {
+    required String title,
+    required String content,
+    required VoidCallback onConfirm,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(title, style: Theme.of(context).textTheme.titleLarge!),
+          content: Text(
+            content,
+            style: TextStyle(
+              color: isDark ? CColors.textCategory : CColors.secondaryTextColor,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: isDark ? CColors.light : CColors.primaryTextColor,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirm();
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                ),
+              ),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

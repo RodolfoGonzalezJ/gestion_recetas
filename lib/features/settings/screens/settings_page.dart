@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/auth/screens/login/login.dart';
 import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_section.dart';
@@ -38,14 +39,32 @@ class SettingsPage extends StatelessWidget {
                 avatarUrl: 'https://i.pravatar.cc/150?img=3',
               ),
               const SizedBox(height: 24),
-              const SettingsSection(
+              SettingsSection(
                 title: "Cuenta",
                 tiles: [
-                  SettingsTile(
+                  const SettingsTile(
                     icon: Icons.lock_outline,
                     title: "Contraseña y Seguridad",
                   ),
-                  SettingsTile(icon: Icons.exit_to_app, title: "Cerrar Sesión"),
+                  SettingsTile(
+                    icon: Icons.exit_to_app,
+                    title: "Cerrar Sesión",
+                    onTap: () {
+                      THelperFunctions.showDialogBox(
+                        context,
+                        title: 'Cerrar Sesión',
+                        content: "¿Estás seguro de que quieres cerrar sesión?",
+                        onConfirm: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
               const SizedBox(height: 16),

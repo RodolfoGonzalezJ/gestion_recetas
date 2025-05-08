@@ -6,6 +6,7 @@ class SettingsTile extends StatelessWidget {
   final bool isSwitch;
   final bool switchValue;
   final void Function(bool)? onChanged;
+  final VoidCallback? onTap; // ✅ Nuevo parámetro
 
   const SettingsTile({
     super.key,
@@ -14,6 +15,7 @@ class SettingsTile extends StatelessWidget {
     this.isSwitch = false,
     this.switchValue = false,
     this.onChanged,
+    this.onTap, // ✅ Agregado al constructor
   });
 
   @override
@@ -36,7 +38,7 @@ class SettingsTile extends StatelessWidget {
             isSwitch
                 ? Switch(value: switchValue, onChanged: onChanged)
                 : Icon(Icons.arrow_forward_ios, size: iconSize * 0.7),
-        onTap: isSwitch ? null : () {},
+        onTap: isSwitch ? null : onTap, // ✅ Usar onTap si no es switch
       ),
     );
   }
