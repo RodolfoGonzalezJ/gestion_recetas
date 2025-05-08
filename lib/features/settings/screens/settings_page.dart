@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
-import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/features/settings/screens/password_security/password_security_screen.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_section.dart';

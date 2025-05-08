@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestion_recetas/features/settings/screens/settings_page.dart';
+import 'package:gestion_recetas/features/settings/screens/password_security/password_security_screen.dart';
 
 class ResetPasswordButton extends StatelessWidget {
   final bool enabled;
@@ -25,7 +25,9 @@ class ResetPasswordButton extends StatelessWidget {
                       const SnackBar(content: Text("Contraseña actualizada")),
                     );
                     Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                      MaterialPageRoute(
+                        builder: (_) => const PasswordSecurityScreen(),
+                      ),
                       (route) => false,
                     );
                   }

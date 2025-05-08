@@ -60,7 +60,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             const SizedBox(height: 24),
             PasswordInputField(
               label: "Contraseña",
-              hintText: "Debe tener al menos 8 caracteres.",
+              hintText: "Introduce una contraseña segura.",
               controller: _passwordController,
               onChanged: _onPasswordChanged,
             ),
