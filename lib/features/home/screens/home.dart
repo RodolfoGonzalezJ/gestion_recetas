@@ -125,7 +125,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       FontWeight.w600,
                       onPressed: () {},
                     ),
-                    _card('Recetas', totalRecipes, 140, 93),
+                    _card(
+                      'Recetas',
+                      totalRecipes,
+                      (MediaQuery.of(context).size.width * 0.35),
+                      93,
+                    ),
                   ],
                 ),
                 Column(
@@ -138,8 +143,18 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     Row(
                       children: [
-                        _card('Estado Critico', criticalCount, 106, 93),
-                        _card('Estado Medio', mediumCount, 106, 93),
+                        _card(
+                          'Estado Critico',
+                          criticalCount,
+                          (MediaQuery.of(context).size.width * 0.25),
+                          93,
+                        ),
+                        _card(
+                          'Estado Medio',
+                          mediumCount,
+                          (MediaQuery.of(context).size.width * 0.25),
+                          93,
+                        ),
                       ],
                     ),
                   ],
@@ -168,8 +183,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _filteredRecipes(),
             const SizedBox(height: 16),
             const SizedBox(height: 12),
-            _sectionTitle('Vistas Recientemente', onPressed: () {}),
-            _recentViews(),
+            // _sectionTitle('Vistas Recientemente', onPressed: () {}),
+            // _recentViews(),
             const SizedBox(height: 16),
             _adBanner(),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
@@ -301,7 +316,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
       color: Colors.grey[300],
       child: Center(
         child: Text(
-          '¡SM y PO no an pagado la nomina si no paga el el equipo renuncia!',
+          '¡Anuncioooooooooooo',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
@@ -759,7 +774,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

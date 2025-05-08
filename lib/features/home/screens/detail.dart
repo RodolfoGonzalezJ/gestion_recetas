@@ -487,7 +487,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             allowHalfRating: true,
                             itemCount: 5,
                             itemPadding: const EdgeInsets.symmetric(
-                              horizontal: 2.0,
+                              horizontal: 1.0,
                             ),
                             itemBuilder:
                                 (context, _) =>
