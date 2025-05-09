@@ -11,8 +11,13 @@ class CommentService {
       final collection = MongoDBHelper.db.collection('comments');
       final commentMap = comment.toMap();
 
-      // Obtener el nombre del usuario desde el perfil
-      final userName = _profileController.userProfile.fullName;
+      final userProfile = _profileController.userProfile;
+
+      if (userProfile == null) {
+        throw Exception('Error: No se pudo cargar el perfil del usuario.');
+      }
+
+      final userName = userProfile.fullName;
       commentMap['userName'] = userName;
 
       // Ensure unique ID

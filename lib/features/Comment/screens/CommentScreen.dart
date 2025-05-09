@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
+
 
 class CommentScreen extends StatefulWidget {
   final String recipeId;
@@ -19,6 +21,7 @@ class CommentScreen extends StatefulWidget {
 class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   final RecipeService _recipeService = RecipeService();
+  final ProfileController _profileController = ProfileController(); // Instancia del controlador de perfil
   double _rating = 0.0;
 
   @override
@@ -80,11 +83,23 @@ class _CommentScreenState extends State<CommentScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    final userProfile = _profileController.userProfile;
+
+                    if (userProfile == null) {
+                      // Manejar el caso en el que el perfil del usuario no esté cargado
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Error: No se pudo cargar el perfil del usuario.'),
+                        ),
+                      );
+                      return;
+                    }
+
                     final newComment = Comment(
                       id: '',
-                      recipeId: widget.recipeId, 
-                      userId: 'user123', // Reemplazar con el ID real del usuario
-                      userName: '********', 
+                      recipeId: widget.recipeId,
+                      userId: userProfile.cedula ?? 'Unknown', 
+                      userName: userProfile.fullName, 
                       content: _commentController.text,
                       rating: _rating,
                       createdAt: DateTime.now(),

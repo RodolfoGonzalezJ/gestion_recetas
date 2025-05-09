@@ -6,6 +6,14 @@ import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
 import 'package:gestion_recetas/features/navigation/navigation.dart';
 
 class AuthController {
+  static final AuthController _instance = AuthController._internal();
+
+  factory AuthController() {
+    return _instance;
+  }
+
+  AuthController._internal();
+
   final AuthService _authService = AuthService();
   final UserModel _user = UserModel();
 
@@ -122,38 +130,91 @@ class AuthController {
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
-    final googleUser = await GoogleAuthService.signInWithGoogle();
-    if (googleUser != null) {
-      final email = googleUser.email;
-      final name = googleUser.displayName ?? 'Usuario';
+  final googleUser = await GoogleAuthService.signInWithGoogle();
+  if (googleUser != null) {
+    final email = googleUser.email;
+    final name = googleUser.displayName ?? 'Usuario';
 
-      // Verificar si el usuario ya existe en MongoDB
-      final collection = MongoDBHelper.db.collection('users');
-      final existingUser = await collection.findOne({'correo': email});
+    // Verificar si el usuario ya existe en MongoDB
+    final collection = MongoDBHelper.db.collection('users');
+    final existingUser = await collection.findOne({'correo': email});
 
-      if (existingUser == null) {
-        // Si el usuario no existe, crearlo en MongoDB
-        final newUser = UserModel(nombre: name, correo: email, contrasena: '');
+    if (existingUser == null) {
+      // Si el usuario no existe, crearlo en MongoDB
+      final newUser = UserModel(nombre: name, correo: email, contrasena: '');
+      await collection.insert(newUser.toJson());
+      print('Usuario creado en MongoDB: $name');
 
-        await collection.insert(newUser.toJson());
-        print('Usuario creado en MongoDB: $name');
-      } else {
-        print('Usuario ya existe en MongoDB: $name');
-      }
-
-      // Navegar a la pantalla principal
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavigationScreen()),
-      );
+      // Actualizar el modelo _user con los datos del nuevo usuario
+      _user.nombre = name;
+      _user.correo = email;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al iniciar sesión con Google')),
-      );
+      print('Usuario ya existe en MongoDB: $name');
+
+      // Actualizar el modelo _user con los datos del usuario existente
+      _user.nombre = existingUser['nombre'];
+      _user.apellido = existingUser['apellido'];
+      _user.correo = existingUser['correo'];
+      _user.celular = existingUser['celular'];
+      _user.cedula = existingUser['cedula'];
+      _user.fechaNacimiento = DateTime.parse(existingUser['fechaNacimiento']);
+      _user.pais = existingUser['pais'];
+      _user.departamento = existingUser['departamento'];
+      _user.municipio = existingUser['municipio'];
+      _user.direccion = existingUser['direccion'];
+      _user.barrio = existingUser['barrio'];
+      _user.contrasena = existingUser['contrasena'];
     }
+
+    // Navegar a la pantalla principal
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const NavigationScreen()),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error al iniciar sesión con Google')),
+    );
   }
+}
 
   Future<void> signOut() async {
     await GoogleAuthService.signOut();
     print('Sesión cerrada');
+  }
+
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+  try {
+    final collection = MongoDBHelper.db.collection('users');
+    final user = await collection.findOne({
+      'correo': email,
+      'contrasena': password, // Asegúrate de cifrar las contraseñas en la base de datos
+    });
+
+    if (user != null) {
+      print('Usuario autenticado: ${user['nombre']}');
+      
+      // Actualizar el modelo _user con los datos del usuario autenticado
+      _user.nombre = user['nombre'];
+      _user.apellido = user['apellido'];
+      _user.correo = user['correo'];
+      _user.celular = user['celular'];
+      _user.cedula = user['cedula'];
+      _user.fechaNacimiento = DateTime.parse(user['fechaNacimiento']);
+      _user.pais = user['pais'];
+      _user.departamento = user['departamento'];
+      _user.municipio = user['municipio'];
+      _user.direccion = user['direccion'];
+      _user.barrio = user['barrio'];
+      _user.contrasena = user['contrasena'];
+      print('Correo asignado al modelo _user: ${_user.correo}');
+      return true;
+    } else {
+      print('Credenciales incorrectas');
+      return false;
+    }
+  } catch (e) {
+    print('Error al autenticar usuario: $e');
+    return false;
+  }
   }
 }

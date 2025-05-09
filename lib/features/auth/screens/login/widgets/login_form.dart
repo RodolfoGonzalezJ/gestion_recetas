@@ -45,25 +45,20 @@ class _LoginFormState extends State<LoginForm> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final authService = AuthService();
-      final success = await authService.authenticateUser(
-        _emailController.text,
-        _passwordController.text,
-      );
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      final success = await _authController.signInWithEmailAndPassword(email, password);
 
       if (success) {
-        if (_rememberMe) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('email', _emailController.text);
-          await prefs.setString('password', _passwordController.text);
+        // Asegúrate de que los datos del usuario estén disponibles antes de navegar
+        if (_authController.user.correo != null && _authController.user.correo!.isNotEmpty) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const NavigationScreen()),
+          );
+        } else {
+          print('Error: El correo del usuario no está disponible después del inicio de sesión.');
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inicio de sesión exitoso')),
-        );
-        // Navegar a la pantalla principal
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const NavigationScreen()),
-        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Correo o contraseña incorrectos')),

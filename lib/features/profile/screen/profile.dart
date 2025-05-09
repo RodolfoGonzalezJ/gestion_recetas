@@ -1,5 +1,6 @@
 // lib/features/profile/screen/profile.dart
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/features/profile/screen/edit_profile.dart';
@@ -26,14 +27,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _ctrl = ProfileController(); // Instancia sin GetX
+    _ctrl = ProfileController();
+    _loadUserData(); // Instancia sin GetX
   }
+
+  Future<void> _loadUserData() async {
+  final email = AuthController().user.correo;
+  if (email == null || email.isEmpty) {
+    print('El correo del usuario está vacío. No se puede cargar el perfil.');
+    return;
+  }
+  print('Correo obtenido del AuthController: $email');
+  await _ctrl.loadUserProfile(email);
+  setState(() {});
+}
 
   @override
   Widget build(BuildContext context) {
-    final UserProfile userProfile = _ctrl.userProfile;
     final theme = Theme.of(context);
     final isDark = THelperFunctions.isDarkMode(context);
+
+    if (_ctrl.userProfile == null) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Perfil', style: theme.textTheme.titleLarge),
+            backgroundColor: isDark ? CColors.dark : CColors.light,
+          ),
+          body: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      final UserProfile userProfile = _ctrl.userProfile!;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -48,19 +75,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                ProfileHeader(
-                  user: userProfile,
-                  onEdit: () {
-                    THelperFunctions.navigateToScreen(
-                      context,
-                      EditProfileScreen(user: userProfile),
-                    );
-                  },
-                ),
-              ],
+            ProfileHeader(
+              user: userProfile,
+              onEdit: () {
+                THelperFunctions.navigateToScreen(
+                  context,
+                  EditProfileScreen(user: userProfile),
+                );
+              },
             ),
             const SizedBox(height: 90),
             ProfileStats(user: userProfile),
