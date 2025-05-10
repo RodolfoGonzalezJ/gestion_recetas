@@ -5,9 +5,9 @@ import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserProfile user;
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit;
 
-  const ProfileHeader({super.key, required this.user, required this.onEdit});
+  const ProfileHeader({super.key, required this.user, this.onEdit});
 
   @override
   Widget build(BuildContext context) {
