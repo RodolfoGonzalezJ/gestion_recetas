@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:gestion_recetas/features/Comment/controllers/controllers.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/theme_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:gestion_recetas/providers/data_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => CommentController()),
         ChangeNotifierProvider(create: (_) => ThemeNotifier()), // <- Agregado
+        ChangeNotifierProvider(create: (context) => DataProvider()),
       ],
       child: const App(),
     ),

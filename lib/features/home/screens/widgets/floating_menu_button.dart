@@ -8,7 +8,9 @@ import 'blurred_background.dart';
 import 'animated_action_item.dart';
 
 class FloatingMenuButton extends StatefulWidget {
-  const FloatingMenuButton({super.key});
+  final VoidCallback? onRefresh;
+
+  const FloatingMenuButton({super.key, this.onRefresh});
 
   @override
   State<FloatingMenuButton> createState() => _FloatingMenuButtonState();
@@ -79,7 +81,10 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
               ),
               const SizedBox(height: 12),
               FloatingActionButton(
-                onPressed: toggleMenu,
+                onPressed: () {
+                  toggleMenu();
+                  widget.onRefresh?.call();
+                },
                 backgroundColor: backgroundColor,
                 child: Icon(isOpen ? Icons.close : Icons.add, color: iconColor),
               ),

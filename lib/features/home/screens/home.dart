@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/providers/data_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:gestion_recetas/common/widgets/difficulty.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
-import 'package:gestion_recetas/features/Comment/screens/CommentScreen.dart';
-import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
-import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
-import 'package:gestion_recetas/features/Comment/service/comment_service.dart';
 import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
@@ -19,58 +17,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenRealState extends State<HomeScreen> {
-  final InventoryService _inventoryService = InventoryService();
-  final RecipeService _recipeService = RecipeService();
-  final CommentService _commentService = CommentService();
-  int totalRecipes = 0;
-  String selectedRecipeCategory = 'Todos';
-  String searchQuery = '';
-  int criticalCount = 0;
-  int mediumCount = 0;
+  String searchQuery = ''; // Define searchQuery
+  String selectedRecipeCategory = 'Todos'; // Define selectedRecipeCategory
 
   @override
   void initState() {
     super.initState();
-    _fetchTotalRecipes();
-    _fetchInventoryCounts();
-  }
-
-  Future<void> _fetchTotalRecipes() async {
-    try {
-      final count = await _recipeService.getTotalRecipes();
-      setState(() {
-        totalRecipes = count;
-      });
-    } catch (e) {
-      print('Error fetching total recipes: $e');
-    }
-  }
-
-  Future<void> _fetchInventoryCounts() async {
-    try {
-      final products = await _inventoryService.fetchProducts();
-      final now = DateTime.now();
-
-      setState(() {
-        criticalCount =
-            products.where((product) {
-              final daysToExpire = product.expiryDate.difference(now).inDays;
-              return daysToExpire >= 0 && daysToExpire <= 5;
-            }).length;
-
-        mediumCount =
-            products.where((product) {
-              final daysToExpire = product.expiryDate.difference(now).inDays;
-              return daysToExpire >= 6 && daysToExpire <= 10;
-            }).length;
-      });
-    } catch (e) {
-      print('Error fetching inventory counts: $e');
-    }
+    final dataProvider = Provider.of<DataProvider>(context, listen: false);
+    dataProvider.loadRecipes();
+    dataProvider.loadProducts();
   }
 
   @override
   Widget build(BuildContext context) {
+    final dataProvider = Provider.of<DataProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -128,7 +89,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     _card(
                       'Recetas',
-                      totalRecipes,
+                      dataProvider.totalRecipes,
                       (MediaQuery.of(context).size.width * 0.35),
                       93,
                     ),
@@ -146,13 +107,13 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       children: [
                         _card(
                           'Estado Critico',
-                          criticalCount,
+                          dataProvider.criticalCount,
                           (MediaQuery.of(context).size.width * 0.25),
                           93,
                         ),
                         _card(
                           'Estado Medio',
-                          mediumCount,
+                          dataProvider.mediumCount,
                           (MediaQuery.of(context).size.width * 0.25),
                           93,
                         ),
@@ -170,7 +131,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
               onPressed: () {},
             ),
             const SizedBox(height: 16),
-            _expiringSoon(),
+            _expiringSoon(dataProvider.products),
             const SizedBox(height: 16),
             _sectionTitleWithoutSeeMore(
               'Categorias',
@@ -181,25 +142,27 @@ class _HomeScreenRealState extends State<HomeScreen> {
             const SizedBox(height: 16),
             _categories(),
             const SizedBox(height: 16),
-            _filteredRecipes(),
-            const SizedBox(height: 16),
-            const SizedBox(height: 12),
-            // _sectionTitle('Vistas Recientemente', onPressed: () {}),
-            // _recentViews(),
+            _sectionTitle('Mis recetas 🔥', onPressed: () {}),
+            _trendingItems(dataProvider.recipes),
             const SizedBox(height: 16),
             _adBanner(),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
-            _recommendedItems(),
+            _recommendedItems(dataProvider.recipes),
             const SizedBox(height: 16),
             _sectionTitle('En tendencias 🔥', onPressed: () {}),
-            _trendingItems(),
+            _trendingItems(dataProvider.recipes),
             const SizedBox(height: 16),
             _sectionTitle('Recetas de la semana', onPressed: () {}),
-            _weeklyRecipes(),
+            _weeklyRecipes(dataProvider.recipes),
           ],
         ),
       ),
-      floatingActionButton: const FloatingMenuButton(),
+      floatingActionButton: FloatingMenuButton(
+        onRefresh: () {
+          dataProvider.loadRecipes();
+          dataProvider.loadProducts();
+        },
+      ),
     );
   }
 
@@ -242,42 +205,28 @@ class _HomeScreenRealState extends State<HomeScreen> {
     );
   }
 
-  Widget _filteredRecipes() {
-    return FutureBuilder(
-      future: _recipeService.fetchRecipes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar recetas.'));
-        }
-        final items = snapshot.data ?? [];
-        final filteredItems =
-            items
-                .where(
-                  (recipe) =>
-                      (selectedRecipeCategory == 'Todos' ||
-                          recipe.category == selectedRecipeCategory) &&
-                      recipe.name.toLowerCase().contains(
-                        searchQuery.toLowerCase(),
-                      ),
-                )
-                .toList();
+  Widget _filteredRecipes(List<dynamic> recipes) {
+    final filteredItems =
+        recipes
+            .where(
+              (recipe) =>
+                  (selectedRecipeCategory == 'Todos' ||
+                      recipe.category == selectedRecipeCategory) &&
+                  recipe.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
 
-        return _horizontalList(
-          filteredItems.map((recipe) {
-            return {
-              'id': recipe.id,
-              'title': recipe.name,
-              'time': '${recipe.preparationTime.inMinutes} min',
-              'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(1),
-              'nivel': recipe.difficulty,
-            };
-          }).toList(),
-        );
-      },
+    return _horizontalList(
+      filteredItems.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
     );
   }
 
@@ -324,160 +273,69 @@ class _HomeScreenRealState extends State<HomeScreen> {
     );
   }
 
-  Widget _recommendedItems() {
-    return FutureBuilder(
-      future: _recipeService.fetchRecipes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar recetas.'));
-        }
-        final items = snapshot.data ?? [];
-        final filteredItems =
-            selectedRecipeCategory == 'Todos'
-                ? items
-                : items
-                    .where(
-                      (recipe) => recipe.category == selectedRecipeCategory,
-                    )
-                    .toList();
+  Widget _recommendedItems(List<dynamic> recipes) {
+    final filteredItems =
+        recipes.where((recipe) {
+          return selectedRecipeCategory == 'Todos' ||
+              recipe.category == selectedRecipeCategory;
+        }).toList();
 
-        return _horizontalList(
-          filteredItems.map((recipe) {
-            return {
-              'id': recipe.id,
-              'title': recipe.name,
-              'time': '${recipe.preparationTime.inMinutes} min',
-              'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(1),
-              'nivel': recipe.difficulty,
-            };
-          }).toList(),
-        );
-      },
+    return _horizontalList(
+      filteredItems.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
     );
   }
 
-  Widget _trendingItems() {
-    return FutureBuilder(
-      future: _recipeService.fetchRecipes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar recetas.'));
-        }
-        final items = snapshot.data ?? [];
-        final filteredItems =
-            selectedRecipeCategory == 'Todos'
-                ? items
-                : items
-                    .where(
-                      (recipe) => recipe.category == selectedRecipeCategory,
-                    )
-                    .toList();
-
-        return _horizontalList(
-          filteredItems.map((recipe) {
-            return {
-              'id': recipe.id,
-              'title': recipe.name,
-              'time': '${recipe.preparationTime.inMinutes} min',
-              'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(1),
-              'nivel': recipe.difficulty,
-            };
-          }).toList(),
-        );
-      },
-    );
+  Widget _trendingItems(List<dynamic> recipes) {
+    // Use cached recipes for trending items
+    return _recommendedItems(recipes);
   }
 
-  Widget _weeklyRecipes() {
-    return FutureBuilder(
-      future: _recipeService.fetchRecipes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar recetas.'));
-        }
-        final items = snapshot.data ?? [];
-        final filteredItems =
-            selectedRecipeCategory == 'Todos'
-                ? items
-                : items
-                    .where(
-                      (recipe) => recipe.category == selectedRecipeCategory,
-                    )
-                    .toList();
-
-        return _horizontalList(
-          filteredItems.map((recipe) {
-            return {
-              'id': recipe.id,
-              'title': recipe.name,
-              'time': '${recipe.preparationTime.inMinutes} min',
-              'image': recipe.imageUrl ?? 'assets/images/default.png',
-              'rating': recipe.averageRating.toStringAsFixed(1),
-              'nivel': recipe.difficulty,
-            };
-          }).toList(),
-        );
-      },
-    );
+  Widget _weeklyRecipes(List<dynamic> recipes) {
+    // Use cached recipes for weekly items
+    return _recommendedItems(recipes);
   }
 
-  Widget _expiringSoon() {
-    return FutureBuilder(
-      future: _inventoryService.fetchProducts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar productos.'));
-        }
-        final items = snapshot.data ?? [];
-        final filteredItems =
-            items
-                .where(
-                  (product) => product.name.toLowerCase().contains(
-                    searchQuery.toLowerCase(),
-                  ),
-                )
-                .toList();
+  Widget _expiringSoon(List<dynamic> products) {
+    final filteredItems =
+        products
+            .where(
+              (product) => product.name.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              ),
+            )
+            .toList();
 
-        filteredItems.sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
+    filteredItems.sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
 
-        return _horizontalListProducts(
-          filteredItems.map((product) {
-            final daysToExpire =
-                product.expiryDate.difference(DateTime.now()).inDays;
-            final status =
-                daysToExpire < 0
-                    ? 'Vencido'
-                    : daysToExpire == 0
-                    ? 'Hoy'
-                    : 'Expira en $daysToExpire días';
-            final quantityStatus =
-                product.quantity == 0
-                    ? 'Agotado'
-                    : 'Cantidad: ${product.quantity}';
+    return _horizontalListProducts(
+      filteredItems.map((product) {
+        final daysToExpire =
+            product.expiryDate.difference(DateTime.now()).inDays;
+        final status =
+            daysToExpire < 0
+                ? 'Vencido'
+                : daysToExpire == 0
+                ? 'Hoy'
+                : 'Expira en $daysToExpire días';
+        final quantityStatus =
+            product.quantity == 0 ? 'Agotado' : 'Cantidad: ${product.quantity}';
 
-            return {
-              'title': product.name,
-              'image': product.photoUrl ?? 'assets/images/default.png',
-              'cantidad': quantityStatus,
-              'expira': status,
-            };
-          }).toList(),
-        );
-      },
+        return {
+          'title': product.name,
+          'image': product.photoUrl ?? 'assets/images/default.png',
+          'cantidad': quantityStatus,
+          'expira': status,
+        };
+      }).toList(),
     );
   }
 
@@ -490,6 +348,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         itemBuilder: (context, index) {
           final item = items[index];
+          final statusColor = _getExpirationColor(item['expira']!);
+
           return Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -519,14 +379,14 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade100,
+                      color: statusColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       item['expira']!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Colors.red,
+                        color: statusColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -553,6 +413,17 @@ class _HomeScreenRealState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  Color _getExpirationColor(String status) {
+    if (status.contains('Vencido')) {
+      return Colors.red;
+    } else if (status.contains('Hoy')) {
+      return Colors.orange;
+    } else if (status.contains('Expira en')) {
+      return Colors.green;
+    }
+    return Colors.grey;
   }
 
   Widget _horizontalList(List<Map<String, dynamic>> items) {
