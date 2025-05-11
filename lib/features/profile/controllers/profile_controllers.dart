@@ -14,37 +14,19 @@ class ProfileController {
     }
 
     try {
-      print('Buscando datos para el correo: $email');
       final collection = MongoDBHelper.db.collection('users');
-
-      // Validar el correo
-      email = email.trim().toLowerCase();
-
-      // Depurar: listar todos los usuarios
-      final allUsers = await collection.find().toList();
-      print('Usuarios en la base de datos: $allUsers');
-
       final userData = await collection.findOne({'correo': email});
 
-      if (userData != null && userData['fechaNacimiento'] != null) {
-        final fechaNacimiento = DateTime.parse(userData['fechaNacimiento']);
-        if (fechaNacimiento.isAfter(DateTime.now())) {
-          print('Error: La fecha de nacimiento no puede estar en el futuro.');
-          return;
-        }
-      } else {
-        print('Error: Datos de usuario o fecha de nacimiento no disponibles.');
-        return;
-      }
-
       if (userData != null) {
-        print('Datos encontrados: $userData');
         userProfile = UserProfile(
           nombre: userData['nombre'] ?? 'Nombre no disponible',
           apellido: userData['apellido'] ?? '',
           celular: userData['celular'] ?? '',
           cedula: userData['cedula'] ?? '',
-          fechaNacimiento: DateTime.parse(userData['fechaNacimiento']),
+          fechaNacimiento:
+              userData['fechaNacimiento'] != null
+                  ? DateTime.parse(userData['fechaNacimiento'])
+                  : null,
           correo: userData['correo'] ?? '',
           pais: userData['pais'] ?? '',
           departamento: userData['departamento'] ?? '',
@@ -54,7 +36,9 @@ class ProfileController {
           contrasena: userData['contrasena'] ?? '',
           username: userData['correo'] ?? 'Usuario',
           bio: userData['bio'] ?? 'Sin biografía',
-          avatarUrl: userData['avatarUrl'] ?? 'assets/icons/avatar.png',
+          avatarUrl:
+              userData['avatarUrl'] ??
+              'assets/icons/avatar.png', 
           recetas: userData['recetas'] ?? 0,
           vistas: userData['vistas'] ?? 0,
           seguidores: userData['seguidores'] ?? 0,
@@ -65,6 +49,21 @@ class ProfileController {
       }
     } catch (e) {
       print('Error al cargar el perfil del usuario: $e');
+    }
+  }
+
+  /// Guarda los datos actualizados del usuario en la base de datos
+  Future<bool> saveUserProfile(UserModel updatedUser) async {
+    try {
+      final collection = MongoDBHelper.db.collection('users');
+      await collection.updateOne(
+        {'correo': updatedUser.correo},
+        {'\$set': updatedUser.toJson()},
+      );
+      return true;
+    } catch (e) {
+      print('Error al guardar el perfil del usuario: $e');
+      return false;
     }
   }
 }

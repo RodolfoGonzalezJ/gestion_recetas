@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:gestion_recetas/data/services/cloudinary_service.dart';
 import 'package:gestion_recetas/features/auth/models/models.dart';
+import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/edit/document_details_section.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/edit/profile_avatar_section.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/edit/profile_form_section.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/edit/save_changes_button.dart';
+import 'package:gestion_recetas/features/profile/screen/widgets/edit/label_text_field.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -16,12 +23,20 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final ProfileController _profileController = ProfileController();
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _idController;
+  late TextEditingController _bioController;
+  late TextEditingController _countryController;
+  late TextEditingController _stateController;
+  late TextEditingController _cityController;
+  late TextEditingController _addressController;
+  late TextEditingController _neighborhoodController;
   DateTime? _birthDate;
+  File? _profileImage;
 
   @override
   void initState() {
@@ -31,6 +46,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController = TextEditingController(text: widget.user.correo);
     _phoneController = TextEditingController(text: widget.user.celular);
     _idController = TextEditingController(text: widget.user.cedula);
+    _bioController = TextEditingController(
+      text: widget.user.bio ?? 'Sin biografía', 
+    );
+    _countryController = TextEditingController(text: widget.user.pais);
+    _stateController = TextEditingController(text: widget.user.departamento);
+    _cityController = TextEditingController(text: widget.user.municipio);
+    _addressController = TextEditingController(text: widget.user.direccion);
+    _neighborhoodController = TextEditingController(text: widget.user.barrio);
     _birthDate = widget.user.fechaNacimiento;
   }
 
@@ -41,6 +64,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _idController.dispose();
+    _bioController.dispose();
+    _countryController.dispose();
+    _stateController.dispose();
+    _cityController.dispose();
+    _addressController.dispose();
+    _neighborhoodController.dispose();
     super.dispose();
   }
 
@@ -62,8 +91,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (picked != null) setState(() => _birthDate = picked);
   }
 
-  void _saveChanges() {
-    // TODO: validar y enviar los cambios usando tu AuthService
+  Future<void> _pickProfileImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _saveChanges() async {
+    String? profileImageUrl;
+    if (_profileImage != null) {
+      profileImageUrl = await CloudinaryService().uploadImage(_profileImage!);
+    }
+
+    final updatedUser = widget.user.copyWith(
+      nombre: _firstNameController.text,
+      apellido: _lastNameController.text,
+      correo: _emailController.text,
+      celular: _phoneController.text,
+      cedula: _idController.text,
+      bio: _bioController.text,
+      pais: _countryController.text,
+      departamento: _stateController.text,
+      municipio: _cityController.text,
+      direccion: _addressController.text,
+      barrio: _neighborhoodController.text,
+      fechaNacimiento: _birthDate,
+      avatarUrl: profileImageUrl ?? widget.user.avatarUrl,
+    );
+
+    final success = await _profileController.saveUserProfile(updatedUser);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Perfil actualizado con éxito')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al actualizar el perfil')),
+      );
+    }
   }
 
   @override
@@ -84,9 +153,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProfileAvatarSection(
-              onTap: () {
-                /* TODO: pick image */
-              },
+              onTap: _pickProfileImage,
+              imageUrl:
+                  _profileImage != null
+                      ? _profileImage!.path
+                      : widget.user.avatarUrl ?? 'assets/icons/avatar.png',
             ),
             const SizedBox(height: 24),
             const Text(
@@ -104,7 +175,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onBirthDateTap: _pickBirthDate,
             ),
             const SizedBox(height: 24),
-            const SizedBox(height: 12),
+            LabeledTextField(label: 'Biografía', controller: _bioController),
+            LabeledTextField(label: 'País', controller: _countryController),
+            LabeledTextField(
+              label: 'Departamento',
+              controller: _stateController,
+            ),
+            LabeledTextField(label: 'Municipio', controller: _cityController),
+            LabeledTextField(
+              label: 'Dirección',
+              controller: _addressController,
+            ),
+            LabeledTextField(
+              label: 'Barrio',
+              controller: _neighborhoodController,
+            ),
             const SizedBox(height: 32),
             SaveChangesButton(onPressed: _saveChanges),
           ],

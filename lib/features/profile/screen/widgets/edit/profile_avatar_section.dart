@@ -1,9 +1,16 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 
 class ProfileAvatarSection extends StatelessWidget {
   final VoidCallback onTap;
-  const ProfileAvatarSection({Key? key, required this.onTap}) : super(key: key);
+  final String imageUrl;
+
+  const ProfileAvatarSection({
+    Key? key,
+    required this.onTap,
+    required this.imageUrl,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +19,11 @@ class ProfileAvatarSection extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage: AssetImage('assets/icons/avatar.png'),
+            backgroundImage:
+                imageUrl.startsWith('http') || imageUrl.startsWith('assets')
+                    ? NetworkImage(imageUrl) as ImageProvider
+                    : FileImage(File(imageUrl)),
+            backgroundColor: Colors.grey[200],
           ),
           Positioned(
             bottom: 0,

@@ -32,15 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUserData() async {
-  final email = AuthController().user.correo;
-  if (email == null || email.isEmpty) {
-    print('El correo del usuario está vacío. No se puede cargar el perfil.');
-    return;
+    final email = AuthController().user.correo;
+    if (email == null || email.isEmpty) {
+      print('El correo del usuario está vacío. No se puede cargar el perfil.');
+      return;
+    }
+    print('Correo obtenido del AuthController: $email');
+    await _ctrl.loadUserProfile(email);
+    setState(() {});
   }
-  print('Correo obtenido del AuthController: $email');
-  await _ctrl.loadUserProfile(email);
-  setState(() {});
-}
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +48,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = THelperFunctions.isDarkMode(context);
 
     if (_ctrl.userProfile == null) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Perfil', style: theme.textTheme.titleLarge),
-            backgroundColor: isDark ? CColors.dark : CColors.light,
-          ),
-          body: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Perfil', style: theme.textTheme.titleLarge),
+          backgroundColor: isDark ? CColors.dark : CColors.light,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
-      final UserProfile userProfile = _ctrl.userProfile!;
-
+    final UserProfile userProfile = _ctrl.userProfile!;
 
     return Scaffold(
       appBar: AppBar(

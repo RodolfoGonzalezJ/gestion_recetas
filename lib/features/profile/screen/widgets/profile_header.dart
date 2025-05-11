@@ -80,7 +80,11 @@ class ProfileHeader extends StatelessWidget {
           top: 40,
           child: CircleAvatar(
             radius: 45,
-            backgroundImage: AssetImage(user.avatarUrl),
+            backgroundImage:
+                user.avatarUrl.startsWith('http') ||
+                        user.avatarUrl.startsWith('assets')
+                    ? NetworkImage(user.avatarUrl) as ImageProvider
+                    : AssetImage('assets/icons/avatar.png'),
             backgroundColor: Colors.white,
           ),
         ),
