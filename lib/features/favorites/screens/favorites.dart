@@ -1,71 +1,124 @@
 import 'package:flutter/material.dart';
 
-class FavoritesScreen extends StatefulWidget {
-  const FavoritesScreen({super.key});
-
-  @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
-}
-
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  final List<Map<String, dynamic>> favoriteItems = [
+class CollectionScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> categories = [
     {
-      'title': 'Tabulé de huevos con brócoli',
-      'description': 'Lorem ipsum dolor sit amet...',
-      'image': 'assets/images/1.png',
-      'isFavorite': true,
+      'title': 'Tus colecciones',
+      'items': [
+        {'image': 'assets/images/brocoli.png', 'label': 'Ver más'},
+        {'image': 'assets/images/buñueloAsado.png', 'label': '30+ Recetas'},
+      ],
     },
     {
-      'title': 'Sartenada de huevos con tomate',
-      'description': 'Lorem ipsum dolor sit amet...',
-      'image': 'assets/images/2.png',
-      'isFavorite': true,
+      'title': 'Desayunos',
+      'items': [
+        {'image': 'assets/images/EspaguetiAglio.png', 'label': 'Ver más'},
+        {
+          'image': 'assets/images/hamburguesaMelosa.png',
+          'label': '30+ Recetas',
+        },
+      ],
     },
     {
-      'title': 'Pollo Cajún',
-      'description': 'Lorem ipsum dolor sit amet...',
-      'image': 'assets/images/3.png',
-      'isFavorite': true,
+      'title': 'Saludables',
+      'items': [
+        {'image': 'assets/images/lecheCondensada.png', 'label': 'Ver más'},
+        {'image': 'assets/images/moteDeQueso.png', 'label': '30+ Recetas'},
+      ],
     },
     {
-      'title': 'Sandwich de Atún',
-      'description': 'Lorem ipsum dolor sit amet...',
-      'image': 'assets/images/4.png',
-      'isFavorite': true,
+      'title': 'Comidas Rápidas',
+      'items': [
+        {'image': 'assets/images/pastaAlemanItalia.png', 'label': 'Ver más'},
+        {'image': 'assets/images/salchipapaCasera.png', 'label': '30+ Recetas'},
+      ],
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mis Recetas')),
+      appBar: AppBar(
+        title: const Text('Colecciones'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        centerTitle: false,
+      ),
       body: ListView.builder(
-        itemCount: favoriteItems.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final item = favoriteItems[index];
-          return Card(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              leading: Image.asset(
-                item['image']!,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
-              title: Text(item['title']!),
-              subtitle: Text(item['description']!),
-              trailing: IconButton(
-                icon: Icon(
-                  item['isFavorite'] ? Icons.favorite : Icons.favorite_border,
-                  color: item['isFavorite'] ? Colors.red : Colors.grey,
+          final category = categories[index];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      category['title'],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      'Ver más',
+                      style: TextStyle(color: Colors.green),
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  setState(() {
-                    item['isFavorite'] = !item['isFavorite'];
-                  });
-                },
-                visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-              ),
+                const SizedBox(height: 8),
+                GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 2.0,
+                  ),
+                  itemCount: category['items'].length,
+                  itemBuilder: (context, itemIndex) {
+                    final item = category['items'][itemIndex];
+                    return Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            item['image'],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 10,
+                          left: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              item['label'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
           );
         },

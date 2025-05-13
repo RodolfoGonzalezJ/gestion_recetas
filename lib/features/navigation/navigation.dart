@@ -20,7 +20,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const InventoryScreen(),
-    const FavoritesScreen(),
+    CollectionScreen(),
     SettingsPage(), // Aquí usamos la SettingsPage real
   ];
 
