@@ -4,7 +4,8 @@ import 'package:gestion_recetas/features/profile/controllers/profile_controllers
 import 'package:uuid/uuid.dart';
 
 class CommentService {
-  final ProfileController _profileController = ProfileController(); // Instancia del controlador de perfil
+  final ProfileController _profileController =
+      ProfileController(); // Instancia del controlador de perfil
 
   Future<void> addComment(Comment comment) async {
     try {
@@ -13,12 +14,12 @@ class CommentService {
 
       final userProfile = _profileController.userProfile;
 
-      if (userProfile == null) {
-        throw Exception('Error: No se pudo cargar el perfil del usuario.');
-      }
+      // Fallback for missing user profile
+      final userName = userProfile?.fullName ?? 'Usuario Anónimo';
+      final userId = userProfile?.cedula ?? 'unknown_user';
 
-      final userName = userProfile.fullName;
       commentMap['userName'] = userName;
+      commentMap['userId'] = userId;
 
       // Ensure unique ID
       if (commentMap['_id'] == null || commentMap['_id'].isEmpty) {
@@ -28,11 +29,6 @@ class CommentService {
       // Ensure the comment is tied to a recipe
       if (commentMap['recipeId'] == null || commentMap['recipeId'].isEmpty) {
         throw Exception('El comentario debe estar asociado a una receta.');
-      }
-
-      // Ensure the comment includes a user name
-      if (commentMap['userName'] == null || commentMap['userName'].isEmpty) {
-        throw Exception('El comentario debe incluir el nombre del usuario.');
       }
 
       await collection.insert(commentMap);

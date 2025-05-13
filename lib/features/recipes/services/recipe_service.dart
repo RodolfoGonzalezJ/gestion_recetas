@@ -112,7 +112,7 @@ class RecipeService {
       print('Comentario agregado y rating actualizado.');
     } catch (e) {
       print('Error al agregar comentario a la receta: $e');
-      rethrow;
+    rethrow;
     }
   }
 

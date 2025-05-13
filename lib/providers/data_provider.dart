@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/auth/models/models.dart';
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/data/services/auth_service.dart';
 
 class DataProvider with ChangeNotifier {
   final InventoryService _inventoryService = InventoryService();
   final RecipeService _recipeService = RecipeService();
+  final AuthService _authService = AuthService();
 
   List<dynamic> _recipes = [];
   List<dynamic> _products = [];
+  List<UserModel> _users = [];
   int _totalRecipes = 0;
   int _criticalCount = 0;
   int _mediumCount = 0;
 
   List<dynamic> get recipes => _recipes;
   List<dynamic> get products => _products;
+  List<UserModel> get users => _users;
   int get totalRecipes => _totalRecipes;
   int get criticalCount => _criticalCount;
   int get mediumCount => _mediumCount;
@@ -42,12 +47,22 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadUsers() async {
+    try {
+      final usersData = await _authService.fetchAllUsers();
+      _users = usersData.map((data) => UserModel.fromJson(data)).toList();
+      notifyListeners();
+    } catch (e) {
+      print('Error loading users: $e');
+    }
+  }
+
   Future<void> addOrUpdateRecipe(dynamic newRecipe) async {
     final index = _recipes.indexWhere((recipe) => recipe.id == newRecipe.id);
     if (index != -1) {
       _recipes[index] = newRecipe;
     } else {
-      _recipes.add(newRecipe); 
+      _recipes.add(newRecipe);
     }
     notifyListeners();
   }
@@ -59,7 +74,7 @@ class DataProvider with ChangeNotifier {
     if (index != -1) {
       _products[index] = newProduct;
     } else {
-      _products.add(newProduct); 
+      _products.add(newProduct);
     }
     notifyListeners();
   }

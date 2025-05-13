@@ -3,7 +3,6 @@ import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 
-
 class CommentScreen extends StatefulWidget {
   final String recipeId;
   final List<Comment> comments;
@@ -21,7 +20,8 @@ class CommentScreen extends StatefulWidget {
 class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   final RecipeService _recipeService = RecipeService();
-  final ProfileController _profileController = ProfileController(); // Instancia del controlador de perfil
+  final ProfileController _profileController =
+      ProfileController(); // Instancia del controlador de perfil
   double _rating = 0.0;
 
   @override
@@ -84,37 +84,36 @@ class _CommentScreenState extends State<CommentScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     final userProfile = _profileController.userProfile;
-
-                    if (userProfile == null) {
-                      // Manejar el caso en el que el perfil del usuario no esté cargado
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Error: No se pudo cargar el perfil del usuario.'),
-                        ),
-                      );
-                      return;
-                    }
-
+                    final userName = userProfile?.fullName ?? 'Usuario Anónimo';
+                    final userId = userProfile?.fullName ?? 'unknown_user';
                     final newComment = Comment(
                       id: '',
                       recipeId: widget.recipeId,
-                      userId: userProfile.cedula ?? 'Unknown', 
-                      userName: userProfile.fullName, 
+                      userId: userId,
+                      userName: userName,
                       content: _commentController.text,
                       rating: _rating,
                       createdAt: DateTime.now(),
                     );
 
-                    await _recipeService.addCommentToRecipe(
-                      widget.recipeId,
-                      newComment,
-                    );
+                    try {
+                      await _recipeService.addCommentToRecipe(
+                        widget.recipeId,
+                        newComment,
+                      );
 
-                    setState(() {
-                      widget.comments.add(newComment);
-                      _commentController.clear();
-                      _rating = 0.0;
-                    });
+                      setState(() {
+                        widget.comments.add(newComment);
+                        _commentController.clear();
+                        _rating = 0.0;
+                      });
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error al agregar el comentario: $e'),
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Añadir'),
                 ),

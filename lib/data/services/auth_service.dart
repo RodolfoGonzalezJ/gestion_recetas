@@ -88,4 +88,15 @@ El equipo de Gestion Recetas
       return false;
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchAllUsers() async {
+    try {
+      final collection = MongoDBHelper.db.collection('users');
+      final users = await collection.find().toList();
+      return users;
+    } catch (e) {
+      print('Error fetching users: $e');
+      rethrow;
+    }
+  }
 }

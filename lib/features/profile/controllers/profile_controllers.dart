@@ -3,7 +3,6 @@ import 'package:gestion_recetas/features/profile/models/user_profile_model.dart'
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
 
 class ProfileController {
-  UserModel? userModel;
   UserProfile? userProfile;
 
   /// Carga los datos del usuario desde la base de datos
@@ -36,9 +35,7 @@ class ProfileController {
           contrasena: userData['contrasena'] ?? '',
           username: userData['correo'] ?? 'Usuario',
           bio: userData['bio'] ?? 'Sin biografía',
-          avatarUrl:
-              userData['avatarUrl'] ??
-              'assets/icons/avatar.png', 
+          avatarUrl: userData['avatarUrl'] ?? 'assets/icons/avatar.png',
           recetas: userData['recetas'] ?? 0,
           vistas: userData['vistas'] ?? 0,
           seguidores: userData['seguidores'] ?? 0,
