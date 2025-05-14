@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:gestion_recetas/common/widgets/difficulty.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
@@ -64,7 +63,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                      padding: EdgeInsets.symmetric(horizontal: 9.0),
                       child: Icon(Icons.search, color: Colors.grey),
                     ),
                     Text(

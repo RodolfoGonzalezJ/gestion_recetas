@@ -6,11 +6,13 @@ Future<void> showSubscriptionModal(
 ) {
   return showDialog(
     context: context,
+    barrierDismissible: false, // no cerrar tocando afuera
     builder:
         (_) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          contentPadding: const EdgeInsets.all(24),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -27,9 +29,8 @@ Future<void> showSubscriptionModal(
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  onConfirm();
+                  onConfirm(); // elimina el blur
                 },
-                // style:
                 child: const Text('Suscribirse'),
               ),
             ],

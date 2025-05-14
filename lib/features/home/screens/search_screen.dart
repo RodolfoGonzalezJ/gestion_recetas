@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/follow/screens/profile_subscription_page.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 
@@ -25,59 +26,75 @@ class _SearchScreenState extends State<SearchScreen>
     final dataProvider = Provider.of<DataProvider>(context);
 
     final filteredRecipes =
-        dataProvider.recipes.where((recipe) {
-          return recipe.name.toLowerCase().contains(searchQuery.toLowerCase());
-        }).toList();
+        dataProvider.recipes
+            .where(
+              (recipe) =>
+                  recipe.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
 
     final filteredProducts =
-        dataProvider.products.where((product) {
-          return product.name.toLowerCase().contains(searchQuery.toLowerCase());
-        }).toList();
+        dataProvider.products
+            .where(
+              (product) => product.name.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              ),
+            )
+            .toList();
 
     final filteredUsers =
-        dataProvider.users.where((user) {
-          return user.nombre?.toLowerCase().contains(
-                searchQuery.toLowerCase(),
-              ) ??
-              false;
-        }).toList();
+        dataProvider.users
+            .where(
+              (user) =>
+                  user.nombre?.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ) ??
+                  false,
+            )
+            .toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        title: TextField(
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'Buscar recetas, productos o usuarios...',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            title: TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Buscar recetas, productos o usuarios...',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+            ),
+            bottom: TabBar(
+              controller: _tabController,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.green,
+              tabs: const [
+                Tab(text: 'Recetas'),
+                Tab(text: 'Productos'),
+                Tab(text: 'Usuarios'),
+              ],
+            ),
           ),
-          onChanged: (value) {
-            setState(() {
-              searchQuery = value;
-            });
-          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildList(filteredRecipes, 'Recetas'),
+              _buildList(filteredProducts, 'Productos'),
+              _buildList(filteredUsers, 'Usuarios'),
+            ],
+          ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.green,
-          tabs: const [
-            Tab(text: 'Recetas'),
-            Tab(text: 'Productos'),
-            Tab(text: 'Usuarios'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildList(filteredRecipes, 'Recetas'),
-          _buildList(filteredProducts, 'Productos'),
-          _buildList(filteredUsers, 'Usuarios'),
-        ],
       ),
     );
   }
@@ -100,10 +117,10 @@ class _SearchScreenState extends State<SearchScreen>
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
               type == 'Usuarios'
-                  ? (item.avatarUrl ?? 'assets/images/default_user.png')
+                  ? (item.avatarUrl ?? 'https://via.placeholder.com/150')
                   : type == 'Productos'
-                  ? (item.photoUrl ?? 'assets/images/default.png')
-                  : (item.imageUrl ?? 'assets/images/default.png'),
+                  ? (item.photoUrl ?? 'https://via.placeholder.com/150')
+                  : (item.imageUrl ?? 'https://via.placeholder.com/150'),
             ),
           ),
           title: Text(
@@ -121,10 +138,20 @@ class _SearchScreenState extends State<SearchScreen>
                   : null,
           onTap: () {
             if (type == 'Usuarios') {
-              // Navigate to user profile or perform an action
-              print('Usuario seleccionado: ${item.nombre}');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ProfileSubscriptionPage(
+                        correo: item.correo,
+                        nombre: item.nombre ?? '',
+                        apellido: item.apellido ?? '',
+                        avatarUrl:
+                            item.avatarUrl ?? 'https://via.placeholder.com/150',
+                      ),
+                ),
+              );
             }
-            // Add navigation for other types if needed
           },
         );
       },

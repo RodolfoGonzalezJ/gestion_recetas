@@ -18,7 +18,7 @@ class SubscriptionService {
     return UserProfile(
       username: 'OzarkPepi',
       bio: 'Estudiante de ingeniería, amante de la cocina y los perros.',
-      avatarUrl: 'assets/images/avatar_pepi.png',
+      avatarUrl: 'assets/icons/avatar.png',
       recetas: 20,
       vistas: 40000,
       seguidores: 16,
@@ -42,7 +42,7 @@ class SubscriptionService {
         description: 'Delicioso buñuelo sin freír',
         category: 'Postres',
         difficulty: 'Fácil',
-        imageUrl: 'assets/images/bunuelos.jpg',
+        imageUrl: 'assets/images/brocoli.png',
         videoUrl: null,
         preparationTime: const Duration(minutes: 40),
         calories: 200,
