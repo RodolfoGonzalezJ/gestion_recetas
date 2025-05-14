@@ -5,14 +5,16 @@ class CollectionScreen extends StatelessWidget {
     {
       'title': 'Tus colecciones',
       'items': [
-        {'image': 'assets/images/brocoli.png', 'label': 'Ver más'},
+        {'image': 'assets/images/brocoli.png', 'label': ''},
+        {'image': 'assets/images/sandwichitoSabrosito.png', 'label': ''},
         {'image': 'assets/images/buñueloAsado.png', 'label': '30+ Recetas'},
       ],
     },
     {
       'title': 'Desayunos',
       'items': [
-        {'image': 'assets/images/EspaguetiAglio.png', 'label': 'Ver más'},
+        {'image': 'assets/images/EspaguetiAglio.png', 'label': ''},
+        {'image': 'assets/images/sopaAjiaco.png', 'label': ''},
         {
           'image': 'assets/images/hamburguesaMelosa.png',
           'label': '30+ Recetas',
@@ -22,14 +24,16 @@ class CollectionScreen extends StatelessWidget {
     {
       'title': 'Saludables',
       'items': [
-        {'image': 'assets/images/lecheCondensada.png', 'label': 'Ver más'},
+        {'image': 'assets/images/lecheCondensada.png', 'label': ''},
+        {'image': 'assets/images/tomate.png', 'label': ''},
         {'image': 'assets/images/moteDeQueso.png', 'label': '30+ Recetas'},
       ],
     },
     {
       'title': 'Comidas Rápidas',
       'items': [
-        {'image': 'assets/images/pastaAlemanItalia.png', 'label': 'Ver más'},
+        {'image': 'assets/images/pastaAlemanItalia.png', 'label': ''},
+        {'image': 'assets/images/tomate.png', 'label': ''},
         {'image': 'assets/images/salchipapaCasera.png', 'label': '30+ Recetas'},
       ],
     },
@@ -39,7 +43,7 @@ class CollectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Colecciones'),
+        title: const Text('Collections'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -65,58 +69,74 @@ class CollectionScreen extends StatelessWidget {
                       ),
                     ),
                     const Text(
-                      'Ver más',
+                      'See all',
                       style: TextStyle(color: Colors.green),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 2.0,
-                  ),
-                  itemCount: category['items'].length,
-                  itemBuilder: (context, itemIndex) {
-                    final item = category['items'][itemIndex];
-                    return Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                            item['image'],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          category['items'][0]['image'],
+                          fit: BoxFit.cover,
+                          height: 140,
                         ),
-                        Positioned(
-                          bottom: 10,
-                          left: 10,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(
+                              category['items'][1]['image'],
+                              fit: BoxFit.cover,
+                              height: 66,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              item['label'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 8),
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  category['items'][2]['image'],
+                                  fit: BoxFit.cover,
+                                  height: 66,
+                                  width: double.infinity,
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                bottom: 8,
+                                right: 8,
+                                child: Container(
+                                  color: Colors.black54,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 5,
+                                    vertical: 2,
+                                  ),
+                                  child: const Text(
+                                    '32+ Recipes',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
