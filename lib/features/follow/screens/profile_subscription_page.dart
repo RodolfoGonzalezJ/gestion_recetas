@@ -22,7 +22,7 @@ class ProfileSubscriptionPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil'), centerTitle: true),
       body: FutureBuilder(
-        future: controller.loadUserProfile(correo),
+        future: controller.loadUserProfile(correo,),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
