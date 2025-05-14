@@ -11,8 +11,18 @@ class UserModel {
   String? direccion;
   String? barrio;
   String? contrasena;
-  String? bio; 
+  String? bio;
   String? avatarUrl;
+
+  // NUEVOS CAMPOS PARA PERFIL DE SUSCRIPCIÓN
+  String? descripcion;
+  double? valorMensual;
+  double? rating;
+  double? seguidores;
+  double? vistas;
+  int? recetas;
+  int? sesiones;
+  String? duracion;
 
   UserModel({
     this.nombre,
@@ -29,6 +39,14 @@ class UserModel {
     this.contrasena,
     this.bio,
     this.avatarUrl,
+    this.descripcion,
+    this.valorMensual,
+    this.rating,
+    this.seguidores,
+    this.vistas,
+    this.recetas,
+    this.sesiones,
+    this.duracion,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,6 +65,14 @@ class UserModel {
       'contrasena': contrasena,
       'bio': bio,
       'avatarUrl': avatarUrl,
+      'descripcion': descripcion,
+      'valorMensual': valorMensual,
+      'rating': rating,
+      'seguidores': seguidores,
+      'vistas': vistas,
+      'recetas': recetas,
+      'sesiones': sesiones,
+      'duracion': duracion,
     };
   }
 
@@ -69,6 +95,14 @@ class UserModel {
       contrasena: json['contrasena'],
       bio: json['bio'],
       avatarUrl: json['avatarUrl'],
+      descripcion: json['descripcion'],
+      valorMensual: (json['valorMensual'] as num?)?.toDouble(),
+      rating: (json['rating'] as num?)?.toDouble(),
+      seguidores: json['seguidores'],
+      vistas: json['vistas'],
+      recetas: json['recetas'],
+      sesiones: json['sesiones'],
+      duracion: json['duracion'],
     );
   }
 
@@ -87,6 +121,14 @@ class UserModel {
     String? contrasena,
     String? bio,
     String? avatarUrl,
+    String? descripcion,
+    double? valorMensual,
+    double? rating,
+    int? seguidores,
+    int? vistas,
+    int? recetas,
+    int? sesiones,
+    String? duracion,
   }) {
     return UserModel(
       nombre: nombre ?? this.nombre,
@@ -103,6 +145,16 @@ class UserModel {
       contrasena: contrasena ?? this.contrasena,
       bio: bio ?? this.bio,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      descripcion: descripcion ?? this.descripcion,
+      valorMensual: valorMensual ?? this.valorMensual,
+      rating: rating ?? this.rating,
+      seguidores: seguidores != null ? seguidores.toDouble() : this.seguidores,
+      vistas: vistas != null ? vistas.toDouble() : this.vistas,
+      recetas: recetas ?? this.recetas,
+      sesiones: sesiones ?? this.sesiones,
+      duracion: duracion ?? this.duracion,
     );
   }
+
+  String get fullName => '${nombre ?? ''} ${apellido ?? ''}';
 }

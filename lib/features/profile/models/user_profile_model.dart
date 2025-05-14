@@ -15,8 +15,8 @@ class UserProfile extends UserModel {
 
   /// Estadísticas de perfil
   final int recetas;
-  final int vistas;
-  final int seguidores;
+  final double vistas;
+  final double seguidores;
   final int resenas;
 
   UserProfile({

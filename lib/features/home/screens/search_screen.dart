@@ -26,22 +26,32 @@ class _SearchScreenState extends State<SearchScreen>
     final dataProvider = Provider.of<DataProvider>(context);
 
     final filteredRecipes =
-        dataProvider.recipes.where((recipe) {
-          return recipe.name.toLowerCase().contains(searchQuery.toLowerCase());
-        }).toList();
+        dataProvider.recipes
+            .where(
+              (recipe) =>
+                  recipe.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
 
     final filteredProducts =
-        dataProvider.products.where((product) {
-          return product.name.toLowerCase().contains(searchQuery.toLowerCase());
-        }).toList();
+        dataProvider.products
+            .where(
+              (product) => product.name.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              ),
+            )
+            .toList();
 
     final filteredUsers =
-        dataProvider.users.where((user) {
-          return user.nombre?.toLowerCase().contains(
-                searchQuery.toLowerCase(),
-              ) ??
-              false;
-        }).toList();
+        dataProvider.users
+            .where(
+              (user) =>
+                  user.nombre?.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ) ??
+                  false,
+            )
+            .toList();
 
     return Container(
       color: Colors.white,
@@ -107,10 +117,10 @@ class _SearchScreenState extends State<SearchScreen>
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
               type == 'Usuarios'
-                  ? (item.avatarUrl ?? 'assets/images/icons/avatar.png')
+                  ? (item.avatarUrl ?? 'https://via.placeholder.com/150')
                   : type == 'Productos'
-                  ? (item.photoUrl ?? 'assets/images/icons/avatar.png')
-                  : (item.imageUrl ?? 'assets/images/icons/avatar.png'),
+                  ? (item.photoUrl ?? 'https://via.placeholder.com/150')
+                  : (item.imageUrl ?? 'https://via.placeholder.com/150'),
             ),
           ),
           title: Text(
@@ -133,8 +143,11 @@ class _SearchScreenState extends State<SearchScreen>
                 MaterialPageRoute(
                   builder:
                       (context) => ProfileSubscriptionPage(
-                        correo:
-                            item.correo, // Pass the user's email to the profile page
+                        correo: item.correo,
+                        nombre: item.nombre ?? '',
+                        apellido: item.apellido ?? '',
+                        avatarUrl:
+                            item.avatarUrl ?? 'https://via.placeholder.com/150',
                       ),
                 ),
               );

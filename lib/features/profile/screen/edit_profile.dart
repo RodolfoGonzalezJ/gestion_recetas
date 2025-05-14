@@ -47,7 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _phoneController = TextEditingController(text: widget.user.celular);
     _idController = TextEditingController(text: widget.user.cedula);
     _bioController = TextEditingController(
-      text: widget.user.bio ?? 'Sin biografía', 
+      text: widget.user.bio ?? 'Sin biografía',
     );
     _countryController = TextEditingController(text: widget.user.pais);
     _stateController = TextEditingController(text: widget.user.departamento);
@@ -133,6 +133,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         const SnackBar(content: Text('Error al actualizar el perfil')),
       );
     }
+    Navigator.pop(context);
   }
 
   @override
