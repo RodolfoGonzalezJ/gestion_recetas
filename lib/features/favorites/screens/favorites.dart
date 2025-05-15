@@ -12,6 +12,7 @@ class CollectionScreen extends StatelessWidget {
         child: Column(
           children: [
             CustomAppBar(),
+            _sectionTitle('Colecciones', onPressed: () {}),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -49,7 +50,6 @@ class CollectionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
             Expanded(child: _CollectionsSection()),
           ],
         ),
@@ -102,8 +102,11 @@ class CollectionScreen extends StatelessWidget {
   }
 
   Widget _buildCategorySection(List<Map<String, dynamic>> categories) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: categories.length,
+      separatorBuilder:
+          (context, index) =>
+              const Divider(height: 16, color: Colors.transparent),
       itemBuilder: (context, index) {
         final category = categories[index];
         return GestureDetector(
@@ -139,6 +142,13 @@ class CollectionScreen extends StatelessWidget {
                           category['items'][0]['image'],
                           fit: BoxFit.cover,
                           height: 140,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.error,
+                              size: 50,
+                              color: Colors.red,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -154,6 +164,13 @@ class CollectionScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                               height: 66,
                               width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.error,
+                                  size: 50,
+                                  color: Colors.red,
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -166,6 +183,13 @@ class CollectionScreen extends StatelessWidget {
                                   fit: BoxFit.cover,
                                   height: 66,
                                   width: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.error,
+                                      size: 50,
+                                      color: Colors.red,
+                                    );
+                                  },
                                 ),
                               ),
                               Positioned(
@@ -177,8 +201,8 @@ class CollectionScreen extends StatelessWidget {
                                     horizontal: 5,
                                     vertical: 2,
                                   ),
-                                  child: const Text(
-                                    '32+ Recetas',
+                                  child: Text(
+                                    category['items'][2]['label'],
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -202,19 +226,22 @@ class CollectionScreen extends StatelessWidget {
   }
 
   Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: CColors.secondaryTextColor,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: CColors.secondaryTextColor,
+            ),
           ),
-        ),
-        TextButton(onPressed: onPressed, child: Text('Ver más')),
-      ],
+          // TextButton(onPressed: onPressed, child: Text('Ver más')),
+        ],
+      ),
     );
   }
 }

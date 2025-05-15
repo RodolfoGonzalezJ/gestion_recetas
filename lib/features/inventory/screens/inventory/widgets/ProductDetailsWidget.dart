@@ -14,6 +14,7 @@ class ProductDetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         product.name.isNotEmpty ? product.name : 'Producto sin nombre',
@@ -80,6 +81,7 @@ class ProductDetailsWidget extends StatelessWidget {
       context: context,
       builder:
           (context) => AlertDialog(
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -139,6 +141,7 @@ class _StockCard extends StatelessWidget {
             : '${remainingTime.inDays} días ${remainingTime.inHours % 24}h';
 
     return Card(
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
