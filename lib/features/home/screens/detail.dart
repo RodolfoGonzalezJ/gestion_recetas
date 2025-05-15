@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
+import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
+
 
 extension DateTimeExtensions on DateTime {
   String getRelativeTime() {
@@ -49,6 +52,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     final recipe = await _recipeService.fetchRecipeById(widget.recipeId);
     final comments = await _recipeService.fetchComments(widget.recipeId);
     return {'recipe': recipe, 'comments': comments};
+  }
+
+  Future<UserProfile?> getUserProfileByEmail(String email) async {
+  final controller = ProfileController();
+  await controller.loadUserProfile(email);
+  return controller.userProfile;
   }
 
   Future<void> _addComment(String content, double rating) async {
@@ -136,12 +145,42 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            recipe.name,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                recipe.name,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              FutureBuilder<UserProfile?>(
+                                future: getUserProfileByEmail(recipe.createdBy),
+                                builder: (context, userSnapshot) {
+                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                    return const Text(
+                                      'Cargando autor...',
+                                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                                    );
+                                  }
+                                  if (userSnapshot.hasError || userSnapshot.data == null) {
+                                    return const Text(
+                                      'Autor desconocido',
+                                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                                    );
+                                  }
+                                  // Mostrar nombre y apellido del autor
+                                  final user = userSnapshot.data!;
+                                  return Text(
+                                    'By ${user.nombre} ${user.apellido}',
+                                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                                  );
+                                },
+                              ),
+
+                            ],
                           ),
                           Row(
                             children: [

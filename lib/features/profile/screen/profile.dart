@@ -8,7 +8,8 @@ import 'package:gestion_recetas/features/profile/screen/widgets/all_recipes.dart
 import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
-
+import 'package:gestion_recetas/features/recipes/models/models.dart';
+import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_stats.dart';
 import 'widgets/popular_recipe_card.dart';
@@ -23,12 +24,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late final ProfileController _ctrl;
+  List<Recipe> _misRecetas = [];
 
   @override
   void initState() {
     super.initState();
     _ctrl = ProfileController();
-    _loadUserData(); // Instancia sin GetX
+    _loadUserData();
   }
 
   Future<void> _loadUserData() async {
@@ -38,6 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
     print('Correo obtenido del AuthController: $email');
+
+    final recipeService = RecipeService();
+    final todasLasRecetas = await recipeService.fetchRecipes();
+
+    setState(() {
+      _misRecetas = todasLasRecetas.where((receta) => receta.createdBy == email).toList();
+    });
+
     await _ctrl.loadUserProfile(email);
     setState(() {});
   }
@@ -95,16 +105,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
             Column(
-              children: List.generate(2, (index) {
+               children: _misRecetas.map((receta) {
                 return RecipeCard(
-                  imagePath: 'assets/logos/logo.png',
-                  title: 'Buñuelo asado',
-                  rating: 4.9,
-                  reviews: 102,
-                  duration: 40,
+                  imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
+                  title: receta.name,
+                  rating: receta.averageRating,
+                  reviews: 0,
+                  duration: receta.preparationTime.inMinutes,
                   difficulty: 3,
                 );
-              }),
+              }).toList(),
             ),
             VerTodasButton(
               onTap: () {

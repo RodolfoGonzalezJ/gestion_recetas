@@ -13,7 +13,7 @@ class Recipe {
   final List<Product> ingredients;
   final String? instructions;
   final double averageRating;
-
+  final String createdBy;
   Recipe({
     required this.id,
     required this.name,
@@ -27,6 +27,8 @@ class Recipe {
     required this.ingredients,
     this.instructions,
     this.averageRating = 0.0,
+    required this.createdBy,
+
   });
 
   Recipe copyWith({double? averageRating}) {
@@ -43,6 +45,7 @@ class Recipe {
       ingredients: ingredients,
       instructions: instructions,
       averageRating: averageRating ?? this.averageRating,
+      createdBy: createdBy,
     );
   }
 
@@ -60,19 +63,20 @@ class Recipe {
       'ingredients': ingredients.map((e) => e.toMap()).toList(),
       'instructions': instructions,
       'averageRating': averageRating,
+      'createdBy': createdBy,
     };
   }
 
   factory Recipe.fromMap(Map<String, dynamic> map) {
     return Recipe(
-      id: map['_id'] as String,
-      name: map['name'] as String,
-      description: map['description'] as String,
+      id: map['_id'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      description: map['description'] as String? ?? '',
       category: map['category'] ?? 'Otros',
-      difficulty: map['difficulty'] as String,
+      difficulty: map['difficulty'] as String?  ?? '',
       imageUrl: map['imageUrl'] as String?,
       videoUrl: map['videoUrl'] as String?,
-      preparationTime: Duration(minutes: map['preparationTime'] as int),
+      preparationTime: Duration(minutes: map['preparationTime'] as int? ?? 0),
       calories: map['calories'] as int?,
       ingredients:
           (map['ingredients'] as List)
@@ -80,6 +84,7 @@ class Recipe {
               .toList(),
       instructions: map['instructions'] as String?,
       averageRating: map['averageRating'] as double? ?? 0.0,
+      createdBy: map['createdBy'] as String? ?? '',
     );
   }
 }

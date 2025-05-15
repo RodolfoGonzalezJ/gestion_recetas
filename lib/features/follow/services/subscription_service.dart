@@ -49,6 +49,7 @@ class SubscriptionService {
         ingredients: [], // ← simulado vacío, ajusta si necesitas
         instructions: 'Mezclar, hornear y disfrutar.',
         averageRating: 4.5,
+        createdBy:["id"] as String,
       ),
     ];
   }

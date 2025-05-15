@@ -141,13 +141,16 @@ class AuthController {
 
     if (existingUser == null) {
       // Si el usuario no existe, crearlo en MongoDB
-      final newUser = UserModel(nombre: name, correo: email, contrasena: '');
+      final defaultFechaNacimiento = DateTime(2002, 2, 1);
+      final newUser = UserModel(nombre: name, correo: email, contrasena: '',fechaNacimiento: defaultFechaNacimiento,);
       await collection.insert(newUser.toJson());
       print('Usuario creado en MongoDB: $name');
 
       // Actualizar el modelo _user con los datos del nuevo usuario
       _user.nombre = name;
       _user.correo = email;
+      _user.fechaNacimiento = defaultFechaNacimiento; 
+
     } else {
       print('Usuario ya existe en MongoDB: $name');
 
@@ -157,7 +160,9 @@ class AuthController {
       _user.correo = existingUser['correo'];
       _user.celular = existingUser['celular'];
       _user.cedula = existingUser['cedula'];
-      _user.fechaNacimiento = DateTime.parse(existingUser['fechaNacimiento']);
+      _user.fechaNacimiento = existingUser['fechaNacimiento'] != null
+          ? DateTime.parse(existingUser['fechaNacimiento'])
+          : DateTime(2002, 2, 1);
       _user.pais = existingUser['pais'];
       _user.departamento = existingUser['departamento'];
       _user.municipio = existingUser['municipio'];

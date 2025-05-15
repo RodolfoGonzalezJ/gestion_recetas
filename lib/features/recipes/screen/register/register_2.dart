@@ -1,6 +1,6 @@
 // lib/features/recipes/screen/register/register_2.dart
 import 'dart:io';
-
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/common/widgets/card.dart';
 import 'package:gestion_recetas/common/widgets/text_input_vertical.dart';
@@ -126,6 +126,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       instructions: instruccionesController.text.trim(),
       imageUrl: widget.imageUrl,
       videoUrl: _videoPath,
+      createdBy: AuthController().user.correo ?? '',
     );
 
     try {
