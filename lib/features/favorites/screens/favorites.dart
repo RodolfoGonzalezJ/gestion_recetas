@@ -7,45 +7,52 @@ class CollectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          CustomAppBar(),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchScreen()),
-              );
-            },
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(141, 0, 0, 0),
-                    blurRadius: 3,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 9.0),
-                    child: Icon(Icons.search, color: Colors.grey),
-                  ),
-                  Text(
-                    'Buscar recetas, productos o usuarios...',
-                    style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
-                  ),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            CustomAppBar(),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                );
+              },
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(141, 0, 0, 0),
+                      blurRadius: 3,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 9.0),
+                      child: Icon(Icons.search, color: Colors.grey),
+                    ),
+                    Text(
+                      'Buscar recetas, productos o usuarios...',
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(child: _CollectionsSection()),
-        ],
+            const SizedBox(height: 20),
+            Expanded(child: _CollectionsSection()),
+          ],
+        ),
       ),
     );
   }
