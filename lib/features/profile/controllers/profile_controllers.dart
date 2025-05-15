@@ -1,9 +1,20 @@
 import 'package:gestion_recetas/features/auth/models/models.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
+import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/features/recipes/models/models.dart';
 
 class ProfileController {
   UserProfile? userProfile;
+
+  // Nuevo método para obtener recetas del usuario
+  Future<List<Recipe>> fetchUserRecipes(String email) async {
+    final recipeService = RecipeService();
+    final todasLasRecetas = await recipeService.fetchRecipes();
+    return todasLasRecetas
+        .where((receta) => receta.createdBy == email)
+        .toList();
+  }
 
   /// Carga los datos del usuario desde la base de datos
   Future<void> loadUserProfile(String email) async {

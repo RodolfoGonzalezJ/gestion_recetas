@@ -35,6 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadUserData() async {
     final email = AuthController().user.correo;
+    print('DEBUG: Email obtenido: $email');
     if (email == null || email.isEmpty) {
       print('El correo del usuario está vacío. No se puede cargar el perfil.');
       return;
@@ -42,22 +43,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print('Correo obtenido del AuthController: $email');
 
     final recipeService = RecipeService();
-    final todasLasRecetas = await recipeService.fetchRecipes();
+    try {
+      final todasLasRecetas = await recipeService.fetchRecipes();
+      print('DEBUG: Recetas obtenidas: ${todasLasRecetas.length}');
+      setState(() {
+        _misRecetas =
+            todasLasRecetas
+                .where((receta) => receta.createdBy == email)
+                .toList();
+        print('DEBUG: Mis recetas filtradas: ${_misRecetas.length}');
+      });
+    } catch (e) {
+      print('ERROR al obtener recetas: $e');
+    }
 
-    setState(() {
-      _misRecetas = todasLasRecetas.where((receta) => receta.createdBy == email).toList();
-    });
-
-    await _ctrl.loadUserProfile(email);
-    setState(() {});
+    try {
+      await _ctrl.loadUserProfile(email);
+      print('DEBUG: Perfil cargado: ${_ctrl.userProfile}');
+      setState(() {});
+    } catch (e) {
+      print('ERROR al cargar perfil: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: Entrando a build. userProfile: ${_ctrl.userProfile}');
     final theme = Theme.of(context);
     final isDark = THelperFunctions.isDarkMode(context);
 
     if (_ctrl.userProfile == null) {
+      print('DEBUG: userProfile es null, mostrando CircularProgressIndicator');
       return Scaffold(
         appBar: AppBar(
           title: Text('Perfil', style: theme.textTheme.titleLarge),
@@ -68,6 +84,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final UserProfile userProfile = _ctrl.userProfile!;
+
+    print('DEBUG: Renderizando pantalla de perfil');
 
     return Scaffold(
       appBar: AppBar(
@@ -105,23 +123,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
             Column(
-               children: _misRecetas.map((receta) {
-                return RecipeCard(
-                  imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
-                  title: receta.name,
-                  rating: receta.averageRating,
-                  reviews: 0,
-                  duration: receta.preparationTime.inMinutes,
-                  difficulty: 3,
-                );
-              }).toList(),
+              children:
+                  _misRecetas
+                      .take(3) // Mostrar solo las 3 más recientes
+                      .map((receta) {
+                        print(
+                          'DEBUG: Receta -> id: ${receta.id}, name: ${receta.name}, imageUrl: ${receta.imageUrl}, averageRating: ${receta.averageRating}, difficulty: ${receta.difficulty}, preparationTime: ${receta.preparationTime}',
+                        );
+                        return RecipeCard(
+                          id: receta.id,
+                          imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
+                          title: receta.name,
+                          rating: receta.averageRating,
+                          reviews: 0,
+                          duration: receta.preparationTime.inMinutes,
+                          difficulty: int.tryParse(receta.difficulty) ?? 1,
+                        );
+                      })
+                      .toList(),
             ),
             VerTodasButton(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const TodasMisRecetasScreen(),
+                    builder:
+                        (_) =>
+                            TodasMisRecetasScreen(recetasUsuario: _misRecetas),
                   ),
                 );
               },

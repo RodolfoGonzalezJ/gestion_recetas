@@ -120,6 +120,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
               Text("Mis Recetas", style: theme.textTheme.titleMedium),
               const SizedBox(height: 10),
               RecipeCard(
+                id: '1',
                 imagePath: 'assets/logos/logo.png',
                 title: 'Buñuelo asado',
                 rating: 4.9,
@@ -128,6 +129,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                 difficulty: 3,
               ),
               RecipeCard(
+                id: '2',
                 imagePath: 'assets/logos/logo.png',
                 title: 'Empanada verde',
                 rating: 4.7,

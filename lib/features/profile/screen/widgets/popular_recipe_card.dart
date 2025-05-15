@@ -29,6 +29,7 @@ class _PopularRecipeCardState extends State<PopularRecipeCard> {
   @override
   Widget build(BuildContext context) {
     return RecipeCard(
+      id: UniqueKey().toString(), 
       imagePath: widget.imagePath,
       title: widget.title,
       rating: widget.rating,

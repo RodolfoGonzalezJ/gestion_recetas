@@ -65,6 +65,7 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
             itemBuilder: (_, index) {
               final r = recetas[index];
               return RecipeCard(
+                id: index.toString(),
                 imagePath: r['image'] as String,
                 title: r['title'] as String,
                 rating: r['rating'] as double,
