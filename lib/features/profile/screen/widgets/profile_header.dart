@@ -75,11 +75,15 @@ class ProfileHeader extends StatelessWidget {
             ),
 
             // Avatar centrado
-            const Positioned(
+            Positioned(
               top: 20,
               child: CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/icons/avatar.png'),
+                backgroundImage:
+                    user.avatarUrl.startsWith('http') ||
+                            user.avatarUrl.startsWith('assets')
+                        ? NetworkImage(user.avatarUrl) as ImageProvider
+                        : AssetImage('assets/icons/avatar.png'),
                 backgroundColor: Colors.white,
               ),
             ),
