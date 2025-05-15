@@ -61,18 +61,46 @@ class _SearchScreenState extends State<SearchScreen>
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            title: TextField(
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: 'Buscar recetas, productos o usuarios...',
-                border: InputBorder.none,
-                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+            title: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(141, 0, 0, 0),
+                    blurRadius: 3,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
+              child: TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Buscar recetas, productos o usuarios...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 16,
+                  ),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
+              ),
             ),
             bottom: TabBar(
               controller: _tabController,
