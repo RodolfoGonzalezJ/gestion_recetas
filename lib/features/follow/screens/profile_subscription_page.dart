@@ -61,7 +61,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
         backgroundColor: isDark ? CColors.dark : Colors.white,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         elevation: 2,
-        toolbarHeight: 38, // Reduce la altura del AppBar
+        toolbarHeight: 38,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
@@ -148,12 +148,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                 },
               ),
             ] else ...[
-              Text(
-                'Acerca de mí',
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.justify,
+              UserInfoCard(
+                nombre: "${widget.nombre} ${widget.apellido}",
+                email: widget.correo,
+                telefono: "+57 3191233129",
+                ubicacion: "Colombia",
+                fechaRegistro: "09 de Mayo del 2025",
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               const Text(
                 "Trayectoria:",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -187,6 +189,78 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
           ),
           const SizedBox(height: 4),
           if (isSelected) Container(height: 2, width: 60, color: Colors.green),
+        ],
+      ),
+    );
+  }
+}
+
+// NUEVO WIDGET
+class UserInfoCard extends StatelessWidget {
+  final String nombre;
+  final String email;
+  final String telefono;
+  final String ubicacion;
+  final String fechaRegistro;
+
+  const UserInfoCard({
+    Key? key,
+    required this.nombre,
+    required this.email,
+    required this.telefono,
+    required this.ubicacion,
+    required this.fechaRegistro,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Informacion',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow("Nombre:", nombre),
+          _buildInfoRow("Email:", email),
+          _buildInfoRow("Telefono:", telefono),
+          _buildInfoRow("Ubicacion:", ubicacion),
+          _buildInfoRow("Registro:", fechaRegistro),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );
