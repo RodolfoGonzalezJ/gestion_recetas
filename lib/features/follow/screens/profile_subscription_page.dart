@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/follow/screens/subscribed_recipes_page.dart';
+import 'package:gestion_recetas/features/follow/widgets/profile_header_follow.dart';
 import 'package:gestion_recetas/features/follow/widgets/subscription_button.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
-import 'package:gestion_recetas/features/profile/screen/widgets/profile_header.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/profile_stats.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/popular_recipe_card.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
@@ -71,7 +71,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProfileHeader(user: userProfile, onEdit: null),
+            ProfileHeader(user: userProfile),
             const SizedBox(height: 60),
 
             Padding(
