@@ -6,6 +6,7 @@ class Comment {
   final String content;
   final double rating;
   final DateTime createdAt;
+  final String? avatarUrl;
 
   Comment({
     required this.id,
@@ -15,6 +16,7 @@ class Comment {
     required this.content,
     required this.rating,
     required this.createdAt,
+    this.avatarUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Comment {
       'content': content,
       'rating': rating,
       'createdAt': createdAt.toIso8601String(),
+      'avatarUrl': avatarUrl,
     };
   }
 
@@ -41,6 +44,7 @@ class Comment {
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),
+      avatarUrl: map['avatarUrl'] as String?,
     );
   }
 }

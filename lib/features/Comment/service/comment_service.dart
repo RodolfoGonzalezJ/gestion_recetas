@@ -12,15 +12,6 @@ class CommentService {
       final collection = MongoDBHelper.db.collection('comments');
       final commentMap = comment.toMap();
 
-      final userProfile = _profileController.userProfile;
-
-      // Fallback for missing user profile
-      final userName = userProfile?.fullName ?? 'Usuario Anónimo';
-      final userId = userProfile?.cedula ?? 'unknown_user';
-
-      commentMap['userName'] = userName;
-      commentMap['userId'] = userId;
-
       // Ensure unique ID
       if (commentMap['_id'] == null || commentMap['_id'].isEmpty) {
         commentMap['_id'] = const Uuid().v4();

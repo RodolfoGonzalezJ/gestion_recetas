@@ -4,7 +4,7 @@ import 'package:gestion_recetas/features/Comment/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
-
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 
 extension DateTimeExtensions on DateTime {
   String getRelativeTime() {
@@ -56,19 +56,33 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
   Future<UserProfile?> getUserProfileByEmail(String email) async {
   final controller = ProfileController();
+  print('DEBUG: Buscando perfil para email: $email');
   await controller.loadUserProfile(email);
+  if (controller.userProfile == null) {
+    print('ERROR: No se encontró perfil para $email');
+  } else {
+    print('DEBUG: Perfil encontrado: ${controller.userProfile!.nombre}');
+  }
   return controller.userProfile;
   }
 
   Future<void> _addComment(String content, double rating) async {
+    // Obtener el email del usuario autenticado
+    final userEmail = AuthController().user.correo ?? '';
+    // Se carga el perfil del usuario
+    final userProfile = await getUserProfileByEmail(userEmail);
+
     final newComment = Comment(
       id: '',
       recipeId: widget.recipeId,
-      userId: 'user123', // Reemplazar con el ID real del usuario
-      userName: 'Usuario Anónimo', // Reemplazar con el nombre real del usuario
+      userId: userProfile?.cedula ?? 'unknown_user',
+      userName: (userProfile != null && (userProfile.nombre ?? '').trim().isNotEmpty)
+      ? '${userProfile.nombre ?? ''} ${userProfile.apellido ?? ''}'.trim()
+      : userProfile?.correo ?? 'Usuario Anónimo',
       content: content,
       rating: rating,
       createdAt: DateTime.now(),
+      avatarUrl: userProfile?.avatarUrl,
     );
 
     await _recipeService.addCommentToRecipe(widget.recipeId, newComment);
@@ -283,16 +297,21 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor: Colors.grey[300],
-                              child: Text(comment.userName[0]),
+                              backgroundImage: (comment.avatarUrl != null && comment.avatarUrl!.isNotEmpty && comment.avatarUrl!.startsWith('http'))
+                                  ? NetworkImage(comment.avatarUrl!)
+                                  : const AssetImage('assets/icons/avatar.png') as ImageProvider,
+                              child: (comment.avatarUrl == null || comment.avatarUrl!.isEmpty)
+                                  ? Text(comment.userName.isNotEmpty ? comment.userName[0] : '?')
+                                  : null,
                             ),
                             contentPadding: const EdgeInsets.all(10),
                             title: Row(
                               children: [
                                 Text(
-                                  comment.userName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  comment.userName.length > 15
+                                      ? '${comment.userName.substring(0, 15)}...'
+                                      : comment.userName,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(width: 8),
                                 Text(comment.createdAt.getRelativeTime()),
