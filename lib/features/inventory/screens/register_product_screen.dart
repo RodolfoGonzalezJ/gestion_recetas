@@ -116,7 +116,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
         entryDate: entry.entryDate,
         expiryDate: entry.expiryDate,
         quantity: entry.quantity,
-        createdBy: userEmail,
+        createdBy: userEmail,//porque falto esta linea en el primer pushh???
       );
 
       try {
