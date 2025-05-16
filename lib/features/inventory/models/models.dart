@@ -9,7 +9,7 @@ class Product {
   final String? photoUrl; // Optional
   final String? notes; // Optional
   final List<Entry> entradas; // Field for tracking history
-
+  final String createdBy;
   Product({
     required this.id,
     required this.name,
@@ -21,6 +21,7 @@ class Product {
     this.photoUrl,
     this.notes,
     required this.entradas,
+    required this.createdBy,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +36,7 @@ class Product {
       'photoUrl': photoUrl,
       'notes': notes,
       'entradas': entradas.map((e) => e.toMap()).toList(),
+      'createdBy': createdBy,
     };
   }
 
@@ -54,6 +56,7 @@ class Product {
               ?.map((e) => Entry.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [], // Si es null, asignar una lista vacía
+      createdBy: map['createdBy'] as String? ?? '',
     );
   }
 
@@ -80,6 +83,7 @@ class Product {
       photoUrl: photoUrl ?? this.photoUrl,
       notes: notes ?? this.notes,
       entradas: entradas ?? this.entradas,
+      createdBy: this.createdBy ?? this.createdBy,
     );
   }
 }

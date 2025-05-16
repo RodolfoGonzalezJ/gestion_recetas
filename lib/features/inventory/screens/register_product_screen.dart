@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/controllers/controllers.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
@@ -89,6 +89,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
   }
 
   Future<void> _saveProduct() async {
+    final userEmail = AuthController().user.correo ?? '';
     if (_formKey.currentState!.validate() &&
         _selectedCategory != null &&
         _selectedExpiryDate != null) {
@@ -115,6 +116,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
         entryDate: entry.entryDate,
         expiryDate: entry.expiryDate,
         quantity: entry.quantity,
+        createdBy: userEmail,
       );
 
       try {

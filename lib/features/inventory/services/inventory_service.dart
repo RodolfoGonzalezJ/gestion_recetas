@@ -68,6 +68,7 @@ class InventoryService {
         photoUrl: originalProduct.photoUrl,
         notes: originalProduct.notes,
         entradas: originalProduct.entradas ?? [],
+        createdBy: originalProduct.createdBy,
       );
       await saveProduct(newProduct);
       print('Duplicated product saved to MongoDB');

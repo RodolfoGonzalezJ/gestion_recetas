@@ -5,10 +5,12 @@ import 'package:gestion_recetas/features/inventory/services/inventory_service.da
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
-
+  
   @override
   State<InventoryScreen> createState() => _InventoryScreenState();
 }
@@ -31,6 +33,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userEmail = AuthController().user.correo ?? '';
+
     return Scaffold(
       appBar: AppBar(title: const Text('Inventario')),
       body: Column(
@@ -53,14 +57,14 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     child: Text('No hay productos en el inventario.'),
                   );
                 } else {
-                  final products =
-                      snapshot.data!
-                          .where(
-                            (product) =>
-                                _selectedCategory == 'Todos' ||
-                                product.category == _selectedCategory,
-                          )
-                          .toList();
+                  final products = snapshot.data!
+                        .where(
+                          (product) =>
+                              product.createdBy == userEmail &&
+                              (_selectedCategory == 'Todos' ||
+                              product.category == _selectedCategory),
+                        )
+                        .toList();
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: products.length,
