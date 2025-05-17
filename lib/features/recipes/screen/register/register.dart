@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/recipes/models/models.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/images_recipe_picker.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/widgets/recipe_text_fields.dart';
 import 'package:gestion_recetas/features/recipes/screen/register/register_2.dart';
@@ -6,7 +7,9 @@ import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class RegisterRecipeScreen extends StatefulWidget {
-  const RegisterRecipeScreen({super.key});
+  final Recipe? recipeToEdit;
+
+  const RegisterRecipeScreen({super.key, this.recipeToEdit});
 
   @override
   State<RegisterRecipeScreen> createState() => _RegisterRecipeScreenState();
@@ -31,6 +34,22 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
     _timeController.dispose();
     _caloriesController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recipeToEdit != null) {
+      final recipe = widget.recipeToEdit!;
+      _nameController.text = recipe.name;
+      _descController.text = recipe.description;
+      _timeController.text =
+          '${recipe.preparationTime.inHours.toString().padLeft(2, '0')}:${(recipe.preparationTime.inMinutes % 60).toString().padLeft(2, '0')}';
+      _caloriesController.text = recipe.calories?.toString() ?? '';
+      _selectedCategory = recipe.category;
+      _selectedDifficulty = recipe.difficulty;
+      _imageUrl = recipe.imageUrl;
+    }
   }
 
   @override
@@ -71,7 +90,9 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _onNextPressed,
-              child: const Text("Siguiente"),
+              child: Text(
+                widget.recipeToEdit != null ? "Modificar Receta" : "Siguiente",
+              ),
             ),
           ],
         ),
@@ -93,6 +114,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
                 preparationTime: _parseDuration(_timeController.text.trim()),
                 calories: int.tryParse(_caloriesController.text.trim()),
                 imageUrl: _imageUrl,
+                recipeToEdit: widget.recipeToEdit,
               ),
         ),
       );

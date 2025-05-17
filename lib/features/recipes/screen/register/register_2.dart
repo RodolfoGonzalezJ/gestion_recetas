@@ -23,6 +23,7 @@ class RecipeIngredientsStep extends StatefulWidget {
   final Duration preparationTime;
   final int? calories;
   final String? imageUrl;
+  final Recipe? recipeToEdit;
 
   const RecipeIngredientsStep({
     super.key,
@@ -33,6 +34,7 @@ class RecipeIngredientsStep extends StatefulWidget {
     required this.preparationTime,
     this.calories,
     this.imageUrl,
+    this.recipeToEdit,
   });
 
   @override
@@ -51,6 +53,12 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
   void initState() {
     super.initState();
     _loadAvailableProducts();
+    if (widget.recipeToEdit != null) {
+      final recipe = widget.recipeToEdit!;
+      instruccionesController.text = recipe.instructions ?? '';
+      _videoPath = recipe.videoUrl;
+      _selectedIngredients.addAll(recipe.ingredients);
+    }
   }
 
   Future<void> _loadAvailableProducts() async {
@@ -97,25 +105,26 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       return;
     }
 
-    // Validate stock availability
-    for (final ingredient in _selectedIngredients) {
-      final product = _availableProducts.firstWhere(
-        (p) => p.id == ingredient.id,
-      );
-      if (ingredient.quantity > product.quantity) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Stock insuficiente para el producto: ${product.name}. Disponible: ${product.quantity}',
-            ),
-          ),
+    if (widget.recipeToEdit == null) {
+      for (final ingredient in _selectedIngredients) {
+        final product = _availableProducts.firstWhere(
+          (p) => p.id == ingredient.id,
         );
-        return;
+        if (ingredient.quantity > product.quantity) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Stock insuficiente para el producto: ${product.name}. Disponible: ${product.quantity}',
+              ),
+            ),
+          );
+          return;
+        }
       }
     }
 
     final recipe = Recipe(
-      id: const Uuid().v4(),
+      id: widget.recipeToEdit?.id ?? const Uuid().v4(),
       name: widget.name,
       description: widget.description,
       category: widget.category,
@@ -126,30 +135,39 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       instructions: instruccionesController.text.trim(),
       imageUrl: widget.imageUrl,
       videoUrl: _videoPath,
-      createdBy: AuthController().user.correo ?? '',
+      createdBy:
+          widget.recipeToEdit?.createdBy ?? AuthController().user.correo ?? '',
     );
 
     try {
-      // Update stock in the database
-      for (final ingredient in _selectedIngredients) {
-        final product = _availableProducts.firstWhere(
-          (p) => p.id == ingredient.id,
+      if (widget.recipeToEdit != null) {
+        await _recipeService.updateRecipe(recipe.id, recipe.toMap());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receta modificada exitosamente.')),
         );
-        final updatedQuantity = product.quantity - ingredient.quantity;
-        await _inventoryService.updateProduct(product.id, {
-          'quantity': updatedQuantity,
-        });
+      } else {
+        for (final ingredient in _selectedIngredients) {
+          final product = _availableProducts.firstWhere(
+            (p) => p.id == ingredient.id,
+          );
+          final updatedQuantity = product.quantity - ingredient.quantity;
+          await _inventoryService.updateProduct(product.id, {
+            'quantity': updatedQuantity,
+          });
+        }
+        await _recipeService.saveRecipe(recipe);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receta publicada exitosamente.')),
+        );
       }
-
-      // Save the recipe
-      await _recipeService.saveRecipe(recipe);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Receta publicada exitosamente.')),
-      );
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al publicar la receta: $e')),
+        SnackBar(
+          content: Text(
+            'Error al ${widget.recipeToEdit != null ? 'modificar' : 'publicar'} la receta: $e',
+          ),
+        ),
       );
     }
   }
@@ -295,7 +313,11 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _publishRecipe,
-              child: const Text('Publicar Receta'),
+              child: Text(
+                widget.recipeToEdit != null
+                    ? 'Modificar Receta'
+                    : 'Publicar Receta',
+              ),
             ),
           ],
         ),
