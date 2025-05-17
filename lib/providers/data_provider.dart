@@ -16,12 +16,29 @@ class DataProvider with ChangeNotifier {
   int _criticalCount = 0;
   int _mediumCount = 0;
 
+  UserModel? _currentUser;
+
   List<dynamic> get recipes => _recipes;
   List<dynamic> get products => _products;
   List<UserModel> get users => _users;
   int get totalRecipes => _totalRecipes;
   int get criticalCount => _criticalCount;
   int get mediumCount => _mediumCount;
+  UserModel? get currentUser => _currentUser;
+
+  // Devuelve solo las recetas creadas por el usuario autenticado
+  List<dynamic> get myRecipes =>
+      _currentUser == null
+          ? []
+          : _recipes.where((r) => r.createdBy == _currentUser!.correo).toList();
+
+  // Devuelve solo los productos creados por el usuario autenticado
+  List<dynamic> get myProducts =>
+      _currentUser == null
+          ? []
+          : _products
+              .where((p) => p.createdBy == _currentUser!.correo)
+              .toList();
 
   Future<void> loadRecipes() async {
     _recipes = await _recipeService.fetchRecipes();
@@ -55,6 +72,11 @@ class DataProvider with ChangeNotifier {
     } catch (e) {
       print('Error loading users: $e');
     }
+  }
+
+  void setCurrentUser(UserModel? user) {
+    _currentUser = user;
+    notifyListeners();
   }
 
   Future<void> addOrUpdateRecipe(dynamic newRecipe) async {

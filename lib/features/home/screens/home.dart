@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/inventory/models/models.dart';
+import 'package:gestion_recetas/features/recipes/models/models.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
@@ -8,6 +10,8 @@ import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'dart:io';
 import 'package:gestion_recetas/features/home/screens/search_screen.dart';
+import 'package:gestion_recetas/features/home/screens/widgets/recipe_suggestions_widget.dart';
+import 'package:gestion_recetas/features/auth/models/models.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +36,23 @@ class _HomeScreenRealState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
+
+    // Obtén el usuario actual del provider
+    final UserModel? currentUser = dataProvider.currentUser;
+
+    // Asegura que los datos existen o usa valores por defecto
+    final recipes = dataProvider.recipes ?? [];
+    final products = dataProvider.products ?? [];
+
+    // Filtra recetas y productos creados por el usuario actual
+    final myRecipes =
+        currentUser == null
+            ? []
+            : recipes.where((r) => r.createdBy == currentUser.correo).toList();
+    final myProducts =
+        currentUser == null
+            ? []
+            : products.where((p) => p.createdBy == currentUser.correo).toList();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -144,7 +165,14 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _categories(),
             const SizedBox(height: 16),
             _sectionTitle('Mis recetas 🔥', onPressed: () {}),
-            _trendingItems(dataProvider.recipes),
+            _trendingItems(recipes),
+            const SizedBox(height: 16),
+            RecipeSuggestionsWidget(
+              allRecipes: recipes.cast<Recipe>(),
+              allProducts: products.cast<Product>(),
+              currentUserEmail: currentUser?.correo ?? '',
+              userProducts: myProducts.cast<Product>(),
+            ),
             const SizedBox(height: 16),
             _adBanner(),
             _sectionTitle('Recomendado para ti', onPressed: () {}),
