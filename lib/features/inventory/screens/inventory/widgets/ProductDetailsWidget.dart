@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailsWidget extends StatelessWidget {
   final Product product;
@@ -16,9 +18,24 @@ class ProductDetailsWidget extends StatelessWidget {
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
-        product.name.isNotEmpty ? product.name : 'Producto sin nombre',
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            textAlign: TextAlign.center,
+            product.name.isNotEmpty ? product.name : 'Producto sin nombre',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: CColors.secondaryButton,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            ),
+            child: Icon(Icons.close, color: CColors.secondaryButton, size: 24),
+          ),
+        ],
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -40,19 +57,55 @@ class ProductDetailsWidget extends StatelessWidget {
             else
               const Icon(Icons.fastfood, size: 150),
             const SizedBox(height: 16),
-            Text(
-              'Categoría: ${product.category.isNotEmpty ? product.category : 'Sin categoría'}',
-              style: const TextStyle(fontSize: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Categoría: ',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${product.category.isNotEmpty ? product.category : 'Sin categoría'}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
-            Text(
-              'Cantidad total: ${product.quantity}',
-              style: const TextStyle(fontSize: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Cantidad total: ',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${product.quantity}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
             if (product.notes != null && product.notes!.isNotEmpty)
-              Text(
-                'Notas: ${product.notes}',
-                style: const TextStyle(fontSize: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Notas: ',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${product.notes}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
               )
             else
               const Text(
@@ -60,19 +113,32 @@ class ProductDetailsWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
             const SizedBox(height: 16),
-            ElevatedButton(
+            TextButton(
               onPressed: () => _showStockDetails(context),
+              style: TextButton.styleFrom(
+                backgroundColor: CColors.primaryButton,
+                foregroundColor: CColors.secondaryButton,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 16,
+                ),
+              ),
               child: const Text('Ver detalles de stock'),
             ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cerrar'),
-        ),
-      ],
+      // actions: [
+      //   TextButton(
+      //     onPressed: () => Navigator.pop(context),
+      //     style: TextButton.styleFrom(
+      //       backgroundColor: CColors.primaryButton,
+      //       foregroundColor: CColors.secondaryButton,
+      //       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      //     ),
+      //     child: const Text('Cerrar'),
+      //   ),
+      // ],
     );
   }
 
@@ -85,7 +151,28 @@ class ProductDetailsWidget extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            title: Text('Detalles de stock: ${product.name}'),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Detalles: ${product.name}'),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: CColors.secondaryButton,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 8,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    color: CColors.secondaryButton,
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
             content: SingleChildScrollView(
               child: Column(
                 children: [
@@ -108,12 +195,12 @@ class ProductDetailsWidget extends StatelessWidget {
                 ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cerrar'),
-              ),
-            ],
+            // actions: [
+            //   TextButton(
+            //     onPressed: () => Navigator.pop(context),
+            //     child: const Text('Cerrar'),
+            //   ),
+            // ],
           ),
     );
   }
@@ -150,20 +237,73 @@ class _StockCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Fecha de ingreso: ${entryDate.toLocal()}'.split(' ')[0],
-              style: const TextStyle(fontSize: 14),
+            Row(
+              children: [
+                Text(
+                  'Fecha de ingreso: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${DateFormat.yMMMMd().format(entryDate)}',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
             ),
-            Text(
-              'Fecha de caducidad: ${expiryDate.toLocal()}'.split(' ')[0],
-              style: const TextStyle(fontSize: 14, color: Colors.red),
+            Row(
+              children: [
+                Text(
+                  'Fecha de caducidad: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                Text(
+                  '${DateFormat.yMMMMd().format(expiryDate)}',
+                  style: const TextStyle(fontSize: 14, color: Colors.red),
+                ),
+              ],
             ),
-            Text('Cantidad: $quantity', style: const TextStyle(fontSize: 14)),
+            Row(
+              children: [
+                Text(
+                  'Cantidad: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text('$quantity', style: const TextStyle(fontSize: 14)),
+              ],
+            ),
             if (grams != null)
-              Text('Gramos: $grams', style: const TextStyle(fontSize: 14)),
-            Text(
-              'Tiempo restante: $remainingText',
-              style: const TextStyle(fontSize: 14),
+              Row(
+                children: [
+                  Text(
+                    'Gramos: ',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('$grams', style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+            Row(
+              children: [
+                Text(
+                  'Tiempo restante: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text('$remainingText', style: const TextStyle(fontSize: 14)),
+              ],
             ),
           ],
         ),
