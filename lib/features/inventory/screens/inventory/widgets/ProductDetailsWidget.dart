@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:intl/intl.dart';
 
 class ProductDetailsWidget extends StatelessWidget {
@@ -15,8 +16,9 @@ class ProductDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? CColors.darkContainer : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,11 +145,12 @@ class ProductDetailsWidget extends StatelessWidget {
   }
 
   void _showStockDetails(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: isDark ? CColors.darkContainer : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -221,6 +224,7 @@ class _StockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     final remainingTime = expiryDate.difference(DateTime.now());
     final remainingText =
         remainingTime.isNegative
@@ -228,7 +232,7 @@ class _StockCard extends StatelessWidget {
             : '${remainingTime.inDays} días ${remainingTime.inHours % 24}h';
 
     return Card(
-      color: Colors.white,
+      color: isDark ? CColors.darkContainer : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),

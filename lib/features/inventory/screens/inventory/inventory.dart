@@ -4,6 +4,7 @@ import 'package:gestion_recetas/features/inventory/screens/inventory/widgets/Pro
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
@@ -312,9 +313,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   Widget _buildProductCard(Product product, int index) {
     final isExpanded = _expandedIndexes.contains(index);
+    final bool isDark = THelperFunctions.isDarkMode(context);
 
     return Card(
-      color: Colors.white,
+      color: isDark ? CColors.darkContainer : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 5,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
