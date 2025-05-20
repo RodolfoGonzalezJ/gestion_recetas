@@ -164,14 +164,42 @@ class _HomeScreenRealState extends State<HomeScreen> {
             const SizedBox(height: 16),
             _categories(),
             const SizedBox(height: 16),
-            _sectionTitle('Mis recetas 🔥', onPressed: () {}),
+            _sectionTitle('Todas las recetas 🔥', onPressed: () {}),
             _trendingItems(recipes),
             const SizedBox(height: 16),
-            RecipeSuggestionsWidget(
-              allRecipes: recipes.cast<Recipe>(),
-              allProducts: products.cast<Product>(),
-              currentUserEmail: currentUser?.correo ?? '',
-              userProducts: myProducts.cast<Product>(),
+            // Apartado de sugerencias de recetas según tus productos
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Text(
+                      'Sugerencias de recetas según tus productos',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF2E2E2E),
+                      ),
+                    ),
+                  ),
+                  RecipeSuggestionsWidget(
+                    currentUserEmail: currentUser?.correo ?? '',
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             _adBanner(),
