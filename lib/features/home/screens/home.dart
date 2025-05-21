@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:gestion_recetas/features/home/screens/search_screen.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/recipe_suggestions_widget.dart';
 import 'package:gestion_recetas/features/auth/models/models.dart';
+import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -387,10 +388,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
             product.quantity == 0 ? 'Agotado' : 'Cantidad: ${product.quantity}';
 
         return {
+          'id': product.id, // <-- Agrega el id para navegación
           'title': product.name,
           'image': product.photoUrl ?? 'assets/images/default.png',
           'cantidad': quantityStatus,
           'expira': status,
+          'product': product, // <-- Pasa el objeto producto completo
         };
       }).toList(),
     );
@@ -407,63 +410,78 @@ class _HomeScreenRealState extends State<HomeScreen> {
           final item = items[index];
           final statusColor = _getExpirationColor(item['expira']!);
 
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 2,
-            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(141, 0, 0, 0),
-                    blurRadius: 1,
-                    offset: Offset(0, 2),
-                  ),
-                ],
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                          ProductDetailExpiringScreen(product: item['product']),
+                ),
+              );
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              width: 140,
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+              elevation: 2,
+              margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(141, 0, 0, 0),
+                      blurRadius: 1,
+                      offset: Offset(0, 2),
                     ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      item['expira']!,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: statusColor,
-                        fontWeight: FontWeight.bold,
+                  ],
+                ),
+                width: 140,
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        item['expira']!,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: statusColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: _loadImage(item['image']),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    item['title']!,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item['cantidad']!,
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _loadImage(item['image']),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item['cantidad']!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
