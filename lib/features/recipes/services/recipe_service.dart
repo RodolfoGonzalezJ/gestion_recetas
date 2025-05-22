@@ -4,7 +4,6 @@ import 'package:gestion_recetas/features/recipes/models/models.dart';
 import 'package:uuid/uuid.dart';
 import 'package:gestion_recetas/features/Comment/service/comment_service.dart';
 
-
 class RecipeService {
   final CommentService _commentService = CommentService();
 
@@ -35,15 +34,20 @@ class RecipeService {
     try {
       final collection = MongoDBHelper.db.collection('recipes');
       final recipes = await collection.find().toList();
-
-      // Fetch average ratings for each recipe
       final recipeList = await Future.wait(
         recipes.map((data) async {
           final recipe = Recipe.fromMap(data);
           final averageRating = await _commentService.calculateAverageRating(
             recipe.id,
           );
-          return recipe.copyWith(averageRating: averageRating);
+          // Trae los comentarios de la receta
+          final comments = await _commentService.fetchComments(recipe.id);
+          // Convierte los comentarios a Map para el modelo
+          final commentsList = comments.map((c) => c.toMap()).toList();
+          return recipe.copyWith(
+            averageRating: averageRating,
+            comments: commentsList,
+          );
         }),
       );
 
@@ -113,7 +117,7 @@ class RecipeService {
       print('Comentario agregado y rating actualizado.');
     } catch (e) {
       print('Error al agregar comentario a la receta: $e');
-    rethrow;
+      rethrow;
     }
   }
 

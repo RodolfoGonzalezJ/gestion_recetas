@@ -190,7 +190,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _trendingItemsSortedByRating(dataProvider.recipes),
             const SizedBox(height: 16),
             _sectionTitle('Recetas de la semana', onPressed: () {}),
-            _weeklyRecipes(dataProvider.recipes),
+            _weeklyRecipesLast8Days(dataProvider.recipes),
           ],
         ),
       ),
@@ -730,6 +730,45 @@ class _HomeScreenRealState extends State<HomeScreen> {
     recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
     return _horizontalList(
       recipeList.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
+    );
+  }
+
+  /// Recetas de la semana: recetas con comentarios en los últimos 8 días, ordenadas por rating
+  Widget _weeklyRecipesLast8Days(List<dynamic> recipes) {
+    final now = DateTime.now();
+    final eightDaysAgo = now.subtract(const Duration(days: 8));
+
+    // Se asume que cada receta tiene una lista de comentarios con campo createdAt y rating
+    final filtered =
+        recipes.whereType<Recipe>().where((recipe) {
+          // Si no hay comentarios, no se muestra
+          if (recipe.comments == null || recipe.comments.isEmpty) return false;
+          // Al menos un comentario en los últimos 8 días
+          return recipe.comments.any(
+            (c) =>
+                c['createdAt'] != null &&
+                    (c['createdAt'] is DateTime
+                            ? c['createdAt']
+                            : DateTime.tryParse(c['createdAt'].toString()))
+                        ?.isAfter(eightDaysAgo) ??
+                false,
+          );
+        }).toList();
+
+    // Ordena por averageRating descendente
+    filtered.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+
+    return _horizontalList(
+      filtered.map((recipe) {
         return {
           'id': recipe.id,
           'title': recipe.name,

@@ -14,6 +14,7 @@ class Recipe {
   final String? instructions;
   final double averageRating;
   final String createdBy;
+  final List<Map<String, dynamic>> comments; // <-- Agregado para comentarios
   Recipe({
     required this.id,
     required this.name,
@@ -28,10 +29,13 @@ class Recipe {
     this.instructions,
     this.averageRating = 0.0,
     required this.createdBy,
-
+    this.comments = const [], // <-- Inicializa por defecto como lista vacía
   });
 
-  Recipe copyWith({double? averageRating}) {
+  Recipe copyWith({
+    double? averageRating,
+    List<Map<String, dynamic>>? comments,
+  }) {
     return Recipe(
       id: id,
       name: name,
@@ -46,6 +50,7 @@ class Recipe {
       instructions: instructions,
       averageRating: averageRating ?? this.averageRating,
       createdBy: createdBy,
+      comments: comments ?? this.comments, // <-- Copia comentarios si se pasa
     );
   }
 
@@ -64,6 +69,7 @@ class Recipe {
       'instructions': instructions,
       'averageRating': averageRating,
       'createdBy': createdBy,
+      'comments': comments, // <-- Serializa comentarios
     };
   }
 
@@ -73,7 +79,7 @@ class Recipe {
       name: map['name'] as String? ?? '',
       description: map['description'] as String? ?? '',
       category: map['category'] ?? 'Otros',
-      difficulty: map['difficulty'] as String?  ?? '',
+      difficulty: map['difficulty'] as String? ?? '',
       imageUrl: map['imageUrl'] as String?,
       videoUrl: map['videoUrl'] as String?,
       preparationTime: Duration(minutes: map['preparationTime'] as int? ?? 0),
@@ -85,6 +91,11 @@ class Recipe {
       instructions: map['instructions'] as String?,
       averageRating: map['averageRating'] as double? ?? 0.0,
       createdBy: map['createdBy'] as String? ?? '',
+      comments:
+          (map['comments'] as List?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          [],
     );
   }
 }
