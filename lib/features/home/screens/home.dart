@@ -16,6 +16,7 @@ import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipes.dart';
 import 'package:gestion_recetas/features/home/screens/see_more_recipes_screen.dart';
+import 'package:gestion_recetas/features/home/screens/widgets/hero_ad_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -344,16 +345,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _adBanner() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      color: Colors.grey[300],
-      child: Center(
-        child: Text(
-          '¡Anuncioooooooooooo',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
+    return HeroAdBanner();
   }
 
   Widget _recommendedItems(List<dynamic> recipes) {
