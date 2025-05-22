@@ -10,9 +10,11 @@ import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'dart:io';
 import 'package:gestion_recetas/features/home/screens/search_screen.dart';
-import 'package:gestion_recetas/features/home/screens/widgets/recipe_suggestions_widget.dart';
+import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipes.dart';
 import 'package:gestion_recetas/features/auth/models/models.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
+import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,13 +34,23 @@ class _HomeScreenRealState extends State<HomeScreen> {
     dataProvider.loadRecipes();
     dataProvider.loadProducts();
     dataProvider.loadUsers(); // Load users
+
+    // Inicializa el usuario autenticado solo una vez después del primer frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dataProvider = Provider.of<DataProvider>(context, listen: false);
+      if (dataProvider.currentUser == null) {
+        final user = AuthController().user;
+        if (user != null) {
+          dataProvider.setCurrentUser(user);
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
 
-    // Obtén el usuario actual del provider
     final UserModel? currentUser = dataProvider.currentUser;
 
     // Asegura que los datos existen o usa valores por defecto
@@ -168,44 +180,11 @@ class _HomeScreenRealState extends State<HomeScreen> {
             _sectionTitle('Todas las recetas 🔥', onPressed: () {}),
             _trendingItems(recipes),
             const SizedBox(height: 16),
-            // Apartado de sugerencias de recetas según tus productos
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Text(
-                      'Sugerencias de recetas según tus productos',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF2E2E2E),
-                      ),
-                    ),
-                  ),
-                  RecipeSuggestionsWidget(
-                    currentUserEmail: currentUser?.correo ?? '',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
             _adBanner(),
-            _sectionTitle('Recomendado para ti', onPressed: () {}),
-            _recommendedItems(dataProvider.recipes),
+            RecommendedRecipesWidget(
+              currentUserEmail:
+                  currentUser?.correo ?? AuthController().user.correo ?? '',
+            ),
             const SizedBox(height: 16),
             _sectionTitle('En tendencias 🔥', onPressed: () {}),
             _trendingItems(dataProvider.recipes),

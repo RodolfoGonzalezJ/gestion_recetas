@@ -5,50 +5,50 @@ import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 
-class RecipeSuggestionsWidget extends StatefulWidget {
+class RecommendedRecipesWidget extends StatefulWidget {
   final String currentUserEmail;
-  const RecipeSuggestionsWidget({super.key, required this.currentUserEmail});
+  const RecommendedRecipesWidget({super.key, required this.currentUserEmail});
 
   @override
-  State<RecipeSuggestionsWidget> createState() =>
-      _RecipeSuggestionsWidgetState();
+  State<RecommendedRecipesWidget> createState() =>
+      _RecommendedRecipesWidgetState();
 }
 
-class _RecipeSuggestionsWidgetState extends State<RecipeSuggestionsWidget> {
-  late Future<List<Recipe>> _suggestedRecipesFuture;
+class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
+  late Future<List<Recipe>> _recommendedRecipesFuture;
 
   @override
   void initState() {
     super.initState();
-    if (widget.currentUserEmail.isNotEmpty) {
-      _suggestedRecipesFuture = _fetchSuggestedRecipes();
-    }
+    _recommendedRecipesFuture = _fetchRecommendedRecipes();
   }
 
   @override
-  void didUpdateWidget(covariant RecipeSuggestionsWidget oldWidget) {
+  void didUpdateWidget(covariant RecommendedRecipesWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentUserEmail != widget.currentUserEmail &&
-        widget.currentUserEmail.isNotEmpty) {
+    if (oldWidget.currentUserEmail != widget.currentUserEmail) {
       setState(() {
-        _suggestedRecipesFuture = _fetchSuggestedRecipes();
+        _recommendedRecipesFuture = _fetchRecommendedRecipes();
       });
     }
   }
 
-  Future<List<Recipe>> _fetchSuggestedRecipes() async {
+  Future<List<Recipe>> _fetchRecommendedRecipes() async {
     final inventoryService = InventoryService();
     final recipeService = RecipeService();
 
     final userEmail = widget.currentUserEmail;
+    if (userEmail.isEmpty) {
+      return [];
+    }
 
     final allProducts = await inventoryService.fetchProducts();
     final myProducts =
         allProducts
             .where(
               (p) =>
-                  p.createdBy.trim().toLowerCase() ==
-                      userEmail.trim().toLowerCase() &&
+                  (p.createdBy.trim().toLowerCase() ==
+                      userEmail.trim().toLowerCase()) &&
                   p.expiryDate.isAfter(DateTime.now()) &&
                   p.quantity > 0,
             )
@@ -97,7 +97,7 @@ class _RecipeSuggestionsWidgetState extends State<RecipeSuggestionsWidget> {
       return const SizedBox.shrink();
     }
     return FutureBuilder<List<Recipe>>(
-      future: _suggestedRecipesFuture,
+      future: _recommendedRecipesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -116,7 +116,7 @@ class _RecipeSuggestionsWidgetState extends State<RecipeSuggestionsWidget> {
           return const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Text(
-              'No hay recetas sugeridas con tus productos actuales.',
+              'No hay recetas recomendadas con tus productos actuales.',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           );
@@ -125,7 +125,7 @@ class _RecipeSuggestionsWidgetState extends State<RecipeSuggestionsWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Sugerencias de recetas según tus productos:',
+              'Recomendado para ti:',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
@@ -152,21 +152,32 @@ class _RecipeSuggestionsWidgetState extends State<RecipeSuggestionsWidget> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (recipe.imageUrl != null &&
-                              recipe.imageUrl!.isNotEmpty)
-                            SizedBox(
-                              width: 150,
-                              height: 150,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                child: Image.network(
-                                  recipe.imageUrl!,
-                                  fit: BoxFit.cover,
-                                ),
+                          SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
                               ),
+                              child:
+                                  (recipe.imageUrl != null &&
+                                          recipe.imageUrl!.isNotEmpty)
+                                      ? Image.network(
+                                        recipe.imageUrl!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stack) =>
+                                                Image.asset(
+                                                  'assets/images/1.png',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                      )
+                                      : Image.asset(
+                                        'assets/images/1.png',
+                                        fit: BoxFit.cover,
+                                      ),
                             ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             recipe.name,
