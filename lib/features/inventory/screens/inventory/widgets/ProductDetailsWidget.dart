@@ -246,13 +246,13 @@ class _StockCard extends StatelessWidget {
                 Text(
                   'Fecha de ingreso: ',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   '${DateFormat.yMMMMd().format(entryDate)}',
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
@@ -261,14 +261,14 @@ class _StockCard extends StatelessWidget {
                 Text(
                   'Fecha de caducidad: ',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
                   ),
                 ),
                 Text(
                   '${DateFormat.yMMMMd().format(expiryDate)}',
-                  style: const TextStyle(fontSize: 14, color: Colors.red),
+                  style: const TextStyle(fontSize: 12, color: Colors.red),
                 ),
               ],
             ),
@@ -277,11 +277,11 @@ class _StockCard extends StatelessWidget {
                 Text(
                   'Cantidad: ',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text('$quantity', style: const TextStyle(fontSize: 14)),
+                Text('$quantity', style: const TextStyle(fontSize: 12)),
               ],
             ),
             if (grams != null)
@@ -290,11 +290,11 @@ class _StockCard extends StatelessWidget {
                   Text(
                     'Gramos: ',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('$grams', style: const TextStyle(fontSize: 14)),
+                  Text('$grams', style: const TextStyle(fontSize: 12)),
                 ],
               ),
             Row(
@@ -302,11 +302,11 @@ class _StockCard extends StatelessWidget {
                 Text(
                   'Tiempo restante: ',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text('$remainingText', style: const TextStyle(fontSize: 14)),
+                Text('$remainingText', style: const TextStyle(fontSize: 12)),
               ],
             ),
           ],
