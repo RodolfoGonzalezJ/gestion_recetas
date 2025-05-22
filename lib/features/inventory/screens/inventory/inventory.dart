@@ -431,20 +431,20 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     const SizedBox(height: 8),
 
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: CColors.primaryButton,
                             foregroundColor: CColors.secondaryButton,
                             padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
+                              vertical: 12,
+                              horizontal: 12,
                             ),
                           ),
                           onPressed: () => _updateProduct(context, product),
                           child: const Text('Agregar Cantidad/Fecha'),
                         ),
-                        SizedBox(width: 12),
                         TextButton(
                           onPressed:
                               () => _showProductDetails(context, product),
@@ -452,8 +452,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             backgroundColor: CColors.primaryButton,
                             foregroundColor: CColors.secondaryButton,
                             padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
+                              vertical: 12,
+                              horizontal: 12,
                             ),
                           ),
                           child: const Text('Ver más'),
