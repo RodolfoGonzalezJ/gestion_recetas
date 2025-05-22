@@ -448,8 +448,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      item['title']!,
+                      item['title']!.length > 16
+                          ? '${item['title']!.substring(0, 14)}...'
+                          : item['title']!,
                       style: const TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
