@@ -71,15 +71,49 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          tooltip: 'Editar',
-                          onPressed: () => _editRecipe(receta),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          tooltip: 'Eliminar',
-                          onPressed: () => _deleteRecipe(receta.id),
+                        // IconButton(
+                        //   icon: const Icon(Icons.edit, color: Colors.blue),
+                        //   tooltip: 'Editar',
+                        //   onPressed: () => _editRecipe(receta),
+                        // ),
+                        // IconButton(
+                        //   icon: const Icon(Icons.delete, color: Colors.red),
+                        //   tooltip: 'Eliminar',
+                        //   onPressed: () => _deleteRecipe(receta.id),
+                        // ),
+                        PopupMenuButton(
+                          icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          color: Colors.white,
+                          itemBuilder:
+                              (context) => [
+                                PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text(
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    'Editar',
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text(
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    'Eliminar',
+                                  ),
+                                ),
+                              ],
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              _editRecipe(receta);
+                            } else if (value == 'delete') {
+                              _deleteRecipe(receta.id);
+                            }
+                          },
                         ),
                       ],
                     ),
