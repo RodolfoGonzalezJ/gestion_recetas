@@ -187,7 +187,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             _sectionTitle('En tendencias 🔥', onPressed: () {}),
-            _trendingItems(dataProvider.recipes),
+            _trendingItemsSortedByRating(dataProvider.recipes),
             const SizedBox(height: 16),
             _sectionTitle('Recetas de la semana', onPressed: () {}),
             _weeklyRecipes(dataProvider.recipes),
@@ -721,6 +721,24 @@ class _HomeScreenRealState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Muestra las recetas ordenadas por averageRating (mayor a menor) en "En tendencias 🔥"
+  Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
+    final recipeList = recipes.whereType<Recipe>().toList();
+    recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+    return _horizontalList(
+      recipeList.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
     );
   }
 }
