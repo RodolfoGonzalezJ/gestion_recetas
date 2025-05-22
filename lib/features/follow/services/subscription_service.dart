@@ -1,5 +1,7 @@
+import 'package:gestion_recetas/data/repositories/mongodb_helper.dart';
 import '../../profile/models/user_profile_model.dart';
 import '../../recipes/models/models.dart';
+import '../../recipes/services/recipe_service.dart';
 
 class SubscriptionService {
   Future<bool> checkIfSubscribed(String correo) async {
@@ -14,43 +16,39 @@ class SubscriptionService {
   }
 
   Future<UserProfile> fetchUserProfile(String correo) async {
-    // Simula datos (reemplaza por consulta real)
+    final collection = MongoDBHelper.db.collection('users');
+    final userData = await collection.findOne({'correo': correo});
+    if (userData == null) {
+      throw Exception('Usuario no encontrado');
+    }
     return UserProfile(
-      username: 'OzarkPepi',
-      bio: 'Estudiante de ingeniería, amante de la cocina y los perros.',
-      avatarUrl: 'assets/icons/avatar.png',
-      recetas: 20,
-      vistas: 40000,
-      seguidores: 16,
-      resenas: 4,
-      correo: correo,
-      nombre: 'Pepi',
-      apellido: 'Por la Calleja',
-      celular: '3191233129',
-      pais: 'Colombia',
-      direccion: 'Cra 123',
-      barrio: 'Barrio lindo',
-      fechaNacimiento: DateTime(2000, 1, 1),
+      nombre: userData['nombre'] ?? '',
+      apellido: userData['apellido'] ?? '',
+      celular: userData['celular'] ?? '',
+      cedula: userData['cedula'] ?? '',
+      fechaNacimiento: userData['fechaNacimiento'] != null
+          ? DateTime.parse(userData['fechaNacimiento'])
+          : null,
+      correo: userData['correo'] ?? '',
+      pais: userData['pais'] ?? '',
+      departamento: userData['departamento'] ?? '',
+      municipio: userData['municipio'] ?? '',
+      direccion: userData['direccion'] ?? '',
+      barrio: userData['barrio'] ?? '',
+      contrasena: userData['contrasena'] ?? '',
+      username: userData['correo'] ?? '',
+      bio: userData['bio'] ?? '',
+      avatarUrl: userData['avatarUrl'] ?? 'assets/icons/avatar.png',
+      recetas: userData['recetas'] ?? 0,
+      vistas: userData['vistas']?.toDouble() ?? 0,
+      seguidores: userData['seguidores']?.toDouble() ?? 0,
+      resenas: userData['resenas'] ?? 0,
     );
   }
 
-  Future<List<Recipe>> fetchUserRecipes(String correo) async {
-    return [
-      Recipe(
-        id: '1',
-        name: 'Buñuelo asado',
-        description: 'Delicioso buñuelo sin freír',
-        category: 'Postres',
-        difficulty: 'Fácil',
-        imageUrl: 'assets/images/brocoli.png',
-        videoUrl: null,
-        preparationTime: const Duration(minutes: 40),
-        calories: 200,
-        ingredients: [], // ← simulado vacío, ajusta si necesitas
-        instructions: 'Mezclar, hornear y disfrutar.',
-        averageRating: 4.5,
-        createdBy:["id"] as String,
-      ),
-    ];
+    Future<List<Recipe>> fetchUserRecipes(String correo) async {
+    final recipeService = RecipeService();
+    final todasLasRecetas = await recipeService.fetchRecipes();
+    return todasLasRecetas.where((receta) => receta.createdBy == correo).toList();
   }
 }

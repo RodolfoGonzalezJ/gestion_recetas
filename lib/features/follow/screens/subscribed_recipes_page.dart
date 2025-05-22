@@ -2,9 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/follow/widgets/subscription_modal.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
+import 'package:gestion_recetas/features/recipes/models/models.dart';
 
 class TodasMisRecetasScreen extends StatefulWidget {
-  const TodasMisRecetasScreen({super.key});
+  final List<Recipe> recetasUsuario;
+
+  const TodasMisRecetasScreen({super.key, required this.recetasUsuario});
 
   @override
   State<TodasMisRecetasScreen> createState() => _TodasMisRecetasScreenState();
@@ -13,41 +16,12 @@ class TodasMisRecetasScreen extends StatefulWidget {
 class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
   bool _showBlur = true;
 
-  final List<Map<String, dynamic>> recetas = [
-    {
-      'image': 'assets/logos/logo.png',
-      'title': 'Buñuelo asado',
-      'rating': 4.9,
-      'reviews': 102,
-      'duration': 40,
-      'difficulty': 2,
-    },
-    {
-      'image': 'assets/logos/logo.png',
-      'title': 'Arepa de huevo',
-      'rating': 4.7,
-      'reviews': 89,
-      'duration': 35,
-      'difficulty': 1,
-    },
-    {
-      'image': 'assets/logos/logo.png',
-      'title': 'Sancocho costeño',
-      'rating': 4.8,
-      'reviews': 112,
-      'duration': 90,
-      'difficulty': 3,
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
-
-    // Ejecutar después del build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showSubscriptionModal(context, () {
-        setState(() => _showBlur = false); // quitar el blur
+        setState(() => _showBlur = false);
       });
     });
   }
@@ -58,25 +32,22 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
       appBar: AppBar(title: const Text("Todas mis recetas")),
       body: Stack(
         children: [
-          // Contenido principal
           ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: recetas.length,
+            itemCount: widget.recetasUsuario.length,
             itemBuilder: (_, index) {
-              final r = recetas[index];
+              final receta = widget.recetasUsuario[index];
               return RecipeCard(
-                id: index.toString(),
-                imagePath: r['image'] as String,
-                title: r['title'] as String,
-                rating: r['rating'] as double,
-                reviews: r['reviews'] as int,
-                duration: r['duration'] as int,
-                difficulty: r['difficulty'] as int,
+                id: receta.id,
+                imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
+                title: receta.name,
+                rating: receta.averageRating,
+                reviews: 0,
+                duration: receta.preparationTime.inMinutes,
+                difficulty: int.tryParse(receta.difficulty) ?? 1,
               );
             },
           ),
-
-          // Desenfoque si está activo
           if (_showBlur)
             Positioned.fill(
               child: BackdropFilter(
