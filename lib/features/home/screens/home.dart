@@ -15,6 +15,7 @@ import 'package:gestion_recetas/features/auth/models/models.dart';
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipes.dart';
+import 'package:gestion_recetas/features/home/screens/see_more_recipes_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -177,7 +178,24 @@ class _HomeScreenRealState extends State<HomeScreen> {
             const SizedBox(height: 16),
             _categories(),
             const SizedBox(height: 16),
-            _sectionTitle('Todas las recetas 🔥', onPressed: () {}),
+            _sectionTitle(
+              'Todas las recetas 🔥',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => SeeMoreRecipesScreen(
+                          title: 'Todas las recetas',
+                          recipes:
+                              (dataProvider.recipes ?? [])
+                                  .whereType<Recipe>()
+                                  .toList(),
+                        ),
+                  ),
+                );
+              },
+            ),
             _trendingItems(recipes),
             const SizedBox(height: 16),
             _adBanner(),
@@ -186,10 +204,38 @@ class _HomeScreenRealState extends State<HomeScreen> {
                   currentUser?.correo ?? AuthController().user.correo ?? '',
             ),
             const SizedBox(height: 16),
-            _sectionTitle('En tendencias 🔥', onPressed: () {}),
+            _sectionTitle(
+              'En tendencias 🔥',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => SeeMoreRecipesScreen(
+                          title: 'En tendencias',
+                          recipes: _getTrendingRecipes(dataProvider.recipes),
+                        ),
+                  ),
+                );
+              },
+            ),
             _trendingItemsSortedByRating(dataProvider.recipes),
             const SizedBox(height: 16),
-            _sectionTitle('Recetas de la semana', onPressed: () {}),
+            _sectionTitle(
+              'Recetas de la semana',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => SeeMoreRecipesScreen(
+                          title: 'Recetas de la semana',
+                          recipes: _getWeeklyRecipes(dataProvider.recipes),
+                        ),
+                  ),
+                );
+              },
+            ),
             _weeklyRecipesLast8Days(dataProvider.recipes),
           ],
         ),
@@ -648,6 +694,34 @@ class _HomeScreenRealState extends State<HomeScreen> {
         },
       );
     }
+  }
+
+  /// Devuelve las recetas ordenadas por averageRating (mayor a menor)
+  List<Recipe> _getTrendingRecipes(List<dynamic> recipes) {
+    final recipeList = recipes.whereType<Recipe>().toList();
+    recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+    return recipeList;
+  }
+
+  /// Devuelve las recetas de la semana (últimos 8 días con comentarios)
+  List<Recipe> _getWeeklyRecipes(List<dynamic> recipes) {
+    final now = DateTime.now();
+    final eightDaysAgo = now.subtract(const Duration(days: 8));
+    final filtered =
+        recipes.whereType<Recipe>().where((recipe) {
+          if (recipe.comments == null || recipe.comments.isEmpty) return false;
+          return recipe.comments.any(
+            (c) =>
+                c['createdAt'] != null &&
+                    (c['createdAt'] is DateTime
+                            ? c['createdAt']
+                            : DateTime.tryParse(c['createdAt'].toString()))
+                        ?.isAfter(eightDaysAgo) ??
+                false,
+          );
+        }).toList();
+    filtered.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+    return filtered;
   }
 
   Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
