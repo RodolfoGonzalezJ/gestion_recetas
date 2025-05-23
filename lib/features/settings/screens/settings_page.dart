@@ -4,6 +4,7 @@ import 'package:gestion_recetas/features/settings/screens/password_security/pass
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_section.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_tile.dart';
+import 'package:gestion_recetas/features/settings/screens/widgets/termsandconditions.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/theme_notifier.dart';
@@ -94,13 +95,20 @@ class SettingsPage extends StatelessWidget {
                   const SettingsTile(icon: Icons.language, title: "Idioma"),
                 ],
               ),
-              const SizedBox(height: 16),
-              const SettingsSection(
+              SizedBox(height: 16),
+              SettingsSection(
                 title: "Privacidad",
                 tiles: [
                   SettingsTile(
                     icon: Icons.privacy_tip_outlined,
                     title: "Política de Privacidad",
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TermsAndConditionsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   SettingsTile(
                     icon: Icons.help_outline,
