@@ -43,6 +43,35 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
     setState(() {});
   }
 
+  void _showDeleteConfirmation(BuildContext context, String recetaId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text("Confirmar eliminación"),
+          content: Text("¿Estás seguro de que deseas eliminar esta receta?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar diálogo
+              },
+              child: Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Cerrar diálogo
+                await _deleteRecipe(recetaId); // Llamar función original
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: Text("Eliminar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +140,7 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
                             if (value == 'edit') {
                               _editRecipe(receta);
                             } else if (value == 'delete') {
-                              _deleteRecipe(receta.id);
+                              _showDeleteConfirmation(context, receta.id);
                             }
                           },
                         ),
