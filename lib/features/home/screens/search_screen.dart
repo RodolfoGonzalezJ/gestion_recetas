@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/follow/screens/profile_subscription_page.dart';
+import 'package:gestion_recetas/features/home/screens/detail.dart';
+import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 
@@ -177,6 +179,21 @@ class _SearchScreenState extends State<SearchScreen>
                         avatarUrl:
                             item.avatarUrl ?? 'https://via.placeholder.com/150',
                       ),
+                ),
+              );
+            } else if (type == 'Recetas') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetailPage(recipeId: item.id),
+                ),
+              );
+            } else if (type == 'Productos') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ProductDetailExpiringScreen(product: item),
                 ),
               );
             }
