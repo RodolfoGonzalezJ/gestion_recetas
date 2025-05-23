@@ -5,6 +5,8 @@ import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+import 'package:provider/provider.dart';
+import 'package:gestion_recetas/features/favorites/controllers/favorite_controller.dart';
 
 extension DateTimeExtensions on DateTime {
   String getRelativeTime() {
@@ -46,6 +48,14 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   void initState() {
     super.initState();
     _recipeData = _fetchRecipeData();
+    // Cargar favoritos si hay usuario autenticado
+    final userEmail = AuthController().user.correo ?? '';
+    if (userEmail.isNotEmpty) {
+      Future.microtask(() {
+        final favCtrl = Provider.of<FavoriteController>(context, listen: false);
+        favCtrl.loadFavorites(userEmail);
+      });
+    }
   }
 
   Future<Map<String, dynamic>> _fetchRecipeData() async {
@@ -55,15 +65,15 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   }
 
   Future<UserProfile?> getUserProfileByEmail(String email) async {
-  final controller = ProfileController();
-  print('DEBUG: Buscando perfil para email: $email');
-  await controller.loadUserProfile(email);
-  if (controller.userProfile == null) {
-    print('ERROR: No se encontró perfil para $email');
-  } else {
-    print('DEBUG: Perfil encontrado: ${controller.userProfile!.nombre}');
-  }
-  return controller.userProfile;
+    final controller = ProfileController();
+    print('DEBUG: Buscando perfil para email: $email');
+    await controller.loadUserProfile(email);
+    if (controller.userProfile == null) {
+      print('ERROR: No se encontró perfil para $email');
+    } else {
+      print('DEBUG: Perfil encontrado: ${controller.userProfile!.nombre}');
+    }
+    return controller.userProfile;
   }
 
   Future<void> _addComment(String content, double rating) async {
@@ -76,9 +86,11 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       id: '',
       recipeId: widget.recipeId,
       userId: userProfile?.cedula ?? 'unknown_user',
-      userName: (userProfile != null && (userProfile.nombre ?? '').trim().isNotEmpty)
-      ? '${userProfile.nombre ?? ''} ${userProfile.apellido ?? ''}'.trim()
-      : userProfile?.correo ?? 'Usuario Anónimo',
+      userName:
+          (userProfile != null && (userProfile.nombre ?? '').trim().isNotEmpty)
+              ? '${userProfile.nombre ?? ''} ${userProfile.apellido ?? ''}'
+                  .trim()
+              : userProfile?.correo ?? 'Usuario Anónimo',
       content: content,
       rating: rating,
       createdAt: DateTime.now(),
@@ -96,6 +108,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userEmail = AuthController().user.correo ?? '';
     return Scaffold(
       body: FutureBuilder<Map<String, dynamic>>(
         future: _recipeData,
@@ -145,6 +158,26 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       ),
                     ),
                   ),
+                  // Corazón de favorito arriba a la derecha
+                  Positioned(
+                    top: 40,
+                    right: 16,
+                    child: Consumer<FavoriteController>(
+                      builder: (context, favCtrl, _) {
+                        final isFav = favCtrl.isFavorite(recipe.id);
+                        return IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav ? Colors.red : Colors.grey,
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            favCtrl.toggleFavorite(userEmail, recipe.id);
+                          },
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
 
@@ -173,27 +206,37 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                               FutureBuilder<UserProfile?>(
                                 future: getUserProfileByEmail(recipe.createdBy),
                                 builder: (context, userSnapshot) {
-                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                  if (userSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return const Text(
                                       'Cargando autor...',
-                                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
                                     );
                                   }
-                                  if (userSnapshot.hasError || userSnapshot.data == null) {
+                                  if (userSnapshot.hasError ||
+                                      userSnapshot.data == null) {
                                     return const Text(
                                       'Autor desconocido',
-                                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
                                     );
                                   }
                                   // Mostrar nombre y apellido del autor
                                   final user = userSnapshot.data!;
                                   return Text(
                                     'By ${user.nombre} ${user.apellido}',
-                                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
                                   );
                                 },
                               ),
-
                             ],
                           ),
                           Row(
@@ -297,12 +340,24 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor: Colors.grey[300],
-                              backgroundImage: (comment.avatarUrl != null && comment.avatarUrl!.isNotEmpty && comment.avatarUrl!.startsWith('http'))
-                                  ? NetworkImage(comment.avatarUrl!)
-                                  : const AssetImage('assets/icons/avatar.png') as ImageProvider,
-                              child: (comment.avatarUrl == null || comment.avatarUrl!.isEmpty)
-                                  ? Text(comment.userName.isNotEmpty ? comment.userName[0] : '?')
-                                  : null,
+                              backgroundImage:
+                                  (comment.avatarUrl != null &&
+                                          comment.avatarUrl!.isNotEmpty &&
+                                          comment.avatarUrl!.startsWith('http'))
+                                      ? NetworkImage(comment.avatarUrl!)
+                                      : const AssetImage(
+                                            'assets/icons/avatar.png',
+                                          )
+                                          as ImageProvider,
+                              child:
+                                  (comment.avatarUrl == null ||
+                                          comment.avatarUrl!.isEmpty)
+                                      ? Text(
+                                        comment.userName.isNotEmpty
+                                            ? comment.userName[0]
+                                            : '?',
+                                      )
+                                      : null,
                             ),
                             contentPadding: const EdgeInsets.all(10),
                             title: Row(
@@ -311,7 +366,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                                   comment.userName.length > 15
                                       ? '${comment.userName.substring(0, 15)}...'
                                       : comment.userName,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 SizedBox(width: 8),
                                 Text(comment.createdAt.getRelativeTime()),
