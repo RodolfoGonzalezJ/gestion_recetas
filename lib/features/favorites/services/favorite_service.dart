@@ -32,4 +32,9 @@ class FavoriteService {
     final favorites = await _collection.find({'userEmail': userEmail}).toList();
     return favorites.map((f) => f['recipeId'] as String).toList();
   }
+
+  Future<int> getFavoritesCount(String recipeId) async {
+    final favorites = await _collection.find({'recipeId': recipeId}).toList();
+    return favorites.length;
+  }
 }

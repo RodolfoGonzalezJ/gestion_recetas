@@ -7,6 +7,7 @@ import 'package:gestion_recetas/features/profile/controllers/profile_controllers
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/favorites/controllers/favorite_controller.dart';
+import 'package:gestion_recetas/features/favorites/services/favorite_service.dart';
 
 extension DateTimeExtensions on DateTime {
   String getRelativeTime() {
@@ -40,6 +41,7 @@ class RecipeDetailPage extends StatefulWidget {
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   final RecipeService _recipeService = RecipeService();
+  final FavoriteService _favoriteService = FavoriteService();
   final TextEditingController _commentController = TextEditingController();
   double _rating = 0.0;
   late Future<Map<String, dynamic>> _recipeData;
@@ -104,6 +106,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       _commentController.clear();
       _rating = 0.0;
     });
+  }
+
+  Future<int> _getFavoritesCount(String recipeId) async {
+    return await _favoriteService.getFavoritesCount(recipeId);
   }
 
   @override
@@ -247,6 +253,49 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           ),
                         ],
                       ),
+                      // Mostrar cantidad de favoritos debajo del título
+                      FutureBuilder<int>(
+                        future: _getFavoritesCount(recipe.id),
+                        builder: (context, favSnapshot) {
+                          if (favSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox(
+                              height: 20,
+                              child: Text('Cargando favoritos...'),
+                            );
+                          }
+                          if (favSnapshot.hasError) {
+                            return const SizedBox(
+                              height: 20,
+                              child: Text('Error al cargar favoritos'),
+                            );
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 4.0,
+                              bottom: 8.0,
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${favSnapshot.data ?? 0} favoritos',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+
                       const SizedBox(height: 16),
 
                       // Stats
