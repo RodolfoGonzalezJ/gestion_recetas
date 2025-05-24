@@ -82,7 +82,7 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color:
                                   isDark
-                                      ? Colors.white
+                                      ? CColors.light
                                       : CColors.primaryTextColor,
                             ),
                             maxLines: 2,

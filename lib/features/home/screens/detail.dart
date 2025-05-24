@@ -161,9 +161,13 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     left: 16,
                     child: CircleAvatar(
                       backgroundColor:
-                          isDark ? CColors.dark : Colors.black.withOpacity(0.8),
+                          isDark ? CColors.darkContainer : CColors.light,
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color:
+                              isDark ? CColors.light : CColors.primaryTextColor,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -205,6 +209,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              SizedBox(height: 15),
                               Text(
                                 recipe.name,
                                 style: const TextStyle(
@@ -281,9 +286,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             ),
                             child: Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.favorite,
-                                  color: Colors.red,
+                                  color: isDark ? Colors.grey : Colors.red,
                                   size: 18,
                                 ),
                                 const SizedBox(width: 4),
@@ -334,7 +339,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       const SizedBox(height: 6),
                       Text(
                         recipe.description,
-                        style: const TextStyle(color: Colors.black87),
+                        style: TextStyle(
+                          color: isDark ? Colors.grey.shade400 : Colors.black,
+                        ),
                       ),
 
                       const SizedBox(height: 20),
@@ -384,8 +391,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           fontSize: 16,
                         ),
                       ),
-
-                      const SizedBox(height: 10),
 
                       ...comments.map((comment) {
                         return Container(
@@ -447,7 +452,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           ),
                         );
                       }).toList(),
-                      const SizedBox(height: 20),
 
                       // Positioned(
                       //   left: 0,
@@ -587,8 +591,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       // ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          color: isDark ? CColors.darkContainer : Colors.white,
+                          borderRadius: BorderRadius.circular(5),
                           boxShadow: [
                             BoxShadow(
                               color: const Color.fromARGB(141, 0, 0, 0),
@@ -607,16 +611,15 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                               color: Colors.grey.shade400,
                             ),
                             filled: true,
-                            fillColor: Colors.white,
                             contentPadding: const EdgeInsets.symmetric(
                               vertical: 12.0,
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(5),
                               borderSide: BorderSide(color: Colors.transparent),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(5),
                               borderSide: BorderSide(color: Colors.transparent),
                             ),
                             suffixIcon: IconButton(
@@ -688,11 +691,18 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   }
 
   Widget _buildStat(IconData icon, String value) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Row(
       children: [
-        Icon(icon, size: 18, color: Colors.grey[600]),
+        Icon(icon, size: 18, color: isDark ? Colors.white : Colors.black),
         const SizedBox(width: 4),
-        Text(value),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            color: isDark ? Colors.grey.shade400 : Colors.black,
+          ),
+        ),
       ],
     );
   }
