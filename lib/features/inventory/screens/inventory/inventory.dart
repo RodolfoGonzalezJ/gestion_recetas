@@ -37,9 +37,18 @@ class _InventoryScreenState extends State<InventoryScreen> {
   @override
   Widget build(BuildContext context) {
     final userEmail = AuthController().user.correo ?? '';
-
+    final isDark = THelperFunctions.isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventario')),
+      appBar: AppBar(
+        title: Text(
+          'Inventario',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: isDark ? CColors.light : CColors.primaryTextColor,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           _buildCategoryFilter(),
@@ -87,14 +96,17 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   Widget _buildCategoryFilter() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      height: 100,
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListView(
         scrollDirection: Axis.horizontal,
         children:
             ProductCategories.all.map((category) {
               final isSelected = _selectedCategory == category;
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -108,14 +120,17 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                    color:
+                        isSelected
+                            ? CColors.primaryColor
+                            : (isDark ? CColors.darkContainer : CColors.light),
+                    borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       if (isSelected)
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.5),
+                          color: Colors.blue.withOpacity(0.1),
                           blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          offset: const Offset(0, 0),
                         ),
                     ],
                   ),
@@ -132,7 +147,14 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       Text(
                         category,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : (isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.black),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ],

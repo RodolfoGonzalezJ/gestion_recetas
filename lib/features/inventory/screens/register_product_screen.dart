@@ -116,7 +116,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
         entryDate: entry.entryDate,
         expiryDate: entry.expiryDate,
         quantity: entry.quantity,
-        createdBy: userEmail,//porque falto esta linea en el primer pushh???
+        createdBy: userEmail, //porque falto esta linea en el primer pushh???
       );
 
       try {
@@ -139,7 +139,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final color = dark ? Colors.white : CColors.secondaryTextColor;
+    final color = dark ? CColors.light : CColors.secondaryTextColor;
     return Scaffold(
       appBar: AppBar(
         title: Text(
