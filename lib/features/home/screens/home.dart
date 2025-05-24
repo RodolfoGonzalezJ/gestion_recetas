@@ -254,6 +254,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
 
   Widget _categories() {
     final categories = ['Todos', ...RecipeCategories.all];
+    final isDark = THelperFunctions.isDarkMode(context);
+
     return SizedBox(
       height: 40,
       child: ListView.separated(
@@ -263,6 +265,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final isSelected = categories[index] == selectedRecipeCategory;
+
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -273,7 +276,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: isSelected ? CColors.primaryColor : Colors.grey.shade300,
+                color:
+                    isSelected
+                        ? CColors.primaryColor
+                        : isDark
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -314,36 +322,6 @@ class _HomeScreenRealState extends State<HomeScreen> {
         };
       }).toList(),
     );
-  }
-
-  Widget _recentViews() {
-    final List<Map<String, dynamic>> items = [
-      {
-        'id': 'recipe1',
-        'title': 'Sandwichito Sabrosito',
-        'time': '20 min',
-        'image': 'assets/images/sandwichitoSabrosito.png',
-        'rating': '4.9',
-        'nivel': '1',
-      },
-      {
-        'id': 'recipe2',
-        'title': 'Buñuelo Asado',
-        'time': '40 min',
-        'image': 'assets/images/buñueloAsado.png',
-        'rating': '4.9',
-        'nivel': '2',
-      },
-      {
-        'id': 'recipe3',
-        'title': 'Pasta Alemán-Italia',
-        'time': '120 min',
-        'image': 'assets/images/pastaAlemanItalia.png',
-        'rating': '4.0',
-        'nivel': '1',
-      },
-    ];
-    return _horizontalList(items);
   }
 
   Widget _adBanner() {

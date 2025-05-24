@@ -153,29 +153,38 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: Colors.yellow[50],
-                          borderRadius: BorderRadius.circular(14),
+                          color:
+                              isDark
+                                  ? CColors.darkContainer
+                                  : Colors.yellow[50],
+                          borderRadius: BorderRadius.circular(5),
                           border: Border.all(
-                            color: Colors.yellow[700]!,
+                            color:
+                                isDark ? Colors.grey.shade700 : Colors.yellow,
                             width: 1,
                           ),
                         ),
+
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.sticky_note_2,
-                              color: Colors.amber,
+                              color:
+                                  isDark ? CColors.light : Colors.yellow[700],
                               size: 22,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 product.notes!,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15,
                                   fontStyle: FontStyle.italic,
-                                  color: Color(0xFF444444),
+                                  color:
+                                      isDark
+                                          ? CColors.light
+                                          : Colors.yellow[700],
                                 ),
                               ),
                             ),
