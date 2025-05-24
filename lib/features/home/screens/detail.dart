@@ -139,7 +139,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(10),
+                      bottom: Radius.circular(18),
                     ),
                     child: Image.network(
                       recipe.imageUrl ?? 'assets/images/1.png',

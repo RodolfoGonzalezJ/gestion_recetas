@@ -4,6 +4,8 @@ import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class RecommendedRecipesWidget extends StatefulWidget {
   final String currentUserEmail;
@@ -123,6 +125,7 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
     if (widget.currentUserEmail.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -133,11 +136,15 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(
               'Error al cargar sugerencias.',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isDark ? CColors.light : CColors.primaryTextColor,
+              ),
             ),
           );
         }
@@ -209,23 +216,25 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
   }
 
   Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2E2E2E),
+            color: isDark ? CColors.light : CColors.primaryTextColor,
           ),
         ),
-        TextButton(onPressed: onPressed, child: const Text('Ver más')),
+        TextButton(onPressed: onPressed, child: const Text('')),
       ],
     );
   }
 
   Widget _buildRecipeList(List<Recipe> recetas, {required bool isPropia}) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return SizedBox(
       height: 195,
       child: ListView.builder(
@@ -254,7 +263,7 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
+                color: isDark ? CColors.darkContainer : CColors.lightContainer,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.04),
@@ -313,7 +322,7 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
                       children: [
                         Icon(
                           Icons.timer,
-                          color: Colors.green.shade700,
+                          color: CColors.primaryButton,
                           size: 14,
                         ),
                         const SizedBox(width: 4),
@@ -321,7 +330,7 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
                           '${recipe.preparationTime.inMinutes} min',
                           style: const TextStyle(fontSize: 12),
                         ),
-                        const Icon(Icons.star, color: Colors.orange, size: 14),
+                        const Icon(Icons.star, color: CColors.medium, size: 14),
                         const SizedBox(width: 2),
                         Text(
                           recipe.averageRating.toStringAsFixed(1),

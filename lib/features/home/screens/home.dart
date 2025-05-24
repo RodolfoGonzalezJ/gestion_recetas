@@ -702,6 +702,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -710,10 +711,20 @@ class _HomeScreenRealState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CColors.secondaryTextColor,
+            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
           ),
         ),
-        TextButton(onPressed: onPressed, child: Text('Ver más')),
+        TextButton(
+          onPressed: onPressed,
+          child: Text(
+            'Ver más',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
+            ),
+          ),
+        ),
       ],
     );
   }
