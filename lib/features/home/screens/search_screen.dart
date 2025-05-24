@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/follow/screens/profile_subscription_page.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/product_detail_expiring.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 
@@ -26,7 +28,7 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
-
+    final isDark = THelperFunctions.isDarkMode(context);
     final filteredRecipes =
         dataProvider.recipes
             .where(
@@ -56,17 +58,20 @@ class _SearchScreenState extends State<SearchScreen>
             .toList();
 
     return Container(
-      color: Colors.white,
+      color: isDark ? CColors.dark : CColors.light,
       child: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
+            backgroundColor: isDark ? CColors.dark : CColors.light,
+            iconTheme: IconThemeData(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            elevation: 1,
             title: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(141, 0, 0, 0),
@@ -106,8 +111,9 @@ class _SearchScreenState extends State<SearchScreen>
             ),
             bottom: TabBar(
               controller: _tabController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
+              labelColor: isDark ? Colors.white : CColors.dark,
+              unselectedLabelColor:
+                  isDark ? CColors.textCategory : CColors.textCategory,
               indicatorColor: Colors.green,
               tabs: const [
                 Tab(text: 'Recetas'),

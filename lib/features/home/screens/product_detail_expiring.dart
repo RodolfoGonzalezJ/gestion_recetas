@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'dart:io';
+
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class ProductDetailExpiringScreen extends StatelessWidget {
   final Product product;
@@ -10,6 +13,7 @@ class ProductDetailExpiringScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
     final daysToExpire = product.expiryDate.difference(DateTime.now()).inDays;
     final status =
         daysToExpire < 0
@@ -21,11 +25,21 @@ class ProductDetailExpiringScreen extends StatelessWidget {
     final statusColor = _getExpirationColor(status);
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: isDark ? CColors.dark : CColors.light,
       appBar: AppBar(
-        title: const Text('Detalle del Producto'),
+        title: Text(
+          'Detalle del Producto',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         backgroundColor: statusColor,
-        foregroundColor: Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black,
+        iconTheme: IconThemeData(
+          color: isDark ? CColors.light : CColors.primaryTextColor,
+        ),
         elevation: 0,
       ),
       body: LayoutBuilder(
@@ -41,7 +55,7 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                     // Imagen destacada
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(5),
                         boxShadow: [
                           BoxShadow(
                             color: statusColor.withOpacity(0.18),
@@ -51,7 +65,7 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                         child: _buildImage(product.photoUrl),
                       ),
                     ),
@@ -63,10 +77,13 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                         Flexible(
                           child: Text(
                             product.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF22223B),
+                              color:
+                                  isDark
+                                      ? Colors.white
+                                      : CColors.primaryTextColor,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -78,8 +95,8 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(16),
+                            color: statusColor.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
                             status,
@@ -94,38 +111,40 @@ class ProductDetailExpiringScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     // Tarjetas de información
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
+                    _buildInfoCardGrid([
+                      _infoCard(
+                        context: context,
+                        icon: Icons.category,
+                        label: 'Categoría',
+                        value: product.category,
+                      ),
+                      _infoCard(
+                        context: context,
+                        icon: Icons.inventory_2,
+                        label: 'Cantidad',
+                        value: '${product.quantity}',
+                      ),
+                      if (product.grams != null)
                         _infoCard(
-                          icon: Icons.category,
-                          label: 'Categoría',
-                          value: product.category,
+                          context: context,
+                          icon: Icons.scale,
+                          label: 'Gramos',
+                          value: '${product.grams}',
                         ),
-                        _infoCard(
-                          icon: Icons.inventory_2,
-                          label: 'Cantidad',
-                          value: '${product.quantity}',
-                        ),
-                        if (product.grams != null)
-                          _infoCard(
-                            icon: Icons.scale,
-                            label: 'Gramos',
-                            value: '${product.grams}',
-                          ),
-                        _infoCard(
-                          icon: Icons.calendar_today,
-                          label: 'Ingreso',
-                          value: _formatDate(product.entryDate),
-                        ),
-                        _infoCard(
-                          icon: Icons.event,
-                          label: 'Expira',
-                          value: _formatDate(product.expiryDate),
-                        ),
-                      ],
-                    ),
+                      _infoCard(
+                        context: context,
+                        icon: Icons.calendar_today,
+                        label: 'Ingreso',
+                        value: _formatDate(product.entryDate),
+                      ),
+                      _infoCard(
+                        context: context,
+                        icon: Icons.event,
+                        label: 'Expira',
+                        value: _formatDate(product.expiryDate),
+                      ),
+                    ]),
+
                     const SizedBox(height: 18),
                     // Notas
                     if (product.notes != null && product.notes!.isNotEmpty)
@@ -173,48 +192,80 @@ class ProductDetailExpiringScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildInfoCardGrid(List<Widget> cards) {
+    List<Widget> rows = [];
+
+    for (int i = 0; i < cards.length; i += 2) {
+      final firstCard = Expanded(child: cards[i]);
+      final secondCard =
+          (i + 1 < cards.length)
+              ? Expanded(child: cards[i + 1])
+              : const Expanded(child: SizedBox());
+
+      rows.add(
+        Row(children: [firstCard, const SizedBox(width: 8), secondCard]),
+      );
+
+      rows.add(const SizedBox(height: 8)); // Espaciado entre filas
+    }
+
+    return Column(children: rows);
+  }
+
   Widget _infoCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
   }) {
+    final isDark = THelperFunctions.isDarkMode(context);
+
     return Container(
-      width: 140,
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        color:
+            (isDark ? CColors.darkContainer : CColors.lightContainer) ??
+            Colors.white,
+
+        borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.07),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 0),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade200),
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(icon, color: Colors.blueGrey[700], size: 26),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF6C757D),
-              fontWeight: FontWeight.w500,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? CColors.textCategory : CColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? CColors.light : CColors.primaryTextColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF22223B),
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/features/recipes/models/models.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/home/screens/detail.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/floating_menu_button.dart';
@@ -54,7 +55,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final dataProvider = Provider.of<DataProvider>(context);
 
     final UserModel? currentUser = dataProvider.currentUser;
-
+    final isDark = THelperFunctions.isDarkMode(context);
     // Asegura que los datos existen o usa valores por defecto
     final recipes = dataProvider.recipes ?? [];
     final products = dataProvider.products ?? [];
@@ -86,8 +87,9 @@ class _HomeScreenRealState extends State<HomeScreen> {
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
+                  color:
+                      isDark ? CColors.darkContainer : CColors.lightContainer,
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
                       color: const Color.fromARGB(141, 0, 0, 0),
@@ -417,6 +419,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _horizontalListProducts(List<Map<String, dynamic>> items) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return SizedBox(
       height: 230,
       child: ListView.builder(
@@ -446,8 +449,9 @@ class _HomeScreenRealState extends State<HomeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  color:
+                      isDark ? CColors.darkContainer : CColors.lightContainer,
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
                       color: const Color.fromARGB(141, 0, 0, 0),
@@ -468,7 +472,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: statusColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
                         item['expira']!,
@@ -481,7 +485,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(5),
                       child: _loadImage(item['image']),
                     ),
                     const SizedBox(height: 8),
@@ -496,9 +500,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     const SizedBox(height: 4),
                     Text(
                       item['cantidad']!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Colors.black54,
+                        color:
+                            isDark
+                                ? CColors.textCategory
+                                : CColors.primaryTextColor,
                       ),
                     ),
                   ],
@@ -739,6 +746,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
     FontWeight fontWeight, {
     required VoidCallback onPressed,
   }) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -747,7 +755,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: fontWeight,
-            color: CColors.secondaryTextColor,
+            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
           ),
         ),
       ],
@@ -755,9 +763,10 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _card(String titulo, int cantidad, double width, double height) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Card(
-      color: CColors.lightContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: isDark ? CColors.darkContainer : CColors.lightContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 4,
       shadowColor: const Color.fromARGB(144, 0, 0, 0),
       child: Container(
@@ -769,19 +778,19 @@ class _HomeScreenRealState extends State<HomeScreen> {
           children: [
             Text(
               titulo,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
-                color: CColors.secondaryTextColor,
+                color: isDark ? CColors.textCategory : CColors.primaryTextColor,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               '$cantidad',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
-                color: CColors.primaryTextColor,
+                color: isDark ? CColors.light : CColors.primaryTextColor,
               ),
             ),
           ],

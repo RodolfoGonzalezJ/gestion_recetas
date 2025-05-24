@@ -5,6 +5,8 @@ import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/favorites/controllers/favorite_controller.dart';
 import 'package:gestion_recetas/features/favorites/services/favorite_service.dart';
@@ -114,6 +116,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
     final userEmail = AuthController().user.correo ?? '';
     return Scaffold(
       body: FutureBuilder<Map<String, dynamic>>(
@@ -136,7 +139,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(32),
+                      bottom: Radius.circular(10),
                     ),
                     child: Image.network(
                       recipe.imageUrl ?? 'assets/images/1.png',
@@ -157,7 +160,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     top: 40,
                     left: 16,
                     child: CircleAvatar(
-                      backgroundColor: Colors.white,
+                      backgroundColor:
+                          isDark ? CColors.dark : Colors.black.withOpacity(0.8),
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back),
                         onPressed: () => Navigator.pop(context),
