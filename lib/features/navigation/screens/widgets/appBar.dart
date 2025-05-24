@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
+import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -8,14 +8,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0, top: 20.0),
       child: AppBar(
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
-          child: iconButtonBox(
-            imagePath: 'assets/logos/logo.png',
+          child: IconButtonBox(
+            imagePath:
+                isDark ? 'assets/logos/logo3.png' : 'assets/logos/logo.png',
             onTap: () {},
           ),
         ),
@@ -34,7 +37,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              iconButtonBox(imagePath: 'assets/logos/Frame.png', onTap: () {}),
+              IconButtonBox(
+                imagePath:
+                    isDark
+                        ? 'assets/logos/notification_dark.png'
+                        : 'assets/logos/Frame.png',
+                onTap: () {},
+              ),
             ],
           ),
         ],

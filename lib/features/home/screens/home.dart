@@ -43,9 +43,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
       final dataProvider = Provider.of<DataProvider>(context, listen: false);
       if (dataProvider.currentUser == null) {
         final user = AuthController().user;
-        if (user != null) {
-          dataProvider.setCurrentUser(user);
-        }
+        dataProvider.setCurrentUser(user);
       }
     });
   }
