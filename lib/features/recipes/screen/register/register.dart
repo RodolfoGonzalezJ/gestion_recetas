@@ -64,6 +64,9 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         leading: const BackButton(),
+        iconTheme: IconThemeData(
+          color: dark ? CColors.light : CColors.primaryTextColor,
+        ),
       ),
       body: Form(
         key: _formKey,

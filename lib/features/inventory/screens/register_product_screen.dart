@@ -146,6 +146,11 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
           widget.existingProduct == null
               ? 'Registrar Producto'
               : 'Editar Producto',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        leading: const BackButton(),
+        iconTheme: IconThemeData(
+          color: dark ? CColors.light : CColors.primaryTextColor,
         ),
       ),
       body: Padding(
