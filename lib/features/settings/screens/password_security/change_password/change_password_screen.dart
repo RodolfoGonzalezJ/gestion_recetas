@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'widgets/password_input_field.dart';
 import 'widgets/reset_password_button.dart';
 import 'widgets/password_validator_checklist.dart';
@@ -40,9 +41,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Cambiar Contraseña",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? CColors.light : CColors.secondaryTextColor,
+          ),
         ),
         leading: BackButton(color: isDark ? Colors.white : Colors.black),
         backgroundColor: Colors.transparent,

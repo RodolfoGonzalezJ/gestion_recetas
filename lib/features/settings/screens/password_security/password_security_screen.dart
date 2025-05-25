@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/settings/screens/password_security/change_password/change_password_screen.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/settings_tile.dart';
 import 'widgets/save_button.dart';
@@ -13,13 +14,17 @@ class PasswordSecurityScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Contraseña y Seguridad",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? CColors.light : CColors.secondaryTextColor,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: isDark ? Colors.white : Colors.black,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Column(
         children: [

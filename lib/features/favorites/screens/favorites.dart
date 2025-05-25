@@ -3,6 +3,7 @@ import 'package:gestion_recetas/features/home/screens/search_screen.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/appBar.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/favorites/controllers/favorite_controller.dart';
 import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
@@ -16,6 +17,7 @@ class CollectionScreen extends StatelessWidget {
     final userEmail =
         Provider.of<DataProvider>(context, listen: false).currentUser?.correo ??
         '';
+    final isDark = THelperFunctions.isDarkMode(context);
     return ChangeNotifierProvider(
       create: (_) => FavoriteController()..loadFavorites(userEmail),
       child: Consumer<FavoriteController>(
@@ -46,7 +48,8 @@ class CollectionScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomAppBar(),
-                      _sectionTitle('Colecciones', onPressed: () {}),
+                      _sectionTitle(context, 'Colecciones'),
+
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -59,13 +62,16 @@ class CollectionScreen extends StatelessWidget {
                         child: Container(
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
+                            color:
+                                isDark
+                                    ? CColors.darkContainer
+                                    : CColors.lightContainer,
+                            borderRadius: BorderRadius.circular(5),
                             boxShadow: [
                               BoxShadow(
                                 color: const Color.fromARGB(141, 0, 0, 0),
                                 blurRadius: 3,
-                                offset: Offset(0, 2),
+                                offset: Offset(0, 0),
                               ),
                             ],
                           ),
@@ -123,7 +129,7 @@ class CollectionScreen extends StatelessWidget {
                                             Text(
                                               cat,
                                               style: const TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 23,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -141,10 +147,14 @@ class CollectionScreen extends StatelessWidget {
                                                   ),
                                                 );
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 'Ver más',
                                                 style: TextStyle(
-                                                  color: Colors.green,
+                                                  color:
+                                                      isDark
+                                                          ? CColors.light
+                                                          : CColors
+                                                              .primaryColor,
                                                 ),
                                               ),
                                             ),
@@ -307,7 +317,13 @@ class CollectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+  Widget _sectionTitle(
+    BuildContext context,
+    String title, {
+    VoidCallback? onPressed,
+  }) {
+    final isDark = THelperFunctions.isDarkMode(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -316,11 +332,19 @@ class CollectionScreen extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: CColors.secondaryTextColor,
+              color: isDark ? Colors.white : CColors.secondaryTextColor,
             ),
           ),
+          if (onPressed != null)
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: isDark ? Colors.white : CColors.secondaryTextColor,
+              ),
+              onPressed: onPressed,
+            ),
         ],
       ),
     );
@@ -356,8 +380,21 @@ class _AllFavoritesCategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Favoritas: $category')),
+      appBar: AppBar(
+        title: Text(
+          'Favoritas: $category',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : CColors.secondaryTextColor,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: isDark ? Colors.white : CColors.secondaryTextColor,
+        ),
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: recipes.length,
