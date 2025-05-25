@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:gestion_recetas/data/services/cloudinary_service.dart';
@@ -138,14 +139,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: CColors.primaryTextColor),
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(color: Colors.black),
+        iconTheme: IconThemeData(
+          color: isDark ? CColors.light : CColors.primaryTextColor,
+        ),
+        title: Text(
+          'Editar Perfil',
+          style: TextStyle(
+            color: isDark ? CColors.light : CColors.primaryTextColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(

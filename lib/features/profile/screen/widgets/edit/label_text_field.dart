@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class LabeledTextField extends StatelessWidget {
   final String label;
@@ -15,6 +16,7 @@ class LabeledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -22,9 +24,9 @@ class LabeledTextField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: CColors.secondaryTextColor,
+              color: isDark ? CColors.light : CColors.primaryTextColor,
             ),
           ),
           Row(

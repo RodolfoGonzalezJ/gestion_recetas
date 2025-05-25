@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
   @override
@@ -11,8 +13,20 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = THelperFunctions.isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: Text("Términos y Condiciones")),
+      appBar: AppBar(
+        title: Text(
+          "Términos y Condiciones",
+          style: TextStyle(
+            color: isDark ? CColors.light : CColors.secondaryTextColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: isDark ? CColors.light : CColors.secondaryTextColor,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -55,6 +69,7 @@ Podemos suspender o cancelar tu acceso a la aplicación en cualquier momento y s
 8. Legislación Aplicable
 Estos términos se rigen por las leyes de Colombia, y cualquier disputa derivada del uso de la aplicación será sometida a los tribunales competentes de dicha jurisdicción.''',
                   style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.justify,
                 ),
               ),
             ),

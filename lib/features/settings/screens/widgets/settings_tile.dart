@@ -35,10 +35,7 @@ class SettingsTile extends StatelessWidget {
           vertical: verticalPadding,
         ),
         leading: Icon(icon, size: iconSize),
-        title: Text(
-          title,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ), //style: Theme.of(context).textTheme.titleSmall),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle:
             subtitle != null
                 ? Text(
