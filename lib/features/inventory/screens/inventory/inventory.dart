@@ -79,7 +79,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           )
                           .toList();
                   return ListView.builder(
-                    padding: const EdgeInsets.all(16),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
@@ -167,6 +166,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   void _updateProduct(BuildContext context, Product product) async {
+    final bool isDark = THelperFunctions.isDarkMode(context);
     final newExpiryDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -189,14 +189,24 @@ class _InventoryScreenState extends State<InventoryScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, null),
-                child: const Text('Cancelar'),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : CColors.primaryColor,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () {
                   final quantity = int.tryParse(quantityController.text);
                   Navigator.pop(context, quantity);
                 },
-                child: const Text('Aceptar'),
+                child: Text(
+                  'Aceptar',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : CColors.primaryColor,
+                  ),
+                ),
               ),
             ],
           );
@@ -339,7 +349,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     return Card(
       color: isDark ? CColors.darkContainer : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 5,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
@@ -354,8 +364,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       _isValidNetworkUrl(product.photoUrl)
                           ? Image.network(
                             product.photoUrl!,
-                            width: 80,
-                            height: 80,
+                            width: 85,
+                            height: 85,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const Icon(
@@ -373,16 +383,16 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     product.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16.5,
                     ),
                   ),
                 ),
                 FloatingActionButton(
                   mini: true,
-                  backgroundColor: Colors.green,
-                  child: Icon(
-                    isExpanded ? LucideIcons.arrowUp : LucideIcons.arrowDown,
-                    color: Colors.white,
+                  backgroundColor:
+                      isDark ? CColors.resaltar : CColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   onPressed: () {
                     setState(() {
@@ -393,6 +403,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       }
                     });
                   },
+                  child: Icon(
+                    isExpanded ? LucideIcons.arrowUp : LucideIcons.arrowDown,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -457,25 +471,38 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       children: [
                         TextButton(
                           style: TextButton.styleFrom(
-                            backgroundColor: CColors.primaryButton,
+                            backgroundColor:
+                                isDark
+                                    ? CColors.resaltar
+                                    : CColors.primaryButton,
                             foregroundColor: CColors.secondaryButton,
                             padding: const EdgeInsets.symmetric(
                               vertical: 12,
                               horizontal: 12,
                             ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
                           onPressed: () => _updateProduct(context, product),
                           child: const Text('Agregar Cantidad/Fecha'),
                         ),
+
                         TextButton(
                           onPressed:
                               () => _showProductDetails(context, product),
                           style: TextButton.styleFrom(
-                            backgroundColor: CColors.primaryButton,
+                            backgroundColor:
+                                isDark
+                                    ? CColors.resaltar
+                                    : CColors.primaryButton,
                             foregroundColor: CColors.secondaryButton,
                             padding: const EdgeInsets.symmetric(
                               vertical: 12,
                               horizontal: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
                           child: const Text('Ver más'),

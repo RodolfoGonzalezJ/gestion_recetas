@@ -33,7 +33,8 @@ class ActionButton extends StatelessWidget {
           child: FloatingActionButton(
             heroTag: label,
             onPressed: onPressed,
-            backgroundColor: isDark ? CColors.dark : CColors.primaryColor,
+            backgroundColor:
+                isDark ? CColors.darkContainer : CColors.primaryColor,
             child: icon,
           ),
         ),

@@ -37,7 +37,6 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = THelperFunctions.isDarkMode(context);
-    final Color backgroundColor = isDark ? CColors.dark : CColors.primaryColor;
     final Color iconColor = Colors.white;
 
     return Stack(
@@ -53,7 +52,7 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 visible: showButtons[0],
                 label: "Registrar Receta",
                 icon: Image.asset(CImages.recipeIcons, height: 24, width: 24),
-                color: backgroundColor,
+                color: isDark ? CColors.darkContainer! : CColors.primaryColor,
                 onPressed: () {
                   // Navigate to register recipe screen
                   Navigator.push(
@@ -69,7 +68,7 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                 visible: showButtons[1],
                 label: "Registrar Producto",
                 icon: Image.asset(CImages.productIcons, height: 24, width: 24),
-                color: backgroundColor,
+                color: isDark ? CColors.darkContainer! : CColors.primaryColor,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -85,7 +84,8 @@ class _FloatingMenuButtonState extends State<FloatingMenuButton> {
                   toggleMenu();
                   widget.onRefresh?.call();
                 },
-                backgroundColor: backgroundColor,
+                backgroundColor:
+                    isDark ? CColors.darkContainer! : CColors.primaryColor,
                 child: Icon(isOpen ? Icons.close : Icons.add, color: iconColor),
               ),
             ],
