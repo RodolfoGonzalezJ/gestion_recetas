@@ -18,6 +18,7 @@ class UserProfile extends UserModel {
   final double vistas;
   final double seguidores;
   final int resenas;
+  final String status;
 
   UserProfile({
     // Campos heredados de UserModel
@@ -42,6 +43,7 @@ class UserProfile extends UserModel {
     required this.vistas,
     required this.seguidores,
     required this.resenas,
+    required this.status,
   }) : super(
          nombre: nombre,
          apellido: apellido,

@@ -13,6 +13,7 @@ class UserModel {
   String? contrasena;
   String? bio;
   String? avatarUrl;
+  String? status;
 
   // NUEVOS CAMPOS PARA PERFIL DE SUSCRIPCIÓN
   String? descripcion;
@@ -39,6 +40,7 @@ class UserModel {
     this.contrasena,
     this.bio,
     this.avatarUrl,
+    this.status,
     this.descripcion,
     this.valorMensual,
     this.rating,
@@ -65,6 +67,7 @@ class UserModel {
       'contrasena': contrasena,
       'bio': bio,
       'avatarUrl': avatarUrl,
+      'status': status,
       'descripcion': descripcion,
       'valorMensual': valorMensual,
       'rating': rating,
@@ -95,6 +98,7 @@ class UserModel {
       contrasena: json['contrasena'],
       bio: json['bio'],
       avatarUrl: json['avatarUrl'],
+      status: json['status'],
       descripcion: json['descripcion'],
       valorMensual: (json['valorMensual'] as num?)?.toDouble(),
       rating: (json['rating'] as num?)?.toDouble(),
@@ -121,6 +125,7 @@ class UserModel {
     String? contrasena,
     String? bio,
     String? avatarUrl,
+    String? status,
     String? descripcion,
     double? valorMensual,
     double? rating,
@@ -145,6 +150,7 @@ class UserModel {
       contrasena: contrasena ?? this.contrasena,
       bio: bio ?? this.bio,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      status: status ?? this.status,
       descripcion: descripcion ?? this.descripcion,
       valorMensual: valorMensual ?? this.valorMensual,
       rating: rating ?? this.rating,

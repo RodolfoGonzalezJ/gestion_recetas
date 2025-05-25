@@ -6,12 +6,14 @@ import 'package:gestion_recetas/features/profile/models/user_profile_model.dart'
 import 'package:gestion_recetas/features/profile/screen/widgets/profile_stats.dart';
 import 'package:gestion_recetas/features/follow/services/subscription_service.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/popular_recipe_card.dart';
-import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/ver_todas_button.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:intl/intl.dart';
 import 'package:gestion_recetas/features/recipes/models/models.dart';
+import 'package:gestion_recetas/features/follow/screens/subscription_page.dart';
+import 'package:gestion_recetas/features/follow/controllers/subscription_controller.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
   final String correo;
@@ -33,9 +35,12 @@ class ProfileSubscriptionPage extends StatefulWidget {
 }
 
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
+  final SubscriptionController subscriptionController = SubscriptionController();
+  final AuthController authController = AuthController();
   int selectedTabIndex = 0;
   late Future<UserProfile> _userProfileFuture;
   late Future<List<Recipe>> _userRecipesFuture;
+  bool isSubscribed = false;
 
   @override
   void initState() {
@@ -43,6 +48,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     _userProfileFuture = SubscriptionService().fetchUserProfile(widget.correo);
     _userRecipesFuture = SubscriptionService().fetchUserRecipes(widget.correo);
 
+    // Usa el controlador para cargar el estado de suscripción
+    subscriptionController.loadUserProfile(widget.correo);
+    
   }
 
   @override
@@ -92,9 +100,19 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   child: SizedBox(
                     width: double.infinity,
                     child: StyledSubscriptionButton(
-                      onPressed: () {
-                        // Acción de suscripción
-                      },
+                      isSubscribed: authController.user.status?.toUpperCase() == "SUSCRITO",
+                        onPressed: authController.user.status?.toUpperCase() == "SUSCRITO"
+                         ? null
+                        : () async {
+                            // Navega a la página de suscripción
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SubscriptionPage(),
+                              ),
+                            );
+                          },
+                          
                     ),
                   ),
                 ),

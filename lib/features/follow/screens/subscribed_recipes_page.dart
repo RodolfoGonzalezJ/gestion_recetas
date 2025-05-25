@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/follow/controllers/subscription_controller.dart';
 import 'package:gestion_recetas/features/follow/widgets/subscription_modal.dart';
 import 'package:gestion_recetas/features/profile/screen/widgets/recipe_card.dart';
 import 'package:gestion_recetas/features/recipes/models/models.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 
 class TodasMisRecetasScreen extends StatefulWidget {
   final List<Recipe> recetasUsuario;
@@ -19,10 +21,19 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showSubscriptionModal(context, () {
-        setState(() => _showBlur = false);
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final subscriptionController = SubscriptionController();
+      final authController = AuthController();
+      final userStatus = authController.user.status ?? 'FREE'; // Usa el status real
+
+      await showSubscriptionModal(
+        context,
+        () {
+          setState(() => _showBlur = false); 
+        },
+        isSubscribed: subscriptionController.isSubscribed,
+        userStatus: userStatus,
+      );
     });
   }
 

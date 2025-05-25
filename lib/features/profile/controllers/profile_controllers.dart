@@ -51,6 +51,7 @@ class ProfileController {
           vistas: userData['vistas'] ?? 0,
           seguidores: userData['seguidores'] ?? 0,
           resenas: userData['resenas'] ?? 0,
+          status: userData['status'] ?? 'Free',
         );
       } else {
         print('No se encontraron datos para el usuario con correo: $email');

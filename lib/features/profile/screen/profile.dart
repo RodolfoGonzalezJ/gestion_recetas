@@ -113,14 +113,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileStats(user: userProfile),
             const SizedBox(height: 20),
             Text("Receta Popular", style: theme.textTheme.titleMedium),
-            const PopularRecipeCard(
-              imagePath: 'assets/logos/logo.png',
-              title: 'Buñuelo asado',
-              rating: 4.9,
-              reviews: 102,
-              duration: 40,
-              difficulty: 2,
-            ),
+            (_misRecetas.isNotEmpty)
+                ? PopularRecipeCard(
+                    imagePath: (_misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).imageUrl) ?? 'assets/logos/logo.png',
+                    title: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).name,
+                    rating: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).averageRating,
+                    reviews: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).comments.length,
+                    duration: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).preparationTime.inMinutes,
+                    difficulty: int.tryParse(_misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).difficulty) ?? 1,
+                  )
+    : const Text("No tienes recetas aún."),
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
             Column(
               children:

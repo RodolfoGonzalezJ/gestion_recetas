@@ -10,9 +10,12 @@ class SubscriptionService {
     return false;
   }
 
-  Future<void> subscribe(String correo) async {
-    // Aquí guardarías la suscripción en la base de datos
-    await Future.delayed(const Duration(milliseconds: 300));
+  Future<void> subscribe(String correo, String status) async {
+    final collection = MongoDBHelper.db.collection('users');
+    await collection.updateOne(
+      {'correo': correo},
+      {'\$set': {'status': status}},
+    );
   }
 
   Future<UserProfile> fetchUserProfile(String correo) async {
@@ -43,6 +46,7 @@ class SubscriptionService {
       vistas: userData['vistas']?.toDouble() ?? 0,
       seguidores: userData['seguidores']?.toDouble() ?? 0,
       resenas: userData['resenas'] ?? 0,
+      status: userData['status'] ?? 'Free',
     );
   }
 

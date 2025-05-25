@@ -169,6 +169,7 @@ class AuthController {
       _user.direccion = existingUser['direccion'];
       _user.barrio = existingUser['barrio'];
       _user.contrasena = existingUser['contrasena'];
+      _user.status = existingUser['status'] ?? 'FREE'; // <-- AQUÍ
     }
 
     // Navegar a la pantalla principal
@@ -186,6 +187,15 @@ class AuthController {
     await GoogleAuthService.signOut();
     print('Sesión cerrada');
   }
+
+  Future<void> updateStatus(String status) async {
+  final collection = MongoDBHelper.db.collection('users');
+  await collection.updateOne(
+    {'correo': _user.correo},
+    {'\$set': {'status': status}},
+  );
+  _user.status = status;
+}
 
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
   try {
@@ -211,6 +221,7 @@ class AuthController {
       _user.direccion = user['direccion'];
       _user.barrio = user['barrio'];
       _user.contrasena = user['contrasena'];
+      _user.status = user['status'] ?? 'FREE'; // <-- AQUÍ
       print('Correo asignado al modelo _user: ${_user.correo}');
       return true;
     } else {

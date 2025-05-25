@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 
 class StyledSubscriptionButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final Future<void> Function()? onPressed;
   final bool isSubscribed;
   final String priceText;
 
@@ -31,7 +31,11 @@ class StyledSubscriptionButton extends StatelessWidget {
             : const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
 
     return ElevatedButton(
-      onPressed: isSubscribed ? null : onPressed,
+      onPressed: isSubscribed ? null : () {
+        if (onPressed != null) {
+          onPressed!();
+        }
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: CColors.primaryButton,
         padding: buttonPadding,
@@ -44,7 +48,7 @@ class StyledSubscriptionButton extends StatelessWidget {
           Icon(Icons.percent, color: Colors.white, size: iconSize),
           const SizedBox(width: 8),
           Text(
-            isSubscribed ? 'Suscrito' : 'Suscribirse',
+            isSubscribed ? 'Suscrito' : 'Suscribirse ($priceText)',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
