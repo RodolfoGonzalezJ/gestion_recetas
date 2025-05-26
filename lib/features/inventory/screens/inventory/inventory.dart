@@ -373,24 +373,27 @@ class _InventoryScreenState extends State<InventoryScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child:
-                      _isValidNetworkUrl(product.photoUrl)
-                          ? Image.network(
-                            product.photoUrl!,
-                            width: 85,
-                            height: 85,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(
-                                LucideIcons.image,
-                                size: 80,
-                                color: Colors.grey,
-                              );
-                            },
-                          )
-                          : const Icon(Icons.fastfood, size: 80),
+                Hero(
+                  tag: 'product-photo-${product.id}',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child:
+                        _isValidNetworkUrl(product.photoUrl)
+                            ? Image.network(
+                              product.photoUrl!,
+                              width: 85,
+                              height: 85,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  LucideIcons.image,
+                                  size: 80,
+                                  color: Colors.grey,
+                                );
+                              },
+                            )
+                            : const Icon(Icons.fastfood, size: 80),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -404,6 +407,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 ),
                 FloatingActionButton(
                   mini: true,
+                  heroTag: 'expand-btn-${product.id}',
                   backgroundColor:
                       isDark ? CColors.resaltar : CColors.primaryColor,
                   shape: RoundedRectangleBorder(
