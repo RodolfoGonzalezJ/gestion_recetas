@@ -154,6 +154,16 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
           await _inventoryService.updateProduct(product.id, {
             'quantity': updatedQuantity,
           });
+          // Registrar en historial de productos usados
+          await _inventoryService.registerUsedProduct(
+            productId: product.id,
+            productName: product.name,
+            usedQuantity: ingredient.quantity,
+            recipeId: recipe.id,
+            recipeName: recipe.name,
+            usedBy: recipe.createdBy,
+            usedDate: DateTime.now(),
+          );
         }
         await _recipeService.saveRecipe(recipe);
         ScaffoldMessenger.of(context).showSnackBar(

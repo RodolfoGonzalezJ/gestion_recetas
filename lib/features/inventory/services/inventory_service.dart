@@ -127,4 +127,30 @@ class InventoryService {
       rethrow;
     }
   }
+
+  Future<void> registerUsedProduct({
+    required String productId,
+    required String productName,
+    required int usedQuantity,
+    required String recipeId,
+    required String recipeName,
+    required String usedBy,
+    DateTime? usedDate,
+  }) async {
+    try {
+      final usedCollection = MongoDBHelper.db.collection('used_products');
+      await usedCollection.insert({
+        'productId': productId,
+        'productName': productName,
+        'usedQuantity': usedQuantity,
+        'recipeId': recipeId,
+        'recipeName': recipeName,
+        'usedBy': usedBy,
+        'usedDate': (usedDate ?? DateTime.now()).toIso8601String(),
+      });
+    } catch (e) {
+      print('Error al registrar producto usado: $e');
+      rethrow;
+    }
+  }
 }

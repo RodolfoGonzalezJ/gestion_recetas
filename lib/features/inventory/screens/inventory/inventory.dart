@@ -6,8 +6,9 @@ import 'package:gestion_recetas/utils/constants/categories.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+import 'package:gestion_recetas/features/inventory/screens/inventory/used_products_history_screen.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -48,6 +49,20 @@ class _InventoryScreenState extends State<InventoryScreen> {
             color: isDark ? CColors.light : CColors.primaryTextColor,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Ver historial de productos usados',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const UsedProductsHistoryScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
