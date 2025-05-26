@@ -33,6 +33,9 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
   String? _photoPath;
   DateTime? _selectedExpiryDate;
   String? _imageUrl;
+  bool _imageError = false;
+  bool _categoryError = false;
+  bool _expiryDateError = false;
 
   @override
   void initState() {
@@ -48,6 +51,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
     );
     if (widget.existingProduct != null) {
       _selectedExpiryDate = widget.existingProduct!.expiryDate;
+      _photoPath = widget.existingProduct!.photoUrl;
     }
   }
 
@@ -62,8 +66,12 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
       if (uploadedUrl != null) {
         setState(() {
           _photoPath = uploadedUrl;
+          _imageError = false;
         });
       } else {
+        setState(() {
+          _imageError = true;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Error al subir la imagen a Cloudinary'),
@@ -84,15 +92,23 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
     if (pickedDate != null) {
       setState(() {
         _selectedExpiryDate = pickedDate;
+        _expiryDateError = false;
       });
     }
   }
 
   Future<void> _saveProduct() async {
+    setState(() {
+      _imageError = _photoPath == null;
+      _categoryError = _selectedCategory == null;
+      _expiryDateError = _selectedExpiryDate == null;
+    });
+
     final userEmail = AuthController().user.correo ?? '';
     if (_formKey.currentState!.validate() &&
-        _selectedCategory != null &&
-        _selectedExpiryDate != null) {
+        !_imageError &&
+        !_categoryError &&
+        !_expiryDateError) {
       final entry = Entry(
         entryDate: DateTime.now(),
         expiryDate: _selectedExpiryDate!,
@@ -116,7 +132,7 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
         entryDate: entry.entryDate,
         expiryDate: entry.expiryDate,
         quantity: entry.quantity,
-        createdBy: userEmail, //porque falto esta linea en el primer pushh???
+        createdBy: userEmail,
       );
 
       try {
@@ -127,12 +143,6 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
           SnackBar(content: Text('Error al guardar el producto: $e')),
         );
       }
-    } else if (_selectedExpiryDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor selecciona una fecha de caducidad'),
-        ),
-      );
     }
   }
 
@@ -153,133 +163,205 @@ class _RegisterProductScreenState extends State<RegisterProductScreen> {
           color: dark ? CColors.light : CColors.primaryTextColor,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Imagen y carga
+            Text(
+              'Imagen del producto *',
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: _pickPhoto,
+              child: Container(
+                height: 160,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: _imageError ? Colors.red : color,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  color: dark ? Colors.black12 : Colors.grey[100],
+                ),
+                child:
+                    _photoPath != null
+                        ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            _photoPath!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        )
+                        : Center(
+                          child: Icon(
+                            Icons.add_a_photo,
+                            color: color,
+                            size: 48,
+                          ),
+                        ),
+              ),
+            ),
+            if (_imageError)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 4),
+                child: Text(
+                  'La imagen es obligatoria',
+                  style: TextStyle(color: Colors.red[700], fontSize: 13),
+                ),
+              ),
+            const SizedBox(height: 20),
+
+            // Nombre
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Nombre *',
+                border: OutlineInputBorder(),
+              ),
+              validator:
+                  (value) =>
+                      value == null || value.trim().isEmpty
+                          ? 'El nombre es obligatorio'
+                          : null,
+            ),
+            const SizedBox(height: 16),
+
+            // Categoría
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              items:
+                  ProductCategories.all
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      )
+                      .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                  _categoryError = false;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Categoría *',
+                border: OutlineInputBorder(),
+                errorText:
+                    _categoryError ? 'La categoría es obligatoria' : null,
+              ),
+              validator: (_) => null, // Usamos errorText arriba
+            ),
+            const SizedBox(height: 16),
+
+            // Gramos
+            TextFormField(
+              controller: _gramsController,
+              decoration: InputDecoration(
+                labelText: 'Gramos (opcional)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+
+            // Cantidad
+            TextFormField(
+              controller: _quantityController,
+              decoration: InputDecoration(
+                labelText: 'Cantidad *',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'La cantidad es obligatoria';
+                }
+                final n = int.tryParse(value);
+                if (n == null || n < 1) {
+                  return 'La cantidad debe ser al menos 1';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Fecha de caducidad
+            Text(
+              'Fecha de caducidad *',
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
               children: [
-                // RecipeImagePicker(
-                //   text: 'Imagen del producto *',
-                //   text_2: 'Selecciona una imagen para tu producto',
-                //   color: color,
-                //   onImageUploaded: (url) => _imageUrl = url,
-                // ),
-                // const SizedBox(width: 8),
-                // if (_photoPath != null)
-                //   Text(
-                //     'Foto seleccionada',
-                //     style: const TextStyle(color: Colors.green),
-                //   ),
-                // const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre'),
-                  validator:
-                      (value) =>
-                          value!.isEmpty ? 'El nombre es obligatorio' : null,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _selectedCategory,
-                  items:
-                      ProductCategories.all
-                          .map(
-                            (category) => DropdownMenuItem(
-                              value: category,
-                              child: Text(category),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                  },
-                  decoration: const InputDecoration(labelText: 'Categoría'),
-                  validator:
-                      (value) =>
-                          value == null ? 'La categoría es obligatoria' : null,
-                ),
-                const SizedBox(height: 16),
-                // RecipeImagePicker(
-                //   color: color,
-                //   onImageUploaded: (url) => _imageUrl = url,
-                // ),
-                // const SizedBox(width: 8),
-                // if (_photoPath != null)
-                //   Text(
-                //     'Foto seleccionada',
-                //     style: const TextStyle(color: Colors.green),
-                //   ),
-                // const SizedBox(height: 16),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _pickPhoto,
-                      child: const Text('Seleccionar Foto'),
-                    ),
-                    const SizedBox(width: 16),
-                    if (_photoPath != null)
-                      Text(
-                        'Foto seleccionada',
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _gramsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Gramos (opcional)',
+                ElevatedButton.icon(
+                  onPressed: _pickExpiryDate,
+                  icon: const Icon(Icons.calendar_today),
+                  label: const Text('Seleccionar Fecha'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: dark ? Colors.grey[800] : Colors.grey[200],
+                    foregroundColor: dark ? Colors.white : Colors.black,
                   ),
-                  keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _quantityController,
-                  decoration: const InputDecoration(labelText: 'Cantidad'),
-                  keyboardType: TextInputType.number,
-                  validator:
-                      (value) =>
-                          value!.isEmpty || int.parse(value) < 1
-                              ? 'La cantidad debe ser al menos 1'
-                              : null,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _pickExpiryDate,
-                      child: const Text('Seleccionar Fecha de Caducidad'),
-                    ),
-                    const SizedBox(width: 16),
-                    if (_selectedExpiryDate != null)
-                      Text(
-                        'Fecha: ${_selectedExpiryDate!.toLocal()}'.split(
-                          ' ',
-                        )[0],
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _notesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Notas (opcional)',
+                const SizedBox(width: 16),
+                if (_selectedExpiryDate != null)
+                  Text(
+                    'Fecha: ${_selectedExpiryDate!.toLocal()}'.split(' ')[0],
+                    style: const TextStyle(color: Colors.green),
                   ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _saveProduct,
-                  child: const Text('Guardar Producto'),
-                ),
               ],
             ),
-          ),
+            if (_expiryDateError)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 4),
+                child: Text(
+                  'La fecha de caducidad es obligatoria',
+                  style: TextStyle(color: Colors.red[700], fontSize: 13),
+                ),
+              ),
+            const SizedBox(height: 16),
+
+            // Notas
+            TextFormField(
+              controller: _notesController,
+              decoration: InputDecoration(
+                labelText: 'Notas (opcional)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 24),
+
+            // Botón guardar
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _saveProduct,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: CColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  textStyle: const TextStyle(fontSize: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Guardar Producto'),
+              ),
+            ),
+          ],
         ),
       ),
     );
