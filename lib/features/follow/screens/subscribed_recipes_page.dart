@@ -39,15 +39,16 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final recetasPublicas = widget.recetasUsuario.where((r) => !r.isPrivate).toList(); // <-- Solo públicas
     return Scaffold(
       appBar: AppBar(title: const Text("Todas mis recetas")),
       body: Stack(
         children: [
           ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: widget.recetasUsuario.length,
+            itemCount: recetasPublicas.length,
             itemBuilder: (_, index) {
-              final receta = widget.recetasUsuario[index];
+              final receta = recetasPublicas[index];
               return RecipeCard(
                 id: receta.id,
                 imagePath: receta.imageUrl ?? 'assets/logos/logo.png',

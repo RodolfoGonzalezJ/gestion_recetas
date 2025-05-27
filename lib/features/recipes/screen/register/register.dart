@@ -26,6 +26,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
   String? _selectedCategory;
   String? _selectedDifficulty;
   String? _imageUrl;
+  bool _isPrivate = false; // <-- Nuevo estado
 
   @override
   void dispose() {
@@ -49,6 +50,7 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
       _selectedCategory = recipe.category;
       _selectedDifficulty = recipe.difficulty;
       _imageUrl = recipe.imageUrl;
+      _isPrivate = recipe.isPrivate; // <-- Inicializa el estado
     }
   }
 
@@ -90,6 +92,16 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
               onCategoryChanged:
                   (val) => setState(() => _selectedCategory = val),
             ),
+            Row(
+              children: [
+                const Text('Visibilidad:'),
+                Switch(
+                  value: _isPrivate,
+                  onChanged: (val) => setState(() => _isPrivate = val),
+                ),
+                Text(_isPrivate ? 'Privada' : 'Pública'),
+              ],
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _onNextPressed,
@@ -108,17 +120,17 @@ class _RegisterRecipeScreenState extends State<RegisterRecipeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder:
-              (_) => RecipeIngredientsStep(
-                name: _nameController.text.trim(),
-                description: _descController.text.trim(),
-                category: _selectedCategory ?? '',
-                difficulty: _selectedDifficulty ?? '',
-                preparationTime: _parseDuration(_timeController.text.trim()),
-                calories: int.tryParse(_caloriesController.text.trim()),
-                imageUrl: _imageUrl,
-                recipeToEdit: widget.recipeToEdit,
-              ),
+          builder: (_) => RecipeIngredientsStep(
+            name: _nameController.text.trim(),
+            description: _descController.text.trim(),
+            category: _selectedCategory ?? '',
+            difficulty: _selectedDifficulty ?? '',
+            preparationTime: _parseDuration(_timeController.text.trim()),
+            calories: int.tryParse(_caloriesController.text.trim()),
+            imageUrl: _imageUrl,
+            isPrivate: _isPrivate, // <-- Pasa el valor
+            recipeToEdit: widget.recipeToEdit,
+          ),
         ),
       );
     }

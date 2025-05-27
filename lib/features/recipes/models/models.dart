@@ -14,7 +14,9 @@ class Recipe {
   final String? instructions;
   final double averageRating;
   final String createdBy;
-  final List<Map<String, dynamic>> comments; // <-- Agregado para comentarios
+  final List<Map<String, dynamic>> comments; 
+  final bool isPrivate; // <-- Usa isPrivate
+
   Recipe({
     required this.id,
     required this.name,
@@ -29,12 +31,14 @@ class Recipe {
     this.instructions,
     this.averageRating = 0.0,
     required this.createdBy,
-    this.comments = const [], // <-- Inicializa por defecto como lista vacía
+    this.comments = const [], 
+    this.isPrivate = false, // <-- Usa isPrivate
   });
 
   Recipe copyWith({
     double? averageRating,
     List<Map<String, dynamic>>? comments,
+    bool? isPrivate, // <-- Usa isPrivate y es nullable
   }) {
     return Recipe(
       id: id,
@@ -50,7 +54,8 @@ class Recipe {
       instructions: instructions,
       averageRating: averageRating ?? this.averageRating,
       createdBy: createdBy,
-      comments: comments ?? this.comments, // <-- Copia comentarios si se pasa
+      comments: comments ?? this.comments, 
+      isPrivate: isPrivate ?? this.isPrivate, // <-- Usa isPrivate
     );
   }
 
@@ -69,7 +74,8 @@ class Recipe {
       'instructions': instructions,
       'averageRating': averageRating,
       'createdBy': createdBy,
-      'comments': comments, // <-- Serializa comentarios
+      'comments': comments, 
+      'isPrivate': isPrivate, // <-- Usa isPrivate
     };
   }
 
@@ -96,6 +102,7 @@ class Recipe {
               ?.map((e) => Map<String, dynamic>.from(e as Map))
               .toList() ??
           [],
+      isPrivate: map['isPrivate'] ?? false, // <-- Usa isPrivate
     );
   }
 }

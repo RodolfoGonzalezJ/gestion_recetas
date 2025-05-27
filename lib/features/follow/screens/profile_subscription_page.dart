@@ -159,10 +159,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   VerTodasButton(
                     onTap: () async {
                       final recetas = await _userRecipesFuture;
+                      final recetasPublicas = recetas.where((r) => !r.isPrivate).toList();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => TodasMisRecetasScreen(recetasUsuario: recetas),
+                          builder: (_) => TodasMisRecetasScreen(recetasUsuario: recetasPublicas),
                         ),
                       );
                     },
