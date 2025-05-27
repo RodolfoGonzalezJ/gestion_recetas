@@ -233,4 +233,26 @@ class AuthController {
     return false;
   }
   }
+
+  /// Actualiza la contraseña de un usuario por correo electrónico.
+  Future<bool> updatePassword(String email, String newPassword) async {
+    try {
+      final collection = MongoDBHelper.db.collection('users');
+      final result = await collection.updateOne(
+        {'correo': email},
+        {'\$set': {'contrasena': newPassword}},
+      );
+      if (result.isSuccess) {
+        // Opcional: actualiza el modelo local si corresponde
+        if (_user.correo == email) {
+          _user.contrasena = newPassword;
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error al actualizar la contraseña: $e');
+      return false;
+    }
+  }
 }
