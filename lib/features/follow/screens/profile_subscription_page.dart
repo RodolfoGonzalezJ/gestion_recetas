@@ -117,6 +117,50 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   ),
                 ),
 
+                if (authController.user.status?.toUpperCase() == "SUSCRITO")
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("¿Estás seguro de cancelar tu suscripción?"),
+                              content: const Text("Perderás acceso a las recetas exclusivas."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: const Text("Cancelar"),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text("Aceptar"),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed == true) {
+                            await authController.updateStatus("FREE");
+                            if (mounted) {
+                              setState(() {}); // Refresca la UI
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Suscripción cancelada.")),
+                              );
+                            }
+                          }
+                        },
+                        child: const Text("Cancelar Suscripción"),
+                      ),
+                    ),
+                  ),
+
                 const SizedBox(height: 24),
 
                 Row(
