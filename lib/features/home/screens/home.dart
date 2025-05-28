@@ -168,7 +168,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
               onPressed: () {},
             ),
             const SizedBox(height: 16),
-            _expiringSoon(dataProvider.products),
+            _expiringSoon(dataProvider.myProducts),
             const SizedBox(height: 16),
             _sectionTitleWithoutSeeMore(
               'Categorias',
@@ -383,12 +383,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
             product.quantity == 0 ? 'Agotado' : 'Cantidad: ${product.quantity}';
 
         return {
-          'id': product.id, // <-- Agrega el id para navegación
+          'id': product.id,
           'title': product.name,
           'image': product.photoUrl ?? 'assets/images/default.png',
           'cantidad': quantityStatus,
           'expira': status,
-          'product': product, // <-- Pasa el objeto producto completo
+          'product': product,
         };
       }).toList(),
     );

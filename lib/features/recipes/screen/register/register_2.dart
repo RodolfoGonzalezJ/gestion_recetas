@@ -14,6 +14,7 @@ import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:gestion_recetas/data/services/cloudinary_service.dart';
+import 'package:gestion_recetas/features/navigation/navigation.dart';
 
 class RecipeIngredientsStep extends StatefulWidget {
   final String name;
@@ -63,8 +64,10 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
 
   Future<void> _loadAvailableProducts() async {
     final products = await _inventoryService.fetchProducts();
+    final userEmail = AuthController().user.correo ?? '';
     setState(() {
-      _availableProducts = products;
+      _availableProducts =
+          products.where((p) => p.createdBy == userEmail).toList();
     });
   }
 
@@ -170,7 +173,11 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
           const SnackBar(content: Text('Receta publicada exitosamente.')),
         );
       }
-      Navigator.pop(context);
+      // Ir al HomeScreen y limpiar la pila de navegación
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const NavigationScreen()),
+        (route) => false,
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
