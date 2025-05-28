@@ -1,16 +1,123 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:gestion_recetas/features/follow/widgets/keys.dart';
 import 'package:gestion_recetas/features/follow/widgets/subscription_button.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/features/follow/services/pay_service.dart';
-import 'package:gestion_recetas/features/auth/controllers/controllers.dart'; // Asegúrate de importar tu AuthController
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+import 'package:http/http.dart'
+    as http; // Asegúrate de importar tu AuthController
 
-class SubscriptionPage extends StatelessWidget {
+class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
 
   @override
+  State<SubscriptionPage> createState() => _SubscriptionPageState();
+}
+
+class _SubscriptionPageState extends State<SubscriptionPage> {
+  double amount = 40000;
+  Map<String, dynamic>? intentPaymentData;
+  final authController = AuthController();
+
+  showPaymentSheet(AuthController authController) async {
+    try {
+      await Stripe.instance
+          .presentPaymentSheet()
+          .then((val) async {
+            intentPaymentData = null;
+            await authController.updateStatus(
+              "SUSCRITO",
+            ); // Actualiza el estado a SUSCRITO
+            if (context.mounted) {
+              Navigator.pop(context, true); // Retorna true si se suscribió
+            }
+          })
+          .onError((errorMsg, sTrace) {
+            if (kDebugMode) {
+              print(errorMsg.toString() + sTrace.toString());
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Pago cancelado o fallido")),
+            );
+          });
+    } on StripeException catch (error) {
+      if (kDebugMode) {
+        print(error);
+      }
+      showDialog(
+        context: context,
+        builder: (c) => const AlertDialog(content: Text("Cancelado")),
+      );
+    } catch (errorMsg) {
+      if (kDebugMode) {
+        print(errorMsg);
+      }
+      print(errorMsg.toString());
+    }
+  }
+
+  makeIntentforPayment(amountTobeCharge, currency) async {
+    try {
+      Map<String, dynamic> paymentInfo = {
+        "amount": (int.parse(amountTobeCharge) * 100).toString(),
+        "currency": currency,
+        "payment_method_types[]": "card",
+      };
+      var responseFromStripeAPI = await http.post(
+        Uri.parse("https://api.stripe.com/v1/payment_intents"),
+        body: paymentInfo,
+        headers: {
+          "Authorization": "Bearer $SecretKey",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      );
+
+      print("response from API = " + responseFromStripeAPI.body);
+
+      return jsonDecode(responseFromStripeAPI.body);
+    } catch (errorMsg) {
+      if (kDebugMode) {
+        print(errorMsg);
+      }
+      print(errorMsg.toString());
+    }
+  }
+
+  paymentSheetInitialization(amountTobeCharge, currency) async {
+    try {
+      intentPaymentData = await makeIntentforPayment(
+        amountTobeCharge,
+        currency,
+      );
+
+      await Stripe.instance
+          .initPaymentSheet(
+            paymentSheetParameters: SetupPaymentSheetParameters(
+              allowsDelayedPaymentMethods: true,
+              paymentIntentClientSecret: intentPaymentData!['client_secret'],
+              style: ThemeMode.dark,
+              merchantDisplayName: "Foody",
+            ),
+          )
+          .then((val) {
+            print(val);
+          });
+      showPaymentSheet(authController);
+    } catch (errorMsg, s) {
+      if (kDebugMode) {
+        print(s);
+      }
+      print(errorMsg.toString());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final authController = AuthController(); // Instancia tu controlador
+    final theme = Theme.of(context); // Instancia tu controlador
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +133,9 @@ class SubscriptionPage extends StatelessWidget {
           children: [
             Text(
               'Suscríbete por solo',
-              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
@@ -39,7 +148,9 @@ class SubscriptionPage extends StatelessWidget {
             const SizedBox(height: 32),
             Text(
               'Ventajas de la suscripción',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             _buildAdvantage('Acceso a recetas exclusivas'),
@@ -50,11 +161,21 @@ class SubscriptionPage extends StatelessWidget {
             Center(
               child: StyledSubscriptionButton(
                 onPressed: () async {
-                  final pagoExitoso = await PayService.simulatePayment(context);
-                  if (pagoExitoso) {
-                    await authController.updateStatus("SUSCRITO"); // <-- Aquí actualizas el estado
-                    Navigator.pop(context, true); // Retorna true si se suscribió
-                  }
+                  await paymentSheetInitialization(
+                    amount.round().toString(),
+                    "COP",
+                  );
+                  // await showPaymentSheet(authController);
+                  // final pagoExitoso = await PayService.simulatePayment(context);
+                  // if (pagoExitoso) {
+                  //   await authController.updateStatus(
+                  //     "SUSCRITO",
+                  //   ); // <-- Aquí actualizas el estado
+                  //   Navigator.pop(
+                  //     context,
+                  //     true,
+                  //   ); // Retorna true si se suscribió
+                  // }
                 },
                 isSubscribed: false,
                 priceText: '\$ 40.000/mes',
@@ -72,7 +193,11 @@ class SubscriptionPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: CColors.primaryButton, size: 22),
+          const Icon(
+            Icons.check_circle,
+            color: CColors.primaryButton,
+            size: 22,
+          ),
           const SizedBox(width: 10),
           Expanded(child: Text(text)),
         ],

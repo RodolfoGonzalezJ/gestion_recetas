@@ -1,7 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'dart:convert';
 
-class StyledSubscriptionButton extends StatelessWidget {
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:gestion_recetas/features/follow/widgets/keys.dart';
+import 'package:gestion_recetas/utils/constants/colors.dart';
+import 'package:http/http.dart' as http;
+
+export 'subscription_button.dart';
+
+class StyledSubscriptionButton extends StatefulWidget {
   final Future<void> Function()? onPressed;
   final bool isSubscribed;
   final String priceText;
@@ -12,6 +20,98 @@ class StyledSubscriptionButton extends StatelessWidget {
     this.isSubscribed = false,
     this.priceText = '\$ 40.000/mes',
   }) : super(key: key);
+
+  @override
+  State<StyledSubscriptionButton> createState() =>
+      _StyledSubscriptionButtonState();
+}
+
+class _StyledSubscriptionButtonState extends State<StyledSubscriptionButton> {
+  // double amount = 40000;
+  // Map<String, dynamic>? intentPaymentData;
+
+  // showPaymentSheet() async {
+  //   try {
+  //     await Stripe.instance
+  //         .presentPaymentSheet()
+  //         .then((val) {
+  //           intentPaymentData = null;
+  //         })
+  //         .onError((errorMsg, sTrace) {
+  //           if (kDebugMode) {
+  //             print(errorMsg.toString() + sTrace.toString());
+  //           }
+  //         });
+  //   } on StripeException catch (error) {
+  //     if (kDebugMode) {
+  //       print(error);
+  //     }
+  //     showDialog(
+  //       context: context,
+  //       builder: (c) => const AlertDialog(content: Text("Cancelado")),
+  //     );
+  //   } catch (errorMsg) {
+  //     if (kDebugMode) {
+  //       print(errorMsg);
+  //     }
+  //     print(errorMsg.toString());
+  //   }
+  // }
+
+  // makeIntentforPayment(amountTobeCharge, currency) async {
+  //   try {
+  //     Map<String, dynamic> paymentInfo = {
+  //       "amount": (int.parse(amountTobeCharge) * 100).toString(),
+  //       "currency": currency,
+  //       "payment_method_types[]": "card",
+  //     };
+  //     var responseFromStripeAPI = await http.post(
+  //       Uri.parse("https://api.stripe.com/v1/payment_intents"),
+  //       body: paymentInfo,
+  //       headers: {
+  //         "Authorization": "Bearer $SecretKey",
+  //         "Content-Type": "application/x-www-form-urlencoded",
+  //       },
+  //     );
+
+  //     print("response from API = " + responseFromStripeAPI.body);
+
+  //     return jsonDecode(responseFromStripeAPI.body);
+  //   } catch (errorMsg) {
+  //     if (kDebugMode) {
+  //       print(errorMsg);
+  //     }
+  //     print(errorMsg.toString());
+  //   }
+  // }
+
+  // paymentSheetInitialization(amountTobeCharge, currency) async {
+  //   try {
+  //     intentPaymentData = await makeIntentforPayment(
+  //       amountTobeCharge,
+  //       currency,
+  //     );
+
+  //     await Stripe.instance
+  //         .initPaymentSheet(
+  //           paymentSheetParameters: SetupPaymentSheetParameters(
+  //             allowsDelayedPaymentMethods: true,
+  //             paymentIntentClientSecret: intentPaymentData!['client_secret'],
+  //             style: ThemeMode.dark,
+  //             merchantDisplayName: "Foody",
+  //           ),
+  //         )
+  //         .then((val) {
+  //           print(val);
+  //         });
+  //     showPaymentSheet();
+  //   } catch (errorMsg, s) {
+  //     if (kDebugMode) {
+  //       print(s);
+  //     }
+  //     print(errorMsg.toString());
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +131,14 @@ class StyledSubscriptionButton extends StatelessWidget {
             : const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
 
     return ElevatedButton(
-      onPressed: isSubscribed ? null : () {
-        if (onPressed != null) {
-          onPressed!();
-        }
-      },
+      onPressed:
+          widget.isSubscribed
+              ? null
+              : () {
+                if (widget.onPressed != null) {
+                  widget.onPressed!();
+                }
+              },
       style: ElevatedButton.styleFrom(
         backgroundColor: CColors.primaryButton,
         padding: buttonPadding,
@@ -48,7 +151,8 @@ class StyledSubscriptionButton extends StatelessWidget {
           Icon(Icons.percent, color: Colors.white, size: iconSize),
           const SizedBox(width: 8),
           Text(
-            isSubscribed ? 'Suscrito' : 'Suscribirse ($priceText)',
+            widget.isSubscribed ? 'Suscrito' : 'Suscribirse',
+            // ($priceText)'
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -63,7 +167,7 @@ class StyledSubscriptionButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
             ),
             child: Text(
-              priceText,
+              widget.priceText,
               style: TextStyle(
                 color: CColors.primaryButton,
                 fontWeight: FontWeight.w600,

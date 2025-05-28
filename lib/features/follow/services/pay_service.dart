@@ -5,18 +5,19 @@ class PayService {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const AlertDialog(
-        content: Row(
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text("Procesando pago..."),
-          ],
-        ),
-      ),
+      builder:
+          (_) => const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text("Procesando pago..."),
+              ],
+            ),
+          ),
     );
     await Future.delayed(const Duration(seconds: 2));
-    Navigator.of(context).pop(); 
+    Navigator.of(context).pop();
     return true;
-}
+  }
 }
