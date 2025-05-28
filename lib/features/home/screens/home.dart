@@ -299,13 +299,16 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _recommendedItems(List<dynamic> recipes) {
-    final filteredItems = recipes
-        .whereType<Recipe>()
-        .where((r) => !r.isPrivate) // <-- Solo públicas
-        .where((recipe) =>
-            selectedRecipeCategory == 'Todos' ||
-            recipe.category == selectedRecipeCategory)
-        .toList();
+    final filteredItems =
+        recipes
+            .whereType<Recipe>()
+            .where((r) => !r.isPrivate) // <-- Solo públicas
+            .where(
+              (recipe) =>
+                  selectedRecipeCategory == 'Todos' ||
+                  recipe.category == selectedRecipeCategory,
+            )
+            .toList();
 
     return _horizontalList(
       filteredItems.map((recipe) {
@@ -322,14 +325,17 @@ class _HomeScreenRealState extends State<HomeScreen> {
   }
 
   Widget _filteredRecipes(List<dynamic> recipes) {
-    final filteredItems = recipes
-        .whereType<Recipe>()
-        .where((r) => !r.isPrivate) // <-- Solo públicas
-        .where((recipe) =>
-            (selectedRecipeCategory == 'Todos' ||
-                recipe.category == selectedRecipeCategory) &&
-            recipe.name.toLowerCase().contains(searchQuery.toLowerCase()))
-        .toList();
+    final filteredItems =
+        recipes
+            .whereType<Recipe>()
+            .where((r) => !r.isPrivate) // <-- Solo públicas
+            .where(
+              (recipe) =>
+                  (selectedRecipeCategory == 'Todos' ||
+                      recipe.category == selectedRecipeCategory) &&
+                  recipe.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
 
     return _horizontalList(
       filteredItems.map((recipe) {
@@ -546,7 +552,9 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item['title']!,
+                        item['title']!.length > 16
+                            ? '${item['title']!.substring(0, 14)}...'
+                            : item['title']!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -675,10 +683,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
 
   /// Devuelve las recetas ordenadas por averageRating (mayor a menor)
   List<Recipe> _getTrendingRecipes(List<dynamic> recipes) {
-    final recipeList = recipes
-        .whereType<Recipe>()
-        .where((r) => !r.isPrivate) 
-        .toList();
+    final recipeList =
+        recipes.whereType<Recipe>().where((r) => !r.isPrivate).toList();
     recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
     return recipeList;
   }
@@ -687,10 +693,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
   List<Recipe> _getWeeklyRecipes(List<dynamic> recipes) {
     final now = DateTime.now();
     final eightDaysAgo = now.subtract(const Duration(days: 8));
-    final filtered = recipes
-        .whereType<Recipe>()
-        .where((r) => !r.isPrivate) 
-        .where((recipe) {
+    final filtered =
+        recipes.whereType<Recipe>().where((r) => !r.isPrivate).where((recipe) {
           if (recipe.comments == null || recipe.comments.isEmpty) return false;
           return recipe.comments.any(
             (c) =>
@@ -795,10 +799,11 @@ class _HomeScreenRealState extends State<HomeScreen> {
 
   /// Muestra las recetas ordenadas por averageRating (mayor a menor) en "En tendencias 🔥"
   Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
-    final recipeList = recipes
-        .whereType<Recipe>()
-        .where((r) => !r.isPrivate) // <-- Solo públicas
-        .toList();
+    final recipeList =
+        recipes
+            .whereType<Recipe>()
+            .where((r) => !r.isPrivate) // <-- Solo públicas
+            .toList();
     recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
     return _horizontalList(
       recipeList.map((recipe) {
