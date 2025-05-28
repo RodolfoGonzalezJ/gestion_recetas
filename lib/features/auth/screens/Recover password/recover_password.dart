@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_recetas/data/services/auth_service.dart';
+import 'package:gestion_recetas/features/auth/screens/Recover password/reset_password.dart';
 
 class RecoverPasswordScreen extends StatelessWidget {
   const RecoverPasswordScreen({super.key});
@@ -41,18 +42,40 @@ class RecoverPasswordScreen extends StatelessWidget {
                   return;
                 }
 
-                final success = await authService.sendRecoveryEmail(email);
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Correo de recuperación enviado'),
+                // Mostrar ventana de carga
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => AlertDialog(
+                    content: Row(
+                      children: const [
+                        CircularProgressIndicator(),
+                        SizedBox(width: 16),
+                        Expanded(child: Text('Espera un momento... Estamos verificando tu correo electrónico.')),
+                      ],
+                    ),
+                  ),
+                );
+
+                // Esperar 3 segundos
+                await Future.delayed(const Duration(seconds: 3));
+
+                final exists = await authService.emailExists(email);
+
+                // Cerrar ventana de carga
+                Navigator.of(context).pop();
+
+                if (exists) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ResetPasswordScreen(email: email),
                     ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        'El correo electrónico no está registrado o hubo un error al enviar el correo',
+                        'El correo electrónico no está registrado',
                       ),
                     ),
                   );

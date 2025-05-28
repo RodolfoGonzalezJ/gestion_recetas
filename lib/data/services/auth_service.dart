@@ -51,43 +51,43 @@ class AuthService {
     }
   }
 
-  Future<bool> sendRecoveryEmail(String email) async {
-    try {
-      final collection = MongoDBHelper.db.collection('users');
-      final user = await collection.findOne({'correo': email});
+//   Future<bool> sendRecoveryEmail(String email) async {
+//     try {
+//       final collection = MongoDBHelper.db.collection('users');
+//       final user = await collection.findOne({'correo': email});
 
-      if (user == null) {
-        print('Correo no encontrado en la base de datos');
-        return false;
-      }
+//       if (user == null) {
+//         print('Correo no encontrado en la base de datos');
+//         return false;
+//       }
 
-      final smtpServer = gmail('your_email@gmail.com', 'your_email_password');
-      final message =
-          Message()
-            ..from = Address('your_email@gmail.com', 'Gestion Recetas')
-            ..recipients.add(email)
-            ..subject = 'Recuperación de Contraseña'
-            ..text = '''
-Hola ${user['nombre']},
+//       final smtpServer = gmail('your_email@gmail.com', 'your_email_password');
+//       final message =
+//           Message()
+//             ..from = Address('your_email@gmail.com', 'Gestion Recetas')
+//             ..recipients.add(email)
+//             ..subject = 'Recuperación de Contraseña'
+//             ..text = '''
+// Hola ${user['nombre']},
 
-Hemos recibido una solicitud para recuperar tu contraseña. 
-Tu contraseña actual es: ${user['contrasena']}
+// Hemos recibido una solicitud para recuperar tu contraseña. 
+// Tu contraseña actual es: ${user['contrasena']}
 
-Por favor, inicia sesión con esta contraseña o cámbiala desde tu perfil.
+// Por favor, inicia sesión con esta contraseña o cámbiala desde tu perfil.
 
-Si no solicitaste este cambio, ignora este mensaje.
+// Si no solicitaste este cambio, ignora este mensaje.
 
-Saludos,
-El equipo de Gestion Recetas
-''';
+// Saludos,
+// El equipo de Gestion Recetas
+// ''';
 
-      await send(message, smtpServer);
-      return true;
-    } catch (e) {
-      print('Error al enviar correo de recuperación: $e');
-      return false;
-    }
-  }
+//       await send(message, smtpServer);
+//       return true;
+//     } catch (e) {
+//       print('Error al enviar correo de recuperación: $e');
+//       return false;
+//     }
+//   }
 
   Future<List<Map<String, dynamic>>> fetchAllUsers() async {
     try {
@@ -98,5 +98,11 @@ El equipo de Gestion Recetas
       print('Error fetching users: $e');
       rethrow;
     }
+  }
+
+  Future<bool> emailExists(String email) async {
+    final collection = MongoDBHelper.db.collection('users');
+    final user = await collection.findOne({'correo': email});
+    return user != null;
   }
 }

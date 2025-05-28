@@ -102,20 +102,69 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                     child: StyledSubscriptionButton(
                       isSubscribed: authController.user.status?.toUpperCase() == "SUSCRITO",
                         onPressed: authController.user.status?.toUpperCase() == "SUSCRITO"
-                         ? null
+                        ? null
                         : () async {
-                            // Navega a la página de suscripción
-                            Navigator.push(
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const SubscriptionPage(),
                               ),
                             );
+                            // Si el usuario se suscribió, recarga el usuario y actualiza el estado
+                            if (result == true) {
+                              await authController.reloadUser();
+                              if (mounted) setState(() {});
+                            }
                           },
-                          
                     ),
                   ),
                 ),
+
+                if (authController.user.status?.toUpperCase() == "SUSCRITO")
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("¿Estás seguro de cancelar tu suscripción?"),
+                              content: const Text("Perderás acceso a las recetas exclusivas."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: const Text("Cancelar"),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text("Aceptar"),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed == true) {
+                            await authController.updateStatus("FREE");
+                            // Recarga el usuario desde la base de datos
+                            await authController.reloadUser();
+                            if (mounted) {
+                              setState(() {}); 
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Suscripción cancelada.")),
+                              );
+                            }
+                          }
+                        },
+                        child: const Text("Cancelar Suscripción"),
+                      ),
+                    ),
+                  ),
 
                 const SizedBox(height: 24),
 
@@ -159,10 +208,11 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   VerTodasButton(
                     onTap: () async {
                       final recetas = await _userRecipesFuture;
+                      final recetasPublicas = recetas.where((r) => !r.isPrivate).toList();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => TodasMisRecetasScreen(recetasUsuario: recetas),
+                          builder: (_) => TodasMisRecetasScreen(recetasUsuario: recetasPublicas),
                         ),
                       );
                     },

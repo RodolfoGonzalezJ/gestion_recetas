@@ -25,6 +25,7 @@ class RecipeIngredientsStep extends StatefulWidget {
   final int? calories;
   final String? imageUrl;
   final Recipe? recipeToEdit;
+  final bool isPrivate; 
 
   const RecipeIngredientsStep({
     super.key,
@@ -36,6 +37,7 @@ class RecipeIngredientsStep extends StatefulWidget {
     this.calories,
     this.imageUrl,
     this.recipeToEdit,
+    required this.isPrivate,
   });
 
   @override
@@ -49,7 +51,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
   final List<Product> _selectedIngredients = [];
   List<Product> _availableProducts = [];
   String? _videoPath;
-
+  
   @override
   void initState() {
     super.initState();
@@ -140,6 +142,7 @@ class _RecipeIngredientsStepState extends State<RecipeIngredientsStep> {
       videoUrl: _videoPath,
       createdBy:
           widget.recipeToEdit?.createdBy ?? AuthController().user.correo ?? '',
+      isPrivate: widget.isPrivate, // <-- Guarda el valor
     );
 
     try {

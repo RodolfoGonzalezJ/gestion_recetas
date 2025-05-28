@@ -175,6 +175,7 @@ class _RecommendedRecipesWidgetState extends State<RecommendedRecipesWidget> {
                       r.createdBy.trim().toLowerCase() !=
                       widget.currentUserEmail.trim().toLowerCase(),
                 )
+                .where((r) => !r.isPrivate) 
                 .toList();
 
         return Column(
