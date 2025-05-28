@@ -3,8 +3,9 @@ import 'package:gestion_recetas/features/settings/screens/password_security/pass
 
 class ResetPasswordButton extends StatelessWidget {
   final bool enabled;
+  final VoidCallback? onPressed;
 
-  const ResetPasswordButton({super.key, this.enabled = false});
+  const ResetPasswordButton({super.key, this.enabled = false, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +19,7 @@ class ResetPasswordButton extends StatelessWidget {
         width: double.infinity,
         height: buttonHeight,
         child: ElevatedButton(
-          onPressed:
-              enabled
-                  ? () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Contraseña actualizada")),
-                    );
-                    Navigator.pop(context);
-                  }
-                  : null,
-
+          onPressed: enabled ? onPressed : null,
           child: const Text("Cambiar contraseña"),
         ),
       ),

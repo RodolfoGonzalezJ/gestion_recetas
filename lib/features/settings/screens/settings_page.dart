@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
+import 'package:gestion_recetas/features/profile/controllers/profile_controllers.dart';
+import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/features/auth/screens/login/login.dart';
 import 'package:gestion_recetas/features/settings/screens/password_security/password_security_screen.dart';
 import 'package:gestion_recetas/features/settings/screens/widgets/profile_tile.dart';
@@ -10,16 +13,42 @@ import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/theme_notifier.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  UserProfile? _userProfile;
+  final ProfileController _profileController = ProfileController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final email = AuthController().user.correo;
+    if (email == null) return;
+    await _profileController.loadUserProfile(email);
+    setState(() {
+      _userProfile = _profileController.userProfile;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = THelperFunctions.isDarkMode(context);
-    final size = MediaQuery.of(context).size;
-
-    // 🔹 Este es el acceso correcto al provider
     final themeNotifier = Provider.of<ThemeNotifier>(context);
+
+    if (_userProfile == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: isDark ? CColors.dark : Colors.white,
@@ -35,9 +64,10 @@ class SettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ProfileTile(
-                name: 'Pepi Por la Calleja',
+                name: _userProfile!.fullName,
                 subtitle: 'Ver Perfil',
-                avatarUrl: 'https://i.pravatar.cc/150?img=3',
+                avatarUrl: _userProfile!.avatarUrl,
+                // Puedes agregar un onTap para navegar al perfil si lo deseas
               ),
               const SizedBox(height: 24),
               SettingsSection(

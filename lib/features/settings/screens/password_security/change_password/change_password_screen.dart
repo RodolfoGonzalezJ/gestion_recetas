@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/auth/controllers/controllers.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'widgets/password_input_field.dart';
 import 'widgets/reset_password_button.dart';
@@ -33,6 +34,30 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     _passwordController.dispose();
     _confirmController.dispose();
     super.dispose();
+  }
+
+  Future<void> _changePassword() async {
+    final email = AuthController().user.correo;
+    if (email == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo obtener el correo del usuario')),
+      );
+      return;
+    }
+    final success = await AuthController().updatePassword(
+      email,
+      _passwordController.text.trim(),
+    );
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Contraseña actualizada correctamente')),
+      );
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al actualizar la contraseña')),
+      );
+    }
   }
 
   @override
@@ -91,7 +116,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ),
 
             const Spacer(),
-            ResetPasswordButton(enabled: _canSubmit),
+            ResetPasswordButton(
+              enabled: _canSubmit,
+              onPressed: _changePassword,
+            ),
           ],
         ),
       ),
