@@ -39,7 +39,7 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final recetasPublicas = widget.recetasUsuario.where((r) => !r.isPrivate).toList(); // <-- Solo públicas
+    final recetasPublicas = widget.recetasUsuario.where((r) => !r.isPrivate).toList(); 
     return Scaffold(
       appBar: AppBar(title: const Text("Todas mis recetas")),
       body: Stack(

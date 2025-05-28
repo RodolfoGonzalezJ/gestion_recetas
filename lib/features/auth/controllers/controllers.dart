@@ -234,6 +234,8 @@ class AuthController {
   }
   }
 
+  
+
   /// Actualiza la contraseña de un usuario por correo electrónico.
   Future<bool> updatePassword(String email, String newPassword) async {
     try {
@@ -255,4 +257,26 @@ class AuthController {
       return false;
     }
   }
+
+  Future<void> reloadUser() async {
+  final collection = MongoDBHelper.db.collection('users');
+  final user = await collection.findOne({'correo': _user.correo});
+  if (user != null) {
+    _user.nombre = user['nombre'];
+    _user.apellido = user['apellido'];
+    _user.correo = user['correo'];
+    _user.celular = user['celular'];
+    _user.cedula = user['cedula'];
+    _user.fechaNacimiento = user['fechaNacimiento'] != null
+        ? DateTime.parse(user['fechaNacimiento'])
+        : null;
+    _user.pais = user['pais'];
+    _user.departamento = user['departamento'];
+    _user.municipio = user['municipio'];
+    _user.direccion = user['direccion'];
+    _user.barrio = user['barrio'];
+    _user.contrasena = user['contrasena'];
+    _user.status = user['status'] ?? 'FREE';
+  }
+}
 }

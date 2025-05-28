@@ -102,17 +102,20 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                     child: StyledSubscriptionButton(
                       isSubscribed: authController.user.status?.toUpperCase() == "SUSCRITO",
                         onPressed: authController.user.status?.toUpperCase() == "SUSCRITO"
-                         ? null
+                        ? null
                         : () async {
-                            // Navega a la página de suscripción
-                            Navigator.push(
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const SubscriptionPage(),
                               ),
                             );
+                            // Si el usuario se suscribió, recarga el usuario y actualiza el estado
+                            if (result == true) {
+                              await authController.reloadUser();
+                              if (mounted) setState(() {});
+                            }
                           },
-                          
                     ),
                   ),
                 ),
@@ -148,8 +151,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                           );
                           if (confirmed == true) {
                             await authController.updateStatus("FREE");
+                            // Recarga el usuario desde la base de datos
+                            await authController.reloadUser();
                             if (mounted) {
-                              setState(() {}); // Refresca la UI
+                              setState(() {}); 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text("Suscripción cancelada.")),
                               );

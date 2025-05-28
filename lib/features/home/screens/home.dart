@@ -689,7 +689,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final eightDaysAgo = now.subtract(const Duration(days: 8));
     final filtered = recipes
         .whereType<Recipe>()
-        .where((r) => !r.isPrivate) // <-- Solo públicas
+        .where((r) => !r.isPrivate) 
         .where((recipe) {
           if (recipe.comments == null || recipe.comments.isEmpty) return false;
           return recipe.comments.any(
