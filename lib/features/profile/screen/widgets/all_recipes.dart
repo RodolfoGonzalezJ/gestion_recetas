@@ -90,7 +90,7 @@ class _TodasMisRecetasScreenState extends State<TodasMisRecetasScreen> {
                     imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
                     title: receta.name,
                     rating: receta.averageRating,
-                    reviews: 0,
+                    reviews: receta.comments.length,
                     duration: receta.preparationTime.inMinutes,
                     difficulty: int.tryParse(receta.difficulty) ?? 1,
                   ),

@@ -115,14 +115,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text("Receta Popular", style: theme.textTheme.titleMedium),
             (_misRecetas.isNotEmpty)
                 ? PopularRecipeCard(
-                    imagePath: (_misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).imageUrl) ?? 'assets/logos/logo.png',
-                    title: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).name,
-                    rating: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).averageRating,
-                    reviews: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).comments.length,
-                    duration: _misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).preparationTime.inMinutes,
-                    difficulty: int.tryParse(_misRecetas.reduce((a, b) => a.averageRating >= b.averageRating ? a : b).difficulty) ?? 1,
-                  )
-    : const Text("No tienes recetas aún."),
+                  id:
+                      (_misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .id),
+                  imagePath:
+                      (_misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .imageUrl) ??
+                      'assets/logos/logo.png',
+                  title:
+                      _misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .name,
+                  rating:
+                      _misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .averageRating,
+                  reviews:
+                      _misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .comments
+                          .length,
+                  duration:
+                      _misRecetas
+                          .reduce(
+                            (a, b) =>
+                                a.averageRating >= b.averageRating ? a : b,
+                          )
+                          .preparationTime
+                          .inMinutes,
+                  difficulty:
+                      int.tryParse(
+                        _misRecetas
+                            .reduce(
+                              (a, b) =>
+                                  a.averageRating >= b.averageRating ? a : b,
+                            )
+                            .difficulty,
+                      ) ??
+                      1,
+                )
+                : const Text("No tienes recetas aún."),
             Text("Mis Recetas", style: theme.textTheme.titleMedium),
             Column(
               children:
@@ -137,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           imagePath: receta.imageUrl ?? 'assets/logos/logo.png',
                           title: receta.name,
                           rating: receta.averageRating,
-                          reviews: 0,
+                          reviews: receta.comments.length,
                           duration: receta.preparationTime.inMinutes,
                           difficulty: int.tryParse(receta.difficulty) ?? 1,
                         );

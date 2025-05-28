@@ -2,11 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:gestion_recetas/features/profile/models/user_profile_model.dart';
 import 'package:gestion_recetas/utils/constants/colors.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:gestion_recetas/features/recipes/services/recipe_service.dart';
+import 'package:gestion_recetas/features/favorites/services/favorite_service.dart';
 
 class ProfileStats extends StatelessWidget {
   final UserProfile user;
 
   const ProfileStats({super.key, required this.user});
+
+  Future<int> _getTotalFavorites() async {
+    // Suma los favoritos de todas las recetas del usuario
+    final recipeService = RecipeService();
+    final favoriteService = FavoriteService();
+    final recipes = await recipeService.fetchRecipes();
+    final userRecipes =
+        recipes.where((r) => r.createdBy == user.correo).toList();
+    int total = 0;
+    for (final recipe in userRecipes) {
+      total += await favoriteService.getFavoritesCount(recipe.id);
+    }
+    return total;
+  }
+
+  Future<int> _getTotalComments() async {
+    // Suma los comentarios de todas las recetas del usuario
+    final recipeService = RecipeService();
+    final recipes = await recipeService.fetchRecipes();
+    final userRecipes =
+        recipes.where((r) => r.createdBy == user.correo).toList();
+    int total = 0;
+    for (final recipe in userRecipes) {
+      total += recipe.comments.length;
+    }
+    return total;
+  }
+
+  Future<int> _getTotalRecipes() async {
+    final recipeService = RecipeService();
+    final recipes = await recipeService.fetchRecipes();
+    return recipes.where((r) => r.createdBy == user.correo).length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +63,28 @@ class ProfileStats extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStat("Recetas", user.recetas.toString()),
-          _buildStat("Vistas", '${user.vistas}k'),
-          _buildStat("Seguidores", '${user.seguidores}k'),
-          _buildStat("Reseñas", user.resenas.toString()),
+          FutureBuilder<int>(
+            future: _getTotalRecipes(),
+            builder: (context, snapshot) {
+              final value = snapshot.hasData ? snapshot.data.toString() : '...';
+              return _buildStat("Recetas", value);
+            },
+          ),
+          FutureBuilder<int>(
+            future: _getTotalFavorites(),
+            builder: (context, snapshot) {
+              final value = snapshot.hasData ? snapshot.data.toString() : '...';
+              return _buildStat("Favoritos", value);
+            },
+          ),
+          // _buildStat("Seguidores", '${user.seguidores}k'),
+          FutureBuilder<int>(
+            future: _getTotalComments(),
+            builder: (context, snapshot) {
+              final value = snapshot.hasData ? snapshot.data.toString() : '...';
+              return _buildStat("Reseñas", value);
+            },
+          ),
         ],
       ),
     );

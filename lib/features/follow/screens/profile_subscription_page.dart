@@ -35,7 +35,8 @@ class ProfileSubscriptionPage extends StatefulWidget {
 }
 
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
-  final SubscriptionController subscriptionController = SubscriptionController();
+  final SubscriptionController subscriptionController =
+      SubscriptionController();
   final AuthController authController = AuthController();
   int selectedTabIndex = 0;
   late Future<UserProfile> _userProfileFuture;
@@ -50,7 +51,6 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
 
     // Usa el controlador para cargar el estado de suscripción
     subscriptionController.loadUserProfile(widget.correo);
-    
   }
 
   @override
@@ -73,7 +73,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: isDark ? CColors.dark : Colors.white,
-            iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+            iconTheme: IconThemeData(
+              color: isDark ? Colors.white : Colors.black,
+            ),
             elevation: 2,
             toolbarHeight: 38,
           ),
@@ -89,7 +91,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                 const SizedBox(height: 60),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 8 : 0,
+                  ),
                   child: ProfileStats(user: userProfile),
                 ),
 
@@ -100,63 +104,83 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   child: SizedBox(
                     width: double.infinity,
                     child: StyledSubscriptionButton(
-                      isSubscribed: authController.user.status?.toUpperCase() == "SUSCRITO",
-                        onPressed: authController.user.status?.toUpperCase() == "SUSCRITO"
-                        ? null
-                        : () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SubscriptionPage(),
-                              ),
-                            );
-                            // Si el usuario se suscribió, recarga el usuario y actualiza el estado
-                            if (result == true) {
-                              await authController.reloadUser();
-                              if (mounted) setState(() {});
-                            }
-                          },
+                      isSubscribed:
+                          authController.user.status?.toUpperCase() ==
+                          "SUSCRITO",
+                      onPressed:
+                          authController.user.status?.toUpperCase() ==
+                                  "SUSCRITO"
+                              ? null
+                              : () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const SubscriptionPage(),
+                                  ),
+                                );
+                                // Si el usuario se suscribió, recarga el usuario y actualiza el estado
+                                if (result == true) {
+                                  await authController.reloadUser();
+                                  if (mounted) setState(() {});
+                                }
+                              },
                     ),
                   ),
                 ),
 
                 if (authController.user.status?.toUpperCase() == "SUSCRITO")
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 8,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                         onPressed: () async {
                           final confirmed = await showDialog<bool>(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text("¿Estás seguro de cancelar tu suscripción?"),
-                              content: const Text("Perderás acceso a las recetas exclusivas."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text("Cancelar"),
+                            builder:
+                                (context) => AlertDialog(
+                                  title: const Text(
+                                    "¿Estás seguro de cancelar tu suscripción?",
+                                  ),
+                                  content: const Text(
+                                    "Perderás acceso a las recetas exclusivas.",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, false),
+                                      child: const Text("Cancelar"),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      onPressed:
+                                          () => Navigator.pop(context, true),
+                                      child: const Text("Aceptar"),
+                                    ),
+                                  ],
                                 ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text("Aceptar"),
-                                ),
-                              ],
-                            ),
                           );
                           if (confirmed == true) {
                             await authController.updateStatus("FREE");
                             // Recarga el usuario desde la base de datos
                             await authController.reloadUser();
                             if (mounted) {
-                              setState(() {}); 
+                              setState(() {});
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Suscripción cancelada.")),
+                                const SnackBar(
+                                  content: Text("Suscripción cancelada."),
+                                ),
                               );
                             }
                           }
@@ -179,7 +203,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                 const SizedBox(height: 24),
 
                 if (selectedTabIndex == 0) ...[
-                  Text("Receta más popular", style: theme.textTheme.titleMedium),
+                  Text(
+                    "Receta más popular",
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 10),
                   FutureBuilder<List<Recipe>>(
                     future: _userRecipesFuture,
@@ -192,11 +219,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                       }
                       // Encuentra la receta con mayor rating
                       final recetas = snapshot.data!;
-                      final recetaPopular = recetas.reduce((a, b) =>
-                          a.averageRating >= b.averageRating ? a : b);
+                      final recetaPopular = recetas.reduce(
+                        (a, b) => a.averageRating >= b.averageRating ? a : b,
+                      );
 
                       return PopularRecipeCard(
-                        imagePath: recetaPopular.imageUrl ?? 'assets/logos/logo.png',
+                        id: recetaPopular.id,
+                        imagePath:
+                            recetaPopular.imageUrl ?? 'assets/logos/logo.png',
                         title: recetaPopular.name,
                         rating: recetaPopular.averageRating,
                         reviews: 0,
@@ -208,11 +238,15 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                   VerTodasButton(
                     onTap: () async {
                       final recetas = await _userRecipesFuture;
-                      final recetasPublicas = recetas.where((r) => !r.isPrivate).toList();
+                      final recetasPublicas =
+                          recetas.where((r) => !r.isPrivate).toList();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => TodasMisRecetasScreen(recetasUsuario: recetasPublicas),
+                          builder:
+                              (_) => TodasMisRecetasScreen(
+                                recetasUsuario: recetasPublicas,
+                              ),
                         ),
                       );
                     },
@@ -223,9 +257,12 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                     email: userProfile.correo ?? '',
                     telefono: userProfile.celular ?? '',
                     ubicacion: userProfile.pais ?? '',
-                    fechaRegistro: userProfile.fechaNacimiento != null
-                        ? DateFormat('dd/MM/yyyy').format(userProfile.fechaNacimiento!)
-                        : '',
+                    fechaRegistro:
+                        userProfile.fechaNacimiento != null
+                            ? DateFormat(
+                              'dd/MM/yyyy',
+                            ).format(userProfile.fechaNacimiento!)
+                            : '',
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -269,19 +306,19 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   }
 
   int _parseDifficulty(String? difficulty) {
-  switch (difficulty?.toLowerCase()) {
-    case 'fácil':
-    case 'facil':
-      return 1;
-    case 'media':
-      return 2;
-    case 'difícil':
-    case 'dificil':
-      return 3;
-    default:
-      return int.tryParse(difficulty ?? '') ?? 1;
+    switch (difficulty?.toLowerCase()) {
+      case 'fácil':
+      case 'facil':
+        return 1;
+      case 'media':
+        return 2;
+      case 'difícil':
+      case 'dificil':
+        return 3;
+      default:
+        return int.tryParse(difficulty ?? '') ?? 1;
+    }
   }
-}
 }
 
 // NUEVO WIDGET
