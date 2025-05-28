@@ -553,7 +553,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     children: [
                       Text(
                         item['title']!.length > 16
-                            ? '${item['title']!.substring(0, 14)}...'
+                            ? '${item['title']!.substring(0, 18)}...'
                             : item['title']!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
