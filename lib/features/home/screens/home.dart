@@ -159,7 +159,7 @@ class _HomeScreenRealState extends State<HomeScreen> {
                     ),
                     _card(
                       'Recetas',
-                      dataProvider.totalRecipes,
+                      myRecipes.length, // Cambiado: solo recetas del usuario
                       (MediaQuery.of(context).size.width * 0.35),
                       93,
                     ),
@@ -177,13 +177,29 @@ class _HomeScreenRealState extends State<HomeScreen> {
                       children: [
                         _card(
                           'Estado Critico',
-                          dataProvider.criticalCount,
+                          myProducts.where(
+                            (p) {
+                              final daysToExpire =
+                                  p.expiryDate
+                                      .difference(DateTime.now())
+                                      .inDays;
+                              return daysToExpire >= 0 && daysToExpire <= 5;
+                            },
+                          ).length, // Solo productos del usuario en estado crítico
                           (MediaQuery.of(context).size.width * 0.25),
                           93,
                         ),
                         _card(
                           'Estado Medio',
-                          dataProvider.mediumCount,
+                          myProducts.where(
+                            (p) {
+                              final daysToExpire =
+                                  p.expiryDate
+                                      .difference(DateTime.now())
+                                      .inDays;
+                              return daysToExpire >= 6 && daysToExpire <= 10;
+                            },
+                          ).length, // Solo productos del usuario en estado medio
                           (MediaQuery.of(context).size.width * 0.25),
                           93,
                         ),
