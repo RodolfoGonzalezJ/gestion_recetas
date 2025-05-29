@@ -9,6 +9,7 @@ import 'package:gestion_recetas/features/follow/widgets/keys.dart';
 import 'package:gestion_recetas/utils/theme/custom_themes/theme_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/providers/data_provider.dart';
+import 'package:gestion_recetas/features/notifications/notifications_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ void main() async {
   await Stripe.instance.applySettings();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   await MongoDBHelper.connect();
+  await NotificationService.initialize();
   runApp(
     MultiProvider(
       providers: [

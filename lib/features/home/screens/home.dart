@@ -18,6 +18,7 @@ import 'package:gestion_recetas/features/home/screens/product_detail_expiring.da
 import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipes.dart';
 import 'package:gestion_recetas/features/home/screens/see_more_recipes_screen.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/hero_ad_banner.dart';
+import 'package:gestion_recetas/features/notifications/notifications_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,8 +28,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenRealState extends State<HomeScreen> {
-  String searchQuery = ''; // Define searchQuery
-  String selectedRecipeCategory = 'Todos'; // Define selectedRecipeCategory
+  String searchQuery = '';
+  String selectedRecipeCategory = 'Todos';
+  bool _notificationsScheduled = false; //
 
   @override
   void initState() {
@@ -36,9 +38,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final dataProvider = Provider.of<DataProvider>(context, listen: false);
     dataProvider.loadRecipes();
     dataProvider.loadProducts();
-    dataProvider.loadUsers(); // Load users
+    dataProvider.loadUsers();
 
-    // Inicializa el usuario autenticado solo una vez después del primer frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dataProvider = Provider.of<DataProvider>(context, listen: false);
       if (dataProvider.currentUser == null) {
@@ -47,6 +48,32 @@ class _HomeScreenRealState extends State<HomeScreen> {
       }
     });
   }
+
+  void _scheduleExpiryNotifications(List products) {
+  final now = DateTime.now();
+  for (var product in products) {
+    // Ignorar productos sin stock
+    if (product.quantity == 0) continue;
+
+    // Asegurarse de que expiryDate es DateTime
+    DateTime expiry;
+    if (product.expiryDate is String) {
+      expiry = DateTime.tryParse(product.expiryDate) ?? now;
+    } else {
+      expiry = product.expiryDate;
+    }
+
+    final daysToExpire = expiry.difference(now).inDays;
+
+    if (daysToExpire == 3 || daysToExpire == 2 || daysToExpire == 1) {
+      NotificationService.showNotification(
+        id: (product.hashCode + daysToExpire).toInt(),
+        title: '¡Producto por caducar!',
+        body: 'El producto "${product.name}" caduca en $daysToExpire día(s).',
+      );
+    }
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +94,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
         currentUser == null
             ? []
             : products.where((p) => p.createdBy == currentUser.correo).toList();
+
+    // Programa notificaciones solo una vez cuando los productos estén cargados
+        if (!_notificationsScheduled && myProducts.isNotEmpty) {
+      _scheduleExpiryNotifications(myProducts);
+      _notificationsScheduled = true;
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -696,165 +729,127 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final filtered =
         recipes.whereType<Recipe>().where((r) => !r.isPrivate).where((recipe) {
           if (recipe.comments == null || recipe.comments.isEmpty) return false;
-          return recipe.comments.any(
-            (c) =>
-                c['createdAt'] != null &&
-                    (c['createdAt'] is DateTime
-                            ? c['createdAt']
-                            : DateTime.tryParse(c['createdAt'].toString()))
-                        ?.isAfter(eightDaysAgo) ??
-                false,
-          );
-        }).toList();
-    filtered.sort((a, b) => b.averageRating.compareTo(a.averageRating));
-    return filtered;
-  }
+                    return recipe.comments.any(
+                      (c) =>
+                          c['createdAt'] != null &&
+                              (c['createdAt'] is DateTime
+                                      ? c['createdAt']
+                                      : DateTime.tryParse(c['createdAt'].toString()))
+                                  ?.isAfter(eightDaysAgo) ??
+                          false,
+                    );
+                  }).toList();
+              return filtered;
+            }
+          
+            Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
+              final trendingRecipes = _getTrendingRecipes(recipes);
+              return _horizontalList(
+                trendingRecipes.map((recipe) {
+                  return {
+                    'id': recipe.id,
+                    'title': recipe.name,
+                    'time': '${recipe.preparationTime.inMinutes} min',
+                    'image': recipe.imageUrl ?? 'assets/images/default.png',
+                    'rating': recipe.averageRating.toStringAsFixed(1),
+                    'nivel': recipe.difficulty,
+                  };
+                }).toList(),
+              );
+            }
+          
+            Widget _weeklyRecipesLast8Days(List<dynamic> recipes) {
+              final weeklyRecipes = _getWeeklyRecipes(recipes);
+              return _horizontalList(
+                weeklyRecipes.map((recipe) {
+                  return {
+                    'id': recipe.id,
+                    'title': recipe.name,
+                    'time': '${recipe.preparationTime.inMinutes} min',
+                    'image': recipe.imageUrl ?? 'assets/images/default.png',
+                    'rating': recipe.averageRating.toStringAsFixed(1),
+                    'nivel': recipe.difficulty,
+                  };
+                }).toList(),
+              );
+            }
+          
+            Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: onPressed,
+                    child: const Text(
+                      'Ver más',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          
+            Widget _sectionTitleWithoutSeeMore(
+                String title, double fontSize, FontWeight fontWeight,
+                {required VoidCallback onPressed}) {
+              return Text(
+                title,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                ),
+              );
+            }
+          
+            Widget _card(String title, int value, double width, double height) {
+              final isDark = THelperFunctions.isDarkMode(context);
+              return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 2,
+                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                child: Container(
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    color: isDark ? CColors.darkContainer : CColors.lightContainer,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          value.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            color: CColors.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          }
 
-  Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
-    final isDark = THelperFunctions.isDarkMode(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
-          ),
-        ),
-        TextButton(
-          onPressed: onPressed,
-          child: Text(
-            'Ver más',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _sectionTitleWithoutSeeMore(
-    String title,
-    double fontSize,
-    FontWeight fontWeight, {
-    required VoidCallback onPressed,
-  }) {
-    final isDark = THelperFunctions.isDarkMode(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _card(String titulo, int cantidad, double width, double height) {
-    final isDark = THelperFunctions.isDarkMode(context);
-    return Card(
-      color: isDark ? CColors.darkContainer : CColors.lightContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      elevation: 4,
-      shadowColor: const Color.fromARGB(144, 0, 0, 0),
-      child: Container(
-        width: width,
-        height: height,
-        padding: const EdgeInsets.all(4),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              titulo,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: isDark ? CColors.textCategory : CColors.primaryTextColor,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '$cantidad',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: isDark ? CColors.light : CColors.primaryTextColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Muestra las recetas ordenadas por averageRating (mayor a menor) en "En tendencias 🔥"
-  Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
-    final recipeList =
-        recipes
-            .whereType<Recipe>()
-            .where((r) => !r.isPrivate) // <-- Solo públicas
-            .toList();
-    recipeList.sort((a, b) => b.averageRating.compareTo(a.averageRating));
-    return _horizontalList(
-      recipeList.map((recipe) {
-        return {
-          'id': recipe.id,
-          'title': recipe.name,
-          'time': '${recipe.preparationTime.inMinutes} min',
-          'image': recipe.imageUrl ?? 'assets/images/default.png',
-          'rating': recipe.averageRating.toStringAsFixed(1),
-          'nivel': recipe.difficulty,
-        };
-      }).toList(),
-    );
-  }
-
-  /// Recetas de la semana: recetas con comentarios en los últimos 8 días, ordenadas por rating
-  Widget _weeklyRecipesLast8Days(List<dynamic> recipes) {
-    final now = DateTime.now();
-    final eightDaysAgo = now.subtract(const Duration(days: 8));
-
-    // Se asume que cada receta tiene una lista de comentarios con campo createdAt y rating
-    final filtered =
-        recipes.whereType<Recipe>().where((recipe) {
-          // Si no hay comentarios, no se muestra
-          if (recipe.comments == null || recipe.comments.isEmpty) return false;
-          // Al menos un comentario en los últimos 8 días
-          return recipe.comments.any(
-            (c) =>
-                c['createdAt'] != null &&
-                    (c['createdAt'] is DateTime
-                            ? c['createdAt']
-                            : DateTime.tryParse(c['createdAt'].toString()))
-                        ?.isAfter(eightDaysAgo) ??
-                false,
-          );
-        }).toList();
-
-    // Ordena por averageRating descendente
-    filtered.sort((a, b) => b.averageRating.compareTo(a.averageRating));
-
-    return _horizontalList(
-      filtered.map((recipe) {
-        return {
-          'id': recipe.id,
-          'title': recipe.name,
-          'time': '${recipe.preparationTime.inMinutes} min',
-          'image': recipe.imageUrl ?? 'assets/images/default.png',
-          'rating': recipe.averageRating.toStringAsFixed(1),
-          'nivel': recipe.difficulty,
-        };
-      }).toList(),
-    );
-  }
-}

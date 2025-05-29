@@ -67,7 +67,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 name: _userProfile!.fullName,
                 subtitle: 'Ver Perfil',
                 avatarUrl: _userProfile!.avatarUrl,
-                // Puedes agregar un onTap para navegar al perfil si lo deseas
               ),
               const SizedBox(height: 24),
               SettingsSection(
