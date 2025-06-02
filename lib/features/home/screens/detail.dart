@@ -210,11 +210,18 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 15),
-                              Text(
-                                recipe.name,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                              SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width *
+                                    0.6, // Ajusta el ancho máximo
+                                child: Text(
+                                  recipe.name,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
 
@@ -347,12 +354,25 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       const SizedBox(height: 20),
 
                       // Ingredientes
-                      const Text(
-                        'Ingredientes',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Ingredientes',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '(${recipe.ingredients.length})',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
                       ...recipe.ingredients.map<Widget>((ingredient) {
@@ -579,7 +599,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       //         ),
                       //         child: const Text('Enviar'),
                       //       ),
-                      //     ],
+                      //     },
                       //   ),
                       // ),
                       // const Text(
