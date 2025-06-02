@@ -29,6 +29,14 @@ class _SearchScreenState extends State<SearchScreen>
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
     final isDark = THelperFunctions.isDarkMode(context);
+
+    // Esperar a que los datos estén cargados
+    if (!dataProvider.isRecipesLoaded ||
+        !dataProvider.isProductsLoaded ||
+        !dataProvider.isUsersLoaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final filteredRecipes =
         dataProvider.recipes
             .where(

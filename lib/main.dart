@@ -13,10 +13,10 @@ import 'package:gestion_recetas/features/notifications/notifications_service.dar
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await MongoDBHelper.connect();
   Stripe.publishableKey = PublishableKey;
   await Stripe.instance.applySettings();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-  await MongoDBHelper.connect();
   await NotificationService.initialize();
   runApp(
     MultiProvider(
