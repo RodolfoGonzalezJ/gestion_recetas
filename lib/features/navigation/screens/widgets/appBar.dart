@@ -65,7 +65,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         isDark
                             ? 'assets/logos/notification_dark.png'
                             : 'assets/logos/Frame.png',
-                    onTap: () {
+                    onTap: () async {
+                      await NotificationService.notifyExpiringProducts(
+                        expiringProducts,
+                        currentUser?.correo ?? '',
+                      );
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:
