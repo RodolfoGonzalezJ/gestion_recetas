@@ -19,6 +19,7 @@ import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipe
 import 'package:gestion_recetas/features/home/screens/see_more_recipes_screen.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/hero_ad_banner.dart';
 import 'package:gestion_recetas/features/notifications/notifications_service.dart';
+import 'package:gestion_recetas/features/notifications/notification_bell_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +31,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenRealState extends State<HomeScreen> {
   String searchQuery = '';
   String selectedRecipeCategory = 'Todos';
-  bool _notificationsScheduled = false; //
 
   @override
   void initState() {
@@ -48,36 +48,9 @@ class _HomeScreenRealState extends State<HomeScreen> {
     });
   }
 
-  void _scheduleExpiryNotifications(List products) {
-    final now = DateTime.now();
-    for (var product in products) {
-      // Ignorar productos sin stock
-      if (product.quantity == 0) continue;
-
-      // Asegurarse de que expiryDate es DateTime
-      DateTime expiry;
-      if (product.expiryDate is String) {
-        expiry = DateTime.tryParse(product.expiryDate) ?? now;
-      } else {
-        expiry = product.expiryDate;
-      }
-
-      final daysToExpire = expiry.difference(now).inDays;
-
-      if (daysToExpire == 3 || daysToExpire == 2 || daysToExpire == 1) {
-        NotificationService.showNotification(
-          id: (product.hashCode + daysToExpire).toInt(),
-          title: '¡Producto por caducar!',
-          body: 'El producto "${product.name}" caduca en $daysToExpire día(s).',
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
-
     final UserModel? currentUser = dataProvider.currentUser;
     final isDark = THelperFunctions.isDarkMode(context);
 
@@ -91,10 +64,6 @@ class _HomeScreenRealState extends State<HomeScreen> {
     final recipes = dataProvider.recipes;
     final products = dataProvider.products;
 
-    // Asegura que los datos existen o usa valores por defecto
-    // final recipes = dataProvider.recipes ?? [];
-    // final products = dataProvider.products ?? [];
-
     // Filtra recetas y productos creados por el usuario actual
     final myRecipes =
         currentUser == null
@@ -104,12 +73,6 @@ class _HomeScreenRealState extends State<HomeScreen> {
         currentUser == null
             ? []
             : products.where((p) => p.createdBy == currentUser.correo).toList();
-
-    // Programa notificaciones solo una vez cuando los productos estén cargados
-    if (!_notificationsScheduled && myProducts.isNotEmpty) {
-      _scheduleExpiryNotifications(myProducts);
-      _notificationsScheduled = true;
-    }
 
     return Scaffold(
       body: SingleChildScrollView(

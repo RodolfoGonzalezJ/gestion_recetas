@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_recetas/features/inventory/models/models.dart';
 import 'package:gestion_recetas/features/navigation/screens/widgets/iconButtonBox.dart';
 import 'package:gestion_recetas/features/profile/screen/profile.dart';
 import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
+import 'package:gestion_recetas/features/notifications/notifications_service.dart';
+import 'package:gestion_recetas/features/notifications/products_expiring_soon_page.dart';
+import 'package:gestion_recetas/providers/data_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -9,6 +14,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = THelperFunctions.isDarkMode(context);
+    final dataProvider = Provider.of<DataProvider>(context, listen: false);
+    final currentUser = dataProvider.currentUser;
+    final myProducts =
+        currentUser == null
+            ? <Product>[]
+            : dataProvider.products
+                .where((p) => p.createdBy == currentUser.correo)
+                .toList()
+                .cast<Product>();
+
+    // Productos próximos a caducar (<= 3 días)
+    final expiringProducts =
+        myProducts
+            .where((p) => p.expiryDate.difference(DateTime.now()).inDays <= 3)
+            .toList();
+    final expiringCount = expiringProducts.length;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0, top: 20.0),
@@ -37,12 +58,50 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              IconButtonBox(
-                imagePath:
-                    isDark
-                        ? 'assets/logos/notification_dark.png'
-                        : 'assets/logos/Frame.png',
-                onTap: () {},
+              Stack(
+                children: [
+                  IconButtonBox(
+                    imagePath:
+                        isDark
+                            ? 'assets/logos/notification_dark.png'
+                            : 'assets/logos/Frame.png',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (_) => ProductsExpiringSoonPage(
+                                products: expiringProducts,
+                              ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (expiringCount > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          expiringCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
