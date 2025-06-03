@@ -375,17 +375,68 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                         ],
                       ),
                       const SizedBox(height: 10),
+                      // Suponiendo que tienes un Map con las cantidades del usuario:
+                      // final Map<String, num> userIngredientsQuantities = {...};
                       ...recipe.ingredients.map<Widget>((ingredient) {
-                        // Acceder correctamente a las propiedades del objeto `Product`
-                        final ingredientName =
-                            ingredient.name; // Usar la propiedad `name`
+                        final ingredientName = ingredient.name;
+                        final ingredientQuantity = ingredient.quantity;
+                        // Reemplaza esto con tu fuente real de cantidades del usuario
+                        final Map<String, num> userIngredientsQuantities =
+                            {}; // <-- Reemplaza con tu fuente real
+                        final userQty =
+                            userIngredientsQuantities[ingredientName];
+
+                        Color iconColor;
+                        String statusText;
+                        Color statusColor;
+
+                        if (userQty != null &&
+                            userQty >= (ingredientQuantity ?? 1)) {
+                          iconColor = Colors.green;
+                          statusText = 'Tienes';
+                          statusColor = Colors.green;
+                        } else if (userQty != null && userQty > 0) {
+                          iconColor = Colors.orange;
+                          statusText = 'Te falta';
+                          statusColor = Colors.orange;
+                        } else {
+                          iconColor = Colors.red;
+                          statusText = 'No tienes';
+                          statusColor = Colors.red;
+                        }
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
                             children: [
-                              const Icon(Icons.circle, size: 8),
+                              Icon(
+                                userQty != null &&
+                                        userQty >= (ingredientQuantity ?? 1)
+                                    ? Icons.check_circle
+                                    : userQty != null && userQty > 0
+                                    ? Icons.error
+                                    : Icons.cancel,
+                                size: 18,
+                                color: iconColor,
+                              ),
                               const SizedBox(width: 8),
-                              Expanded(child: Text(ingredientName)),
+                              Expanded(
+                                child: Text(
+                                  '$ingredientName (${ingredientQuantity ?? "?"})'
+                                  '${userQty != null ? " - Tienes: $userQty" : ""}',
+                                  style: TextStyle(
+                                    color: iconColor,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                statusText,
+                                style: TextStyle(
+                                  color: statusColor,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         );

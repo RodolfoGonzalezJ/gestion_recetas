@@ -19,7 +19,6 @@ import 'package:gestion_recetas/features/home/screens/widgets/recommended_recipe
 import 'package:gestion_recetas/features/home/screens/see_more_recipes_screen.dart';
 import 'package:gestion_recetas/features/home/screens/widgets/hero_ad_banner.dart';
 import 'package:gestion_recetas/features/notifications/notifications_service.dart';
-import 'package:gestion_recetas/features/notifications/notification_bell_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,13 +30,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenRealState extends State<HomeScreen> {
   String searchQuery = '';
   String selectedRecipeCategory = 'Todos';
+  bool _notificationsScheduled = false; //
 
   @override
   void initState() {
     super.initState();
     final dataProvider = Provider.of<DataProvider>(context, listen: false);
-    // Solo carga si no está en caché
-    dataProvider.loadAll();
+    dataProvider.loadRecipes();
+    dataProvider.loadProducts();
+    dataProvider.loadUsers();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dataProvider = Provider.of<DataProvider>(context, listen: false);
@@ -48,21 +49,41 @@ class _HomeScreenRealState extends State<HomeScreen> {
     });
   }
 
+  void _scheduleExpiryNotifications(List products) {
+    final now = DateTime.now();
+    for (var product in products) {
+      // Ignorar productos sin stock
+      if (product.quantity == 0) continue;
+
+      // Asegurarse de que expiryDate es DateTime
+      DateTime expiry;
+      if (product.expiryDate is String) {
+        expiry = DateTime.tryParse(product.expiryDate) ?? now;
+      } else {
+        expiry = product.expiryDate;
+      }
+
+      final daysToExpire = expiry.difference(now).inDays;
+
+      if (daysToExpire == 3 || daysToExpire == 2 || daysToExpire == 1) {
+        NotificationService.showNotification(
+          id: (product.hashCode + daysToExpire).toInt(),
+          title: '¡Producto por caducar!',
+          body: 'El producto "${product.name}" caduca en $daysToExpire día(s).',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
+
     final UserModel? currentUser = dataProvider.currentUser;
     final isDark = THelperFunctions.isDarkMode(context);
-
-    // Mostrar loader si los datos aún no están cargados
-    if (!dataProvider.isRecipesLoaded ||
-        !dataProvider.isProductsLoaded ||
-        !dataProvider.isUsersLoaded) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    final recipes = dataProvider.recipes;
-    final products = dataProvider.products;
+    // Asegura que los datos existen o usa valores por defecto
+    final recipes = dataProvider.recipes ?? [];
+    final products = dataProvider.products ?? [];
 
     // Filtra recetas y productos creados por el usuario actual
     final myRecipes =
@@ -73,6 +94,12 @@ class _HomeScreenRealState extends State<HomeScreen> {
         currentUser == null
             ? []
             : products.where((p) => p.createdBy == currentUser.correo).toList();
+
+    // Programa notificaciones solo una vez cuando los productos estén cargados
+    if (!_notificationsScheduled && myProducts.isNotEmpty) {
+      _scheduleExpiryNotifications(myProducts);
+      _notificationsScheduled = true;
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -266,8 +293,8 @@ class _HomeScreenRealState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingMenuButton(
         onRefresh: () {
-          // Forzar recarga solo si el usuario lo solicita
-          dataProvider.loadAll(force: true);
+          dataProvider.loadRecipes();
+          dataProvider.loadProducts();
         },
       ),
     );
@@ -728,7 +755,68 @@ class _HomeScreenRealState extends State<HomeScreen> {
                 false,
           );
         }).toList();
+    filtered.sort((a, b) => b.averageRating.compareTo(a.averageRating));
     return filtered;
+  }
+
+  Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
+    final trendingRecipes = _getTrendingRecipes(recipes);
+    return _horizontalList(
+      trendingRecipes.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
+    );
+  }
+
+  Widget _weeklyRecipesLast8Days(List<dynamic> recipes) {
+    final weeklyRecipes = _getWeeklyRecipes(recipes);
+    return _horizontalList(
+      weeklyRecipes.map((recipe) {
+        return {
+          'id': recipe.id,
+          'title': recipe.name,
+          'time': '${recipe.preparationTime.inMinutes} min',
+          'image': recipe.imageUrl ?? 'assets/images/default.png',
+          'rating': recipe.averageRating.toStringAsFixed(1),
+          'nivel': recipe.difficulty,
+        };
+      }).toList(),
+    );
+  }
+
+  Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
+    final isDark = THelperFunctions.isDarkMode(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
+          ),
+        ),
+        TextButton(
+          onPressed: onPressed,
+          child: Text(
+            'Ver más',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _sectionTitleWithoutSeeMore(
@@ -787,66 +875,6 @@ class _HomeScreenRealState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _sectionTitle(String title, {required VoidCallback onPressed}) {
-    final isDark = THelperFunctions.isDarkMode(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
-          ),
-        ),
-        TextButton(
-          onPressed: onPressed,
-          child: Text(
-            'Ver más',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: isDark ? CColors.textBlanco : CColors.primaryTextColor,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _trendingItemsSortedByRating(List<dynamic> recipes) {
-    final trendingRecipes = _getTrendingRecipes(recipes);
-    return _horizontalList(
-      trendingRecipes.map((recipe) {
-        return {
-          'id': recipe.id,
-          'title': recipe.name,
-          'time': '${recipe.preparationTime.inMinutes} min',
-          'image': recipe.imageUrl ?? 'assets/images/default.png',
-          'rating': recipe.averageRating.toStringAsFixed(1),
-          'nivel': recipe.difficulty,
-        };
-      }).toList(),
-    );
-  }
-
-  Widget _weeklyRecipesLast8Days(List<dynamic> recipes) {
-    final weeklyRecipes = _getWeeklyRecipes(recipes);
-    return _horizontalList(
-      weeklyRecipes.map((recipe) {
-        return {
-          'id': recipe.id,
-          'title': recipe.name,
-          'time': '${recipe.preparationTime.inMinutes} min',
-          'image': recipe.imageUrl ?? 'assets/images/default.png',
-          'rating': recipe.averageRating.toStringAsFixed(1),
-          'nivel': recipe.difficulty,
-        };
-      }).toList(),
     );
   }
 }
