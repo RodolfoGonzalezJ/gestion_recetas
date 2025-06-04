@@ -160,7 +160,7 @@ class _RecipeCardState extends State<RecipeCard> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '${widget.rating} | ${widget.reviews} reseñas',
+                              '${widget.rating.toStringAsFixed(1)} | ${widget.reviews} reseñas',
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 15,

@@ -10,6 +10,7 @@ import 'package:gestion_recetas/utils/helpers/helper_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:gestion_recetas/features/favorites/controllers/favorite_controller.dart';
 import 'package:gestion_recetas/features/favorites/services/favorite_service.dart';
+import 'package:gestion_recetas/features/inventory/services/inventory_service.dart';
 
 extension DateTimeExtensions on DateTime {
   String getRelativeTime() {
@@ -44,9 +45,13 @@ class RecipeDetailPage extends StatefulWidget {
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   final RecipeService _recipeService = RecipeService();
   final FavoriteService _favoriteService = FavoriteService();
+  final InventoryService _inventoryService = InventoryService(); // <-- Agregado
   final TextEditingController _commentController = TextEditingController();
   double _rating = 0.0;
   late Future<Map<String, dynamic>> _recipeData;
+
+  // Mapa para almacenar cantidades disponibles por ingrediente
+  Map<String, num> _userIngredientsQuantities = {};
 
   @override
   void initState() {
@@ -59,6 +64,34 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         final favCtrl = Provider.of<FavoriteController>(context, listen: false);
         favCtrl.loadFavorites(userEmail);
       });
+      // Cargar inventario del usuario
+      _loadUserInventory(userEmail);
+    }
+  }
+
+  Future<void> _loadUserInventory(String userEmail) async {
+    try {
+      // Suponiendo que los productos tienen un campo createdBy con el correo del usuario
+      final products = await _inventoryService.fetchProducts();
+      final now = DateTime.now();
+      // Filtrar productos del usuario y no vencidos
+      final userProducts = products.where(
+        (p) =>
+            (p.createdBy == userEmail) &&
+            (p.expiryDate == null || p.expiryDate!.isAfter(now)),
+      );
+      // Sumar cantidades por nombre de producto
+      final Map<String, num> ingredientQuantities = {};
+      for (final p in userProducts) {
+        final name = p.name.trim().toLowerCase();
+        ingredientQuantities[name] =
+            (ingredientQuantities[name] ?? 0) + (p.quantity ?? 0);
+      }
+      setState(() {
+        _userIngredientsQuantities = ingredientQuantities;
+      });
+    } catch (e) {
+      print('Error cargando inventario del usuario: $e');
     }
   }
 
@@ -380,11 +413,11 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                       ...recipe.ingredients.map<Widget>((ingredient) {
                         final ingredientName = ingredient.name;
                         final ingredientQuantity = ingredient.quantity;
-                        // Reemplaza esto con tu fuente real de cantidades del usuario
-                        final Map<String, num> userIngredientsQuantities =
-                            {}; // <-- Reemplaza con tu fuente real
+                        // Usar el mapa real de cantidades del usuario (ignorando vencidos)
                         final userQty =
-                            userIngredientsQuantities[ingredientName];
+                            _userIngredientsQuantities[ingredientName
+                                .trim()
+                                .toLowerCase()];
 
                         Color iconColor;
                         String statusText;
